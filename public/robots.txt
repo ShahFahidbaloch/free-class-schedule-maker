@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://classscheduleoptimizer.com/sitemap-index.xml
+

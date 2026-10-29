@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="500 — Server Computation Error | Class Schedule Optimizer"
+  description="An internal processing error occurred while rendering the academic schedule."
+>
+  <div class="max-w-xl mx-auto px-4 py-28 text-center space-y-6">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-mono text-xl font-bold border border-rose-200 dark:border-rose-900/40">
+      500
+    </div>
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+        Internal Algorithm Error
+      </h1>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400">
+        An unexpected computation exception was encountered. Your schedule data in localStorage remains secure.
+      </p>
+    </div>
+    <div>
+      <a 
+        href="/"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 text-xs font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors shadow-xs"
+      >
+        Reload Schedule Optimizer
+      </a>
+    </div>
+  </div>
+</Layout>
+
