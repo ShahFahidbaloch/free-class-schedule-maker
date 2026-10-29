@@ -4,34 +4,34 @@
 
 @layer base {
   :root {
-    --bg-canvas: #f8fafc;
+    --bg-canvas: #fafafa;
     --bg-surface: #ffffff;
-    --border-subtle: #e2e8f0;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
+    --border-subtle: #e4e4e7;
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #71717a;
   }
 
   .dark {
     --bg-canvas: #09090b;
-    --bg-surface: #18181b;
+    --bg-surface: #121215;
     --border-subtle: #27272a;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
   }
 
   html {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: #fafafa;
+    color: #09090b;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   html.dark {
     background-color: #09090b;
-    color: #f8fafc;
+    color: #fafafa;
   }
 
   body {
@@ -40,7 +40,7 @@
   }
 }
 
-/* Custom delicate scrollbars */
+/* Subtle scrollbars */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -49,16 +49,16 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d4d4d8;
   border-radius: 9999px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #27272a;
 }
 
 /* Print Stylesheet for Timetable */
 @media print {
-  nav, footer, .no-print, header, .editorial-section, #theme-toggle {
+  nav, footer, .no-print, header, #theme-toggle, .editorial-hub {
     display: none !important;
   }
   body {
@@ -69,7 +69,7 @@
   }
   .timetable-print-target {
     box-shadow: none !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid #d4d4d8 !important;
     width: 100% !important;
     page-break-inside: avoid;
   }
