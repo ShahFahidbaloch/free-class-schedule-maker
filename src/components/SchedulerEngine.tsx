@@ -12,8 +12,6 @@ import {
   Check, 
   MapPin, 
   AlertCircle,
-  Layers,
-  Edit3,
   CalendarDays,
   ListPlus
 } from 'lucide-react';
@@ -24,15 +22,18 @@ export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
 
 export interface TimeSlot {
   day: DayOfWeek;
-  startTime: string; // e.g. "10:00 AM" or "10:00"
-  endTime: string;   // e.g. "11:15 AM" or "11:15"
+  startTime: string; // e.g. "10:00 AM"
+  endTime: string;   // e.g. "11:15 AM"
   room: string;
 }
 
 export interface Section {
   id: string;
   name: string;
-  slots: TimeSlot[];
+  days: DayOfWeek[]; // Multi-day support e.g. ['Mon', 'Wed', 'Fri']
+  startTime: string;
+  endTime: string;
+  room: string;
 }
 
 export interface Course {
@@ -45,7 +46,7 @@ export interface Course {
   selectedSectionId: string;
 }
 
-// Enterprise Muted Slate / Navy / Charcoal Palettes with crisp left border
+// Enterprise Muted Slate / Navy / Charcoal Palettes
 export const PALETTES = [
   {
     name: 'Muted Navy',
@@ -74,19 +75,19 @@ export const PALETTES = [
 ];
 
 const DAYS: DayOfWeek[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const DAY_FULL_NAMES: Record<DayOfWeek, string> = {
-  Mon: 'Monday',
-  Tue: 'Tuesday',
-  Wed: 'Wednesday',
-  Thu: 'Thursday',
-  Fri: 'Friday'
+const DAY_LABELS: Record<DayOfWeek, { short: string; pill: string; full: string }> = {
+  Mon: { short: 'Mon', pill: 'M', full: 'Monday' },
+  Tue: { short: 'Tue', pill: 'T', full: 'Tuesday' },
+  Wed: { short: 'Wed', pill: 'W', full: 'Wednesday' },
+  Thu: { short: 'Thu', pill: 'Th', full: 'Thursday' },
+  Fri: { short: 'Fri', pill: 'F', full: 'Friday' }
 };
 
 const START_HOUR = 8;  // 08:00 AM
-const END_HOUR = 18;   // 06:00 PM (10 Hours)
-const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60; // 600 mins
+const END_HOUR = 20;   // 08:00 PM (12 Hours)
+const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60; // 720 mins
 
-// Flexible Time Parser: Allows typing "10:00 AM", "10:00", "2:30 PM", "14:30", "9:00"
+// Flexible Time Parser
 export function parseFlexibleTime(input: string): number {
   if (!input) return 0;
   const clean = input.trim().toLowerCase();
@@ -117,7 +118,7 @@ export function parseFlexibleTime(input: string): number {
   return hours * 60 + minutes;
 }
 
-// Standard 12-Hour display formatter
+// 12-Hour display formatter
 export function formatTime12(timeStr: string): string {
   if (!timeStr) return '';
   const totalMins = parseFlexibleTime(timeStr);
@@ -129,7 +130,7 @@ export function formatTime12(timeStr: string): string {
   return `${displayH}:${displayM} ${ampm}`;
 }
 
-// Default Demonstration Courses
+// Default Demonstration Courses (MWF and TTh Multi-Day)
 const DEMO_COURSES: Course[] = [
   {
     id: 'course-cs101',
@@ -141,47 +142,63 @@ const DEMO_COURSES: Course[] = [
     sections: [
       {
         id: 'sec-cs101-a',
-        name: 'Section 01 (Morning MWF)',
-        slots: [
-          { day: 'Mon', startTime: '10:00 AM', endTime: '11:15 AM', room: 'Turing Hall 102' },
-          { day: 'Wed', startTime: '10:00 AM', endTime: '11:15 AM', room: 'Turing Hall 102' },
-          { day: 'Fri', startTime: '10:00 AM', endTime: '11:15 AM', room: 'Turing Hall 102' }
-        ]
+        name: 'Section 01 (MWF Morning)',
+        days: ['Mon', 'Wed', 'Fri'],
+        startTime: '10:00 AM',
+        endTime: '11:15 AM',
+        room: 'Turing Hall 102'
       },
       {
         id: 'sec-cs101-b',
-        name: 'Section 02 (Afternoon TTh)',
-        slots: [
-          { day: 'Tue', startTime: '01:30 PM', endTime: '03:00 PM', room: 'Gates Hall 204' },
-          { day: 'Thu', startTime: '01:30 PM', endTime: '03:00 PM', room: 'Gates Hall 204' }
-        ]
+        name: 'Section 02 (TTh Afternoon)',
+        days: ['Tue', 'Thu'],
+        startTime: '01:30 PM',
+        endTime: '03:00 PM',
+        room: 'Gates Hall 204'
       }
     ]
   },
   {
     id: 'course-math21',
     code: 'MATH 21',
-    title: 'Calculus & Analytical Geometry',
+    title: 'Calculus & Geometry',
     credits: 4,
     colorIndex: 1,
     selectedSectionId: 'sec-math21-a',
     sections: [
       {
         id: 'sec-math21-a',
-        name: 'Section 01 (Midday MWF)',
-        slots: [
-          { day: 'Mon', startTime: '11:30 AM', endTime: '12:45 PM', room: 'Science Quad 304' },
-          { day: 'Wed', startTime: '11:30 AM', endTime: '12:45 PM', room: 'Science Quad 304' },
-          { day: 'Fri', startTime: '11:30 AM', endTime: '12:45 PM', room: 'Science Quad 304' }
-        ]
+        name: 'Section 01 (MWF Midday)',
+        days: ['Mon', 'Wed', 'Fri'],
+        startTime: '11:30 AM',
+        endTime: '12:45 PM',
+        room: 'Science Quad 304'
       },
       {
         id: 'sec-math21-b',
-        name: 'Section 02 (Morning TTh)',
-        slots: [
-          { day: 'Tue', startTime: '09:00 AM', endTime: '10:30 AM', room: 'Math Hall 110' },
-          { day: 'Thu', startTime: '09:00 AM', endTime: '10:30 AM', room: 'Math Hall 110' }
-        ]
+        name: 'Section 02 (TTh Morning)',
+        days: ['Tue', 'Thu'],
+        startTime: '09:00 AM',
+        endTime: '10:30 AM',
+        room: 'Math Hall 110'
+      }
+    ]
+  },
+  {
+    id: 'course-phys41',
+    code: 'PHYS 41',
+    title: 'Mechanics & Kinetics',
+    credits: 4,
+    colorIndex: 2,
+    selectedSectionId: 'sec-phys41-a',
+    sections: [
+      {
+        id: 'sec-phys41-a',
+        name: 'Section 01 (TTh Midday)',
+        days: ['Tue', 'Thu'],
+        startTime: '11:00 AM',
+        endTime: '12:15 PM',
+        room: 'Physics Rm 201'
       }
     ]
   }
@@ -189,78 +206,87 @@ const DEMO_COURSES: Course[] = [
 
 export default function SchedulerEngine() {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   // Mobile Views: 'calendar' or 'courses'
   const [mobileView, setMobileView] = useState<'calendar' | 'courses'>('calendar');
-  // Mobile Day Filter: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'all'
-  const [mobileDay, setMobileDay] = useState<DayOfWeek | 'all'>('Mon');
 
-  // New Course Registration Form State
+  // New Course Registration Form State with Multi-Day Pills
   const [newCode, setNewCode] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [newCredits, setNewCredits] = useState(3);
-  const [newSlots, setNewSlots] = useState<TimeSlot[]>([
-    { day: 'Tue', startTime: '10:00 AM', endTime: '11:15 AM', room: 'Room 201' }
-  ]);
+  const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(['Mon', 'Wed', 'Fri']);
+  const [newStartTime, setNewStartTime] = useState('09:00 AM');
+  const [newEndTime, setNewEndTime] = useState('10:15 AM');
+  const [newRoom, setNewRoom] = useState('Hall A');
 
   const timetableRef = useRef<HTMLDivElement>(null);
 
   // Initialize from LocalStorage or Load Demo Courses
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('class_schedule_app_v1');
+      const saved = localStorage.getItem('class_schedule_coursicle_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setCourses(parsed);
-          setActiveCourseId(parsed[0].id);
           return;
         }
       }
     } catch (e) {}
     setCourses(DEMO_COURSES);
-    setActiveCourseId(DEMO_COURSES[0].id);
   }, []);
 
   // Sync to LocalStorage
   useEffect(() => {
     if (courses.length > 0) {
       try {
-        localStorage.setItem('class_schedule_app_v1', JSON.stringify(courses));
+        localStorage.setItem('class_schedule_coursicle_v1', JSON.stringify(courses));
       } catch (e) {}
     }
   }, [courses]);
 
-  // Compute Placed Events on Timetable Matrix
-  const placedEvents = useMemo(() => {
-    const list: Array<{
-      courseId: string;
-      code: string;
-      title: string;
-      credits: number;
-      room: string;
-      colorIndex: number;
-      day: DayOfWeek;
-      startTime: string;
-      endTime: string;
-      startMins: number;
-      endMins: number;
-      topPercent: number;
-      heightPercent: number;
-    }> = [];
+  // Compute Placed Events with Coursicle-style Side-by-Side Clash Offsets
+  interface PlacedEvent {
+    id: string;
+    courseId: string;
+    code: string;
+    title: string;
+    credits: number;
+    room: string;
+    colorIndex: number;
+    day: DayOfWeek;
+    startTime: string;
+    endTime: string;
+    startMins: number;
+    endMins: number;
+    topPercent: number;
+    heightPercent: number;
+    hasClash: boolean;
+    lane: number;
+    totalLanes: number;
+  }
 
+  const placedEventsByDay = useMemo(() => {
+    const dayMap: Record<DayOfWeek, PlacedEvent[]> = {
+      Mon: [],
+      Tue: [],
+      Wed: [],
+      Thu: [],
+      Fri: []
+    };
+
+    // Flatten all slots from active sections
     courses.forEach(course => {
       const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
       if (!activeSec) return;
 
-      activeSec.slots.forEach(slot => {
-        const startM = parseFlexibleTime(slot.startTime);
-        const endM = parseFlexibleTime(slot.endTime);
+      activeSec.days.forEach(day => {
+        const startM = parseFlexibleTime(activeSec.startTime);
+        const endM = parseFlexibleTime(activeSec.endTime);
         const dayStartM = START_HOUR * 60; // 480 (8:00 AM)
-        const dayEndM = END_HOUR * 60;     // 1080 (6:00 PM)
+        const dayEndM = END_HOUR * 60;     // 1200 (8:00 PM)
 
         const clampedStart = Math.max(dayStartM, startM);
         const clampedEnd = Math.min(dayEndM, endM);
@@ -269,28 +295,59 @@ export default function SchedulerEngine() {
           const topPercent = ((clampedStart - dayStartM) / TOTAL_MINUTES) * 100;
           const heightPercent = ((clampedEnd - clampedStart) / TOTAL_MINUTES) * 100;
 
-          list.push({
+          dayMap[day].push({
+            id: `${course.id}-${day}-${activeSec.startTime}`,
             courseId: course.id,
             code: course.code,
             title: course.title,
             credits: course.credits,
-            room: slot.room || 'Main Hall',
+            room: activeSec.room || 'Main Hall',
             colorIndex: course.colorIndex,
-            day: slot.day,
-            startTime: slot.startTime,
-            endTime: slot.endTime,
+            day,
+            startTime: activeSec.startTime,
+            endTime: activeSec.endTime,
             startMins: startM,
             endMins: endM,
             topPercent,
-            heightPercent
+            heightPercent,
+            hasClash: false,
+            lane: 0,
+            totalLanes: 1
           });
         }
       });
     });
-    return list;
+
+    // Detect Overlaps and Assign Side-by-Side Lanes per Day (Coursicle mechanism)
+    DAYS.forEach(day => {
+      const events = dayMap[day].sort((a, b) => a.startMins - b.startMins);
+      
+      for (let i = 0; i < events.length; i++) {
+        const colliding: number[] = [i];
+        for (let j = 0; j < events.length; j++) {
+          if (i !== j) {
+            const overlap = Math.max(events[i].startMins, events[j].startMins) < Math.min(events[i].endMins, events[j].endMins);
+            if (overlap) {
+              colliding.push(j);
+            }
+          }
+        }
+
+        if (colliding.length > 1) {
+          events[i].hasClash = true;
+          // Sort cluster by start time / index and assign lane
+          colliding.sort();
+          const laneIdx = colliding.indexOf(i);
+          events[i].lane = laneIdx;
+          events[i].totalLanes = Math.min(colliding.length, 2); // Split into 2 columns
+        }
+      }
+    });
+
+    return dayMap;
   }, [courses]);
 
-  // Compute Live Metrics (Credits, Gaps, Overlaps)
+  // Compute Live Metrics
   const metrics = useMemo(() => {
     const totalCredits = courses.reduce((sum, c) => sum + (c.credits || 0), 0);
     let totalGapMinutes = 0;
@@ -299,15 +356,11 @@ export default function SchedulerEngine() {
     let overlaps = 0;
 
     DAYS.forEach(day => {
-      const daySlots = placedEvents
-        .filter(e => e.day === day)
-        .sort((a, b) => a.startMins - b.startMins);
+      const daySlots = (placedEventsByDay[day] || []).sort((a, b) => a.startMins - b.startMins);
 
       for (let i = 0; i < daySlots.length; i++) {
-        for (let j = i + 1; j < daySlots.length; j++) {
-          if (daySlots[i].endMins > daySlots[j].startMins) {
-            overlaps++;
-          }
+        if (daySlots[i].hasClash) {
+          overlaps++;
         }
 
         if (i < daySlots.length - 1) {
@@ -332,70 +385,65 @@ export default function SchedulerEngine() {
       longestGapMinutes,
       longestGapHours,
       longestGapDay,
-      overlaps
+      overlaps: Math.floor(overlaps / 2) // pair counted
     };
-  }, [courses, placedEvents]);
+  }, [courses, placedEventsByDay]);
+
+  // Toggle Day in Multi-Day Pill Selector [ M ] [ T ] [ W ] [ Th ] [ F ]
+  const toggleDay = (d: DayOfWeek) => {
+    if (selectedDays.includes(d)) {
+      if (selectedDays.length > 1) {
+        setSelectedDays(prev => prev.filter(day => day !== d));
+      }
+    } else {
+      setSelectedDays(prev => [...prev, d]);
+    }
+  };
 
   // Register New Course from Form
   const handleRegisterCourse = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCode.trim()) return;
 
-    const courseId = `course_${Date.now()}`;
+    const courseId = `c_${Date.now()}`;
     const secId = `sec_${Date.now()}`;
     const nextColor = courses.length % PALETTES.length;
 
     const newCourseObj: Course = {
       id: courseId,
       code: newCode.trim().toUpperCase(),
-      title: newTitle.trim() || 'Academic Subject',
+      title: newTitle.trim() || 'Academic Course',
       credits: Number(newCredits) || 3,
       colorIndex: nextColor,
       selectedSectionId: secId,
       sections: [
         {
           id: secId,
-          name: 'Section 01',
-          slots: [...newSlots]
+          name: `Section 01 (${selectedDays.map(d => DAY_LABELS[d].pill).join('')})`,
+          days: [...selectedDays],
+          startTime: newStartTime,
+          endTime: newEndTime,
+          room: newRoom.trim() || 'Room 101'
         }
       ]
     };
 
     setCourses(prev => [...prev, newCourseObj]);
-    setActiveCourseId(courseId);
     setNewCode('');
     setNewTitle('');
-    setNewSlots([{ day: 'Tue', startTime: '10:00 AM', endTime: '11:15 AM', room: 'Room 201' }]);
-    setBanner(`Added ${newCourseObj.code} to your schedule.`);
+    setBanner(`Registered ${newCourseObj.code} across ${selectedDays.join(', ')}.`);
     setTimeout(() => setBanner(null), 4000);
-  };
-
-  const handleAddSlotToNew = () => {
-    setNewSlots(prev => [...prev, { day: 'Thu', startTime: '10:00 AM', endTime: '11:15 AM', room: 'Room 201' }]);
-  };
-
-  const handleRemoveSlotFromNew = (idx: number) => {
-    if (newSlots.length <= 1) return;
-    setNewSlots(prev => prev.filter((_, i) => i !== idx));
-  };
-
-  const handleUpdateNewSlot = (idx: number, field: keyof TimeSlot, value: string) => {
-    setNewSlots(prev => prev.map((s, i) => (i === idx ? { ...s, [field]: value } : s)));
   };
 
   const handleDeleteCourse = (id: string) => {
     setCourses(prev => prev.filter(c => c.id !== id));
-    if (activeCourseId === id) {
-      const remaining = courses.filter(c => c.id !== id);
-      setActiveCourseId(remaining.length > 0 ? remaining[0].id : null);
-    }
   };
 
-  // Permutation Gap Optimizer
+  // One-Click Gap Optimizer
   const handleOptimizeGaps = () => {
     if (courses.length === 0) return;
 
-    const options = courses.map(c => c.sections.map(s => ({ courseId: c.id, sectionId: s.id, slots: s.slots })));
+    const options = courses.map(c => c.sections.map(s => ({ courseId: c.id, sectionId: s.id, days: s.days, start: s.startTime, end: s.endTime })));
     function cartesian<T>(arrays: T[][]): T[][] {
       return arrays.reduce<T[][]>((acc, curr) => acc.flatMap(x => curr.map(y => [...x, y])), [[]]);
     }
@@ -409,12 +457,12 @@ export default function SchedulerEngine() {
       let clash = false;
 
       for (const item of combo) {
-        for (const slot of item.slots) {
-          const s = parseFlexibleTime(slot.startTime);
-          const e = parseFlexibleTime(slot.endTime);
+        for (const day of item.days) {
+          const s = parseFlexibleTime(item.start);
+          const e = parseFlexibleTime(item.end);
 
           for (const existing of allSlots) {
-            if (existing.day === slot.day) {
+            if (existing.day === day) {
               if (Math.max(existing.s, s) < Math.min(existing.e, e)) {
                 clash = true;
                 break;
@@ -422,7 +470,7 @@ export default function SchedulerEngine() {
             }
           }
           if (clash) break;
-          allSlots.push({ day: slot.day, s, e });
+          allSlots.push({ day, s, e });
         }
         if (clash) break;
       }
@@ -454,10 +502,10 @@ export default function SchedulerEngine() {
       try {
         confetti({ particleCount: 75, spread: 60, origin: { y: 0.6 } });
       } catch (e) {}
-      setBanner(`Optimized! Found conflict-free timetable with ${(minGaps / 60).toFixed(1)}h idle gap.`);
+      setBanner(`Optimized! Applied clash-free sections with ${(minGaps / 60).toFixed(1)}h idle gap.`);
       setTimeout(() => setBanner(null), 5000);
     } else {
-      setBanner('No conflict-free combination found across active section options.');
+      setBanner('No conflict-free combination found across active section timings.');
       setTimeout(() => setBanner(null), 5000);
     }
   };
@@ -482,12 +530,12 @@ export default function SchedulerEngine() {
     }
   };
 
-  // Export .ICS File
+  // Export .ICS
   const handleExportICS = () => {
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//ClassSchedule//AcademicTimetable//EN',
+      'PRODID:-//ClassSchedule//CoursicleEngine//EN',
       'CALSCALE:GREGORIAN'
     ];
     const dayMap: Record<DayOfWeek, string> = { Mon: 'MO', Tue: 'TU', Wed: 'WE', Thu: 'TH', Fri: 'FR' };
@@ -500,15 +548,15 @@ export default function SchedulerEngine() {
       const sec = c.sections.find(s => s.id === c.selectedSectionId);
       if (!sec) return;
 
-      sec.slots.forEach(slot => {
-        const offset = DAYS.indexOf(slot.day);
+      sec.days.forEach(day => {
+        const offset = DAYS.indexOf(day);
         const evDate = new Date(baseMon.getTime() + offset * 86400000);
         const y = evDate.getFullYear();
         const m = String(evDate.getMonth() + 1).padStart(2, '0');
         const d = String(evDate.getDate()).padStart(2, '0');
 
-        const startMins = parseFlexibleTime(slot.startTime);
-        const endMins = parseFlexibleTime(slot.endTime);
+        const startMins = parseFlexibleTime(sec.startTime);
+        const endMins = parseFlexibleTime(sec.endTime);
 
         const sh = String(Math.floor(startMins / 60)).padStart(2, '0');
         const sm = String(startMins % 60).padStart(2, '0');
@@ -517,10 +565,10 @@ export default function SchedulerEngine() {
 
         lines.push('BEGIN:VEVENT');
         lines.push(`SUMMARY:${c.code} - ${c.title}`);
-        lines.push(`LOCATION:${slot.room}`);
+        lines.push(`LOCATION:${sec.room}`);
         lines.push(`DTSTART:${y}${m}${d}T${sh}${sm}00`);
         lines.push(`DTEND:${y}${m}${d}T${eh}${em}00`);
-        lines.push(`RRULE:FREQ=WEEKLY;BYDAY=${dayMap[slot.day]};COUNT=15`);
+        lines.push(`RRULE:FREQ=WEEKLY;BYDAY=${dayMap[day]};COUNT=15`);
         lines.push('BEGIN:VALARM');
         lines.push('TRIGGER:-PT15M');
         lines.push('ACTION:DISPLAY');
@@ -541,15 +589,11 @@ export default function SchedulerEngine() {
   };
 
   const handleReset = () => {
-    if (confirm('Reset to standard demo courses?')) {
+    if (confirm('Reset to standard academic demo courses?')) {
       setCourses(DEMO_COURSES);
-      setActiveCourseId(DEMO_COURSES[0].id);
-      localStorage.removeItem('class_schedule_app_v1');
+      localStorage.removeItem('class_schedule_coursicle_v1');
     }
   };
-
-  // Determine active visible columns on mobile vs desktop
-  const activeDaysList = mobileDay === 'all' ? DAYS : [mobileDay];
 
   return (
     <div className="w-full space-y-3">
@@ -566,7 +610,7 @@ export default function SchedulerEngine() {
         </div>
       )}
 
-      {/* Mobile Mode Switcher: Timetable Grid vs. Add / Edit Classes */}
+      {/* Mobile Mode Switcher: Timetable Grid vs. Add Courses */}
       <div className="flex lg:hidden items-center p-1 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xs">
         <button
           type="button"
@@ -578,7 +622,7 @@ export default function SchedulerEngine() {
           }`}
         >
           <CalendarDays className="w-3.5 h-3.5" />
-          <span>Timetable Grid</span>
+          <span>Weekly Timetable</span>
         </button>
 
         <button
@@ -591,17 +635,17 @@ export default function SchedulerEngine() {
           }`}
         >
           <ListPlus className="w-3.5 h-3.5" />
-          <span>Add & Edit Courses ({courses.length})</span>
+          <span>Add Course ({courses.length})</span>
         </button>
       </div>
 
-      {/* Main 12-Column Responsive Workspace */}
+      {/* Main 12-Column Unified Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         
-        {/* Left Column: Course Enrollment & Roster (4 Cols) */}
+        {/* Left Column: Form & Enrolled Roster (4 Cols) */}
         <div className={`space-y-4 lg:col-span-4 ${mobileView === 'courses' ? 'block' : 'hidden lg:block'}`}>
           
-          {/* Add Course Form Card */}
+          {/* Registration Form Card */}
           <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800/80 shadow-2xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
               <div className="flex items-center gap-2">
@@ -656,98 +700,79 @@ export default function SchedulerEngine() {
                 />
               </div>
 
-              {/* Class Timings Slots (Allows Direct Typing or Selection) */}
-              <div className="space-y-2 pt-1">
-                <div className="flex items-center justify-between">
-                  <label className="block text-[11px] font-mono font-medium text-zinc-600 dark:text-zinc-400">
-                    CLASS TIMINGS & ROOM (TYPE OR PICK)
-                  </label>
+              {/* One-Click Multi-Day Selector [ M ] [ T ] [ W ] [ Th ] [ F ] */}
+              <div className="space-y-1.5 pt-1">
+                <label className="block text-[11px] font-mono font-medium text-zinc-600 dark:text-zinc-400">
+                  SELECT CLASS DAYS (MULTI-SELECT)
+                </label>
+                <div className="flex items-center gap-1.5">
+                  {DAYS.map(d => {
+                    const isSelected = selectedDays.includes(d);
+                    return (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleDay(d)}
+                        className={`flex-1 h-9 rounded-md font-mono text-xs font-bold transition cursor-pointer border ${
+                          isSelected
+                            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 border-zinc-900 dark:border-white shadow-xs'
+                            : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                        }`}
+                        title={DAY_LABELS[d].full}
+                      >
+                        {DAY_LABELS[d].pill}
+                      </button>
+                    );
+                  })}
                 </div>
-                
-                {newSlots.map((slot, sIdx) => (
-                  <div key={sIdx} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 space-y-2.5">
-                    <div className="grid grid-cols-12 gap-2 items-center">
-                      {/* Day Selector */}
-                      <div className="col-span-4">
-                        <label className="block text-[10px] text-zinc-400 mb-0.5">DAY</label>
-                        <select
-                          value={slot.day}
-                          onChange={e => handleUpdateNewSlot(sIdx, 'day', e.target.value)}
-                          className="w-full h-8 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-1.5 cursor-pointer"
-                        >
-                          {DAYS.map(d => (
-                            <option key={d} value={d}>{DAY_FULL_NAMES[d]}</option>
-                          ))}
-                        </select>
-                      </div>
+                <p className="text-[10px] text-zinc-400 font-mono">
+                  Active: {selectedDays.map(d => DAY_LABELS[d].short).join(' • ')}
+                </p>
+              </div>
 
-                      {/* Start Time (Editable Text or Time) */}
-                      <div className="col-span-4">
-                        <label className="block text-[10px] text-zinc-400 mb-0.5">START TIME</label>
-                        <input
-                          type="text"
-                          value={slot.startTime}
-                          onChange={e => handleUpdateNewSlot(sIdx, 'startTime', e.target.value)}
-                          placeholder="10:00 AM"
-                          className="w-full h-8 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-2 focus:ring-1 focus:ring-zinc-950"
-                        />
-                      </div>
-
-                      {/* End Time (Editable Text or Time) */}
-                      <div className="col-span-3">
-                        <label className="block text-[10px] text-zinc-400 mb-0.5">END TIME</label>
-                        <input
-                          type="text"
-                          value={slot.endTime}
-                          onChange={e => handleUpdateNewSlot(sIdx, 'endTime', e.target.value)}
-                          placeholder="11:15 AM"
-                          className="w-full h-8 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-2 focus:ring-1 focus:ring-zinc-950"
-                        />
-                      </div>
-
-                      {/* Remove Button */}
-                      <div className="col-span-1 pt-3 text-center">
-                        {newSlots.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveSlotFromNew(sIdx)}
-                            className="text-zinc-400 hover:text-rose-500 text-sm font-bold cursor-pointer"
-                            title="Remove timing"
-                          >
-                            ×
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Room / Hall Input */}
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-zinc-400 shrink-0" />
-                        <input
-                          type="text"
-                          value={slot.room}
-                          onChange={e => handleUpdateNewSlot(sIdx, 'room', e.target.value)}
-                          placeholder="Room / Hall (e.g. Science Hall 101)"
-                          className="w-full h-7 px-2 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
-                        />
-                      </div>
-                    </div>
+              {/* Writable Class Timings & Room Input */}
+              <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 space-y-2.5">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-mono text-zinc-500 mb-1">START TIME</label>
+                    <input
+                      type="text"
+                      value={newStartTime}
+                      onChange={e => setNewStartTime(e.target.value)}
+                      placeholder="10:00 AM"
+                      className="w-full h-8 px-2 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                    />
                   </div>
-                ))}
+                  <div>
+                    <label className="block text-[10px] font-mono text-zinc-500 mb-1">END TIME</label>
+                    <input
+                      type="text"
+                      value={newEndTime}
+                      onChange={e => setNewEndTime(e.target.value)}
+                      placeholder="11:15 AM"
+                      className="w-full h-8 px-2 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                    />
+                  </div>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={handleAddSlotToNew}
-                  className="text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 cursor-pointer pt-1"
-                >
-                  <Plus className="w-3.5 h-3.5" /> Add another day / time slot
-                </button>
+                <div>
+                  <label className="block text-[10px] font-mono text-zinc-500 mb-1">ROOM / HALL</label>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    <input
+                      type="text"
+                      value={newRoom}
+                      onChange={e => setNewRoom(e.target.value)}
+                      placeholder="e.g. Science Quad 101"
+                      className="w-full h-7 px-2 text-xs rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                    />
+                  </div>
+                </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full h-10 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold tracking-wide transition active:scale-98 cursor-pointer mt-2"
+                className="w-full h-10 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold tracking-wide transition active:scale-98 cursor-pointer"
               >
                 + Register Course
               </button>
@@ -760,7 +785,7 @@ export default function SchedulerEngine() {
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
                 Enrolled Courses ({courses.length})
               </span>
-              <span className="text-[11px] font-mono text-zinc-500 font-semibold">{metrics.totalCredits} Credits Total</span>
+              <span className="text-[11px] font-mono text-zinc-500 font-semibold">{metrics.totalCredits} Credits</span>
             </div>
 
             <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
@@ -776,17 +801,17 @@ export default function SchedulerEngine() {
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-xs ${palette.bar}`}></span>
                         <span className="font-mono font-bold text-zinc-900 dark:text-white">{course.code}</span>
-                        <span className="text-[11px] font-mono text-zinc-500">({course.credits} Credits)</span>
+                        <span className="text-[11px] font-mono text-zinc-500">({course.credits}cr)</span>
                       </div>
                       <div className="text-[11px] text-zinc-600 dark:text-zinc-400 truncate max-w-[210px]">{course.title}</div>
                       
                       {activeSec && (
-                        <div className="text-[10px] font-mono text-zinc-400 flex flex-wrap gap-1">
-                          {activeSec.slots.map((sl, i) => (
-                            <span key={i} className="bg-zinc-200/60 dark:bg-zinc-800 px-1 py-0.5 rounded">
-                              {sl.day} {formatTime12(sl.startTime)}
-                            </span>
-                          ))}
+                        <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                          <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                            {activeSec.days.join('')}
+                          </span>
+                          <span>•</span>
+                          <span>{formatTime12(activeSec.startTime)} - {formatTime12(activeSec.endTime)}</span>
                         </div>
                       )}
                     </div>
@@ -806,7 +831,7 @@ export default function SchedulerEngine() {
 
         </div>
 
-        {/* Right Column: Visual Timetable & Live Toolbar (8 Cols) */}
+        {/* Right Column: Full 5-Column Weekly Matrix (8 Cols) */}
         <div className={`space-y-3 lg:col-span-8 ${mobileView === 'calendar' ? 'block' : 'hidden lg:block'}`}>
           
           {/* Action Toolbar */}
@@ -822,11 +847,11 @@ export default function SchedulerEngine() {
                 GAPS: <span className="font-bold">{metrics.gapHours}h</span>
               </div>
 
-              <div className="hidden sm:inline-flex px-2.5 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs">
+              <div className="inline-flex px-2.5 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs">
                 {metrics.overlaps === 0 ? (
                   <span className="text-emerald-700 dark:text-emerald-400 font-medium">0 Conflicts</span>
                 ) : (
-                  <span className="text-rose-600 dark:text-rose-400 font-bold">{metrics.overlaps} Conflict(s)</span>
+                  <span className="text-rose-600 dark:text-rose-400 font-bold">{metrics.overlaps} Overlap(s)</span>
                 )}
               </div>
             </div>
@@ -877,67 +902,33 @@ export default function SchedulerEngine() {
             </div>
           </div>
 
-          {/* Mobile Day Selector Tabs */}
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xs overflow-x-auto lg:hidden">
-            {DAYS.map(day => (
-              <button
-                key={day}
-                onClick={() => setMobileDay(day)}
-                className={`flex-1 py-1.5 text-xs font-mono font-semibold rounded-lg transition cursor-pointer whitespace-nowrap px-2 ${
-                  mobileDay === day
-                    ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
-                }`}
-              >
-                {day}
-              </button>
-            ))}
-            <button
-              onClick={() => setMobileDay('all')}
-              className={`py-1.5 px-3 text-xs font-mono font-semibold rounded-lg transition cursor-pointer whitespace-nowrap ${
-                mobileDay === 'all'
-                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
-              }`}
-            >
-              All 5 Days
-            </button>
-          </div>
-
-          {/* Native Timetable Matrix */}
+          {/* Full 5-Column Weekly Timetable Matrix (Monday to Friday Concurrently) */}
           <div
             ref={timetableRef}
             className="p-4 sm:p-5 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800/80 shadow-2xs timetable-print-target overflow-hidden"
           >
             <div className="relative overflow-x-auto">
-              {/* Responsive Container width */}
-              <div className={`${mobileDay === 'all' ? 'min-w-[640px]' : 'w-full'}`}>
+              <div className="min-w-[660px]">
                 
-                {/* Column Headers */}
-                <div className={`grid pb-2.5 mb-1.5 border-b border-zinc-200 dark:border-zinc-800 ${
-                  mobileDay === 'all' ? 'grid-cols-11' : 'grid-cols-6'
-                }`}>
+                {/* 5-Column Headers: Monday through Friday concurrently */}
+                <div className="grid grid-cols-11 pb-2.5 mb-1.5 border-b border-zinc-200 dark:border-zinc-800">
                   <div className="col-span-1 text-[11px] font-mono font-bold text-zinc-400 text-center uppercase">
                     TIME
                   </div>
-                  {activeDaysList.map(d => (
+                  {DAYS.map(day => (
                     <div
-                      key={d}
-                      className={`text-center text-sm font-bold tracking-tight text-zinc-900 dark:text-white ${
-                        mobileDay === 'all' ? 'col-span-2' : 'col-span-5'
-                      }`}
+                      key={day}
+                      className="col-span-2 text-center text-sm font-bold tracking-tight text-zinc-900 dark:text-white"
                     >
-                      {DAY_FULL_NAMES[d]}
+                      {DAY_LABELS[day].full}
                     </div>
                   ))}
                 </div>
 
-                {/* Grid Body: 10 Hours (8:00 AM to 6:00 PM) */}
-                <div className={`relative h-[600px] grid select-none ${
-                  mobileDay === 'all' ? 'grid-cols-11' : 'grid-cols-6'
-                }`}>
+                {/* 12-Hour Grid Body (08:00 AM – 08:00 PM = 720px Height) */}
+                <div className="relative h-[720px] grid grid-cols-11 select-none">
                   
-                  {/* Left Column: Hours 8:00 AM to 6:00 PM */}
+                  {/* Left Column: 08:00 AM to 08:00 PM */}
                   <div className="col-span-1 relative border-r border-zinc-100 dark:border-zinc-800/80">
                     {Array.from({ length: END_HOUR - START_HOUR + 1 }).map((_, idx) => {
                       const hour = START_HOUR + idx;
@@ -956,41 +947,52 @@ export default function SchedulerEngine() {
                     })}
                   </div>
 
-                  {/* Day Columns */}
-                  <div className={`relative h-full ${
-                    mobileDay === 'all' ? 'col-span-10 grid grid-cols-5' : 'col-span-5'
-                  }`}>
+                  {/* 5 Column Weekly Container: Monday, Tuesday, Wednesday, Thursday, Friday */}
+                  <div className="col-span-10 grid grid-cols-5 relative h-full">
                     
-                    {/* Horizontal Divider Lines */}
+                    {/* Horizontal Guideline Dividers crossing all 5 columns */}
                     {Array.from({ length: END_HOUR - START_HOUR + 1 }).map((_, idx) => {
                       const topPercent = (idx / (END_HOUR - START_HOUR)) * 100;
                       return (
                         <div
                           key={idx}
                           style={{ top: `${topPercent}%` }}
-                          className="absolute left-0 right-0 border-t border-zinc-100 dark:border-zinc-800/50 pointer-events-none"
+                          className="absolute left-0 right-0 border-t border-zinc-100 dark:border-zinc-800/60 pointer-events-none"
                         />
                       );
                     })}
 
-                    {/* Columns Render */}
-                    {activeDaysList.map(day => {
-                      const dayEvents = placedEvents.filter(e => e.day === day);
+                    {/* Monday to Friday Columns */}
+                    {DAYS.map(day => {
+                      const dayEvents = placedEventsByDay[day] || [];
                       return (
                         <div
                           key={day}
-                          className="relative h-full border-r border-zinc-100 dark:border-zinc-800/60 last:border-r-0"
+                          className="relative col-span-1 border-r border-zinc-100 dark:border-zinc-800/60 last:border-r-0 h-full"
                         >
                           {dayEvents.map(event => {
                             const palette = PALETTES[event.colorIndex % PALETTES.length];
+
+                            // Coursicle Side-by-Side Offset Calculation
+                            const isClashed = event.hasClash;
+                            const leftPos = isClashed
+                              ? event.lane === 0 ? '1%' : '50%'
+                              : '2px';
+                            const blockWidth = isClashed ? '48%' : 'calc(100% - 4px)';
+
                             return (
                               <div
-                                key={`${event.courseId}-${event.day}-${event.startTime}`}
+                                key={event.id}
                                 style={{
                                   top: `${event.topPercent}%`,
-                                  height: `${event.heightPercent}%`
+                                  height: `${event.heightPercent}%`,
+                                  left: leftPos,
+                                  width: blockWidth
                                 }}
-                                className={`absolute inset-x-1 p-2.5 rounded-md border-l-4 transition-all shadow-xs hover:shadow-md hover:scale-[1.01] hover:z-20 overflow-hidden flex flex-col justify-between ${palette.card}`}
+                                className={`absolute p-2 rounded-md border-l-4 transition-all shadow-xs hover:shadow-md hover:scale-[1.02] hover:z-30 overflow-hidden flex flex-col justify-between ${palette.card} ${
+                                  isClashed ? 'border-red-500 ring-1 ring-red-400/50' : ''
+                                }`}
+                                title={`${event.code} - ${event.title} (${event.room}) ${isClashed ? '[Conflict Detected]' : ''}`}
                               >
                                 <div>
                                   <div className="flex items-center justify-between gap-1 mb-0.5">
