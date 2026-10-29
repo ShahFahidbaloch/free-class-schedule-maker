@@ -27,112 +27,96 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
 
-    <!-- Open Graph / Meta -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={siteName} />
 
-    <!-- Twitter Cards -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <!-- Theme Detection Script (Eliminates Flash) -->
+    <!-- Theme Script: STRICTLY DEFAULT TO LIGHT MODE FIRST -->
     <script is:inline>
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
+      (function() {
+        var savedTheme = null;
+        try {
+          savedTheme = localStorage.getItem('theme');
+        } catch (e) {}
+
+        // Default strictly to Light Mode unless user explicitly clicked Dark Mode before
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
-        }
-        return 'light';
       })();
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
     </script>
 
-    <!-- Schema.org JSON-LD -->
     {schemaJson && (
       <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
     )}
-    
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": siteName,
-      "url": "https://classscheduleoptimizer.com",
-      "applicationCategory": "EducationalApplication",
-      "operatingSystem": "All modern browsers",
-      "description": "High-performance interactive class schedule maker and dead time gap optimizer for college and university students.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
-    })} />
   </head>
-  <body class="min-h-screen flex flex-col bg-[#FBFBFD] dark:bg-[#0A0A0C] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-900">
-    <!-- Navigation Header -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0A0A0C]/80 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors">
+  <body class="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#09090B] text-slate-900 dark:text-zinc-100 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-150">
+    <!-- Navbar (Notion/Linear Inspired) -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-[#09090B]/90 border-b border-slate-200/80 dark:border-zinc-800/80 transition-colors">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2.5 group">
-          <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white flex items-center justify-center text-white dark:text-zinc-950 font-semibold text-sm shadow-sm transition-transform group-hover:scale-105">
-            CS
+          <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white flex items-center justify-center text-white dark:text-zinc-950 font-semibold text-xs shadow-xs transition-transform group-hover:scale-105">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
           <div class="flex flex-col">
-            <span class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-white leading-none">ScheduleMaker</span>
-            <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-normal leading-tight">Gap Optimizer</span>
+            <span class="text-sm font-semibold tracking-tight text-slate-900 dark:text-white leading-none">ScheduleMaker</span>
+            <span class="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-tight">Gap Optimizer</span>
           </div>
         </a>
 
-        <!-- Desktop Navigation Links -->
-        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-zinc-600 dark:text-zinc-300">
-          <a href="/" class="hover:text-zinc-950 dark:hover:text-white transition-colors">Optimizer</a>
-          <a href="/blog" class="hover:text-zinc-950 dark:hover:text-white transition-colors">Guides & Science</a>
-          <a href="/about" class="hover:text-zinc-950 dark:hover:text-white transition-colors">About</a>
-          <a href="/contact" class="hover:text-zinc-950 dark:hover:text-white transition-colors">Contact</a>
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-zinc-300">
+          <a href="/" class="hover:text-slate-950 dark:hover:text-white transition-colors">Scheduler</a>
+          <a href="#how-it-works" class="hover:text-slate-950 dark:hover:text-white transition-colors">How It Works</a>
+          <a href="#planning-guide" class="hover:text-slate-950 dark:hover:text-white transition-colors">Planning Guide</a>
+          <a href="/blog" class="hover:text-slate-950 dark:hover:text-white transition-colors">Articles</a>
+          <a href="#faq" class="hover:text-slate-950 dark:hover:text-white transition-colors">FAQ</a>
         </nav>
 
         <div class="flex items-center gap-3">
-          <!-- Dark / Light Mode Toggle Button -->
+          <!-- Working Theme Toggle Button -->
           <button 
             id="theme-toggle" 
+            type="button"
             aria-label="Toggle visual theme"
-            class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+            class="h-9 px-3 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors shadow-2xs cursor-pointer"
           >
-            <svg id="theme-sun" class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Sun Icon (visible in Dark Mode) -->
+            <svg id="theme-icon-sun" class="w-4 h-4 text-amber-500 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <svg id="theme-moon" class="w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Moon Icon (visible in Light Mode) -->
+            <svg id="theme-icon-moon" class="w-4 h-4 text-slate-600 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
+            <span id="theme-text" class="hidden sm:inline">Light</span>
           </button>
 
-          <!-- Status Tag -->
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 shadow-xs">
+          <!-- Free Badge -->
+          <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            100% Free Open Utility
-          </span>
+            Free Open Tool
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Main Content Slot -->
+    <!-- Main Content -->
     <main class="flex-1">
       <slot />
     </main>
 
-    <!-- Site Footer -->
-    <footer class="mt-20 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white/60 dark:bg-[#0A0A0C]/60 text-xs text-zinc-500 dark:text-zinc-400">
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-zinc-800/80 bg-white dark:bg-[#09090B] text-xs text-slate-500 dark:text-zinc-400 mt-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div class="space-y-3">
@@ -140,72 +124,82 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
               <div class="w-6 h-6 rounded-md bg-zinc-900 dark:bg-white flex items-center justify-center text-white dark:text-zinc-950 font-semibold text-xs">
                 CS
               </div>
-              <span class="font-semibold text-zinc-900 dark:text-white">Class Schedule Optimizer</span>
+              <span class="font-semibold text-slate-900 dark:text-white">Class Schedule Optimizer</span>
             </div>
-            <p class="leading-relaxed">
-              Algorithmic college timetable planning tool designed to eliminate awkward dead hours, optimize daily credit loads, and reduce student cognitive fatigue.
+            <p class="leading-relaxed text-slate-500 dark:text-zinc-400">
+              Clean, client-side academic schedule builder. Eliminate awkward campus gaps and export to Apple & Google Calendar.
             </p>
           </div>
 
           <div>
-            <h4 class="font-semibold text-zinc-900 dark:text-white mb-3">Tools & Features</h4>
+            <h4 class="font-semibold text-slate-900 dark:text-white mb-3">Tools</h4>
             <ul class="space-y-2">
-              <li><a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Gap Minimizer Engine</a></li>
-              <li><a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Apple & Google Calendar Export</a></li>
-              <li><a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Schedule PNG Generator</a></li>
-              <li><a href="/" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Ivy League Preloaded Models</a></li>
+              <li><a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Gap Optimizer</a></li>
+              <li><a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Export .ICS Calendar</a></li>
+              <li><a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Save PNG Timetable</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 class="font-semibold text-zinc-900 dark:text-white mb-3">Research & Articles</h4>
+            <h4 class="font-semibold text-slate-900 dark:text-white mb-3">Resources</h4>
             <ul class="space-y-2">
-              <li><a href="/blog/how-to-optimize-college-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Eliminating Awkward Campus Gaps</a></li>
-              <li><a href="/blog/engineering-majors-guide-to-conflict-free-timetables" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Engineering Major's Timetable Guide</a></li>
-              <li><a href="/blog" class="hover:text-zinc-900 dark:hover:text-white transition-colors">All Academic Planning Guides</a></li>
+              <li><a href="/blog/how-to-optimize-college-schedule" class="hover:text-slate-900 dark:hover:text-white transition-colors">Eliminating Campus Gaps</a></li>
+              <li><a href="/blog/engineering-majors-guide-to-conflict-free-timetables" class="hover:text-slate-900 dark:hover:text-white transition-colors">Engineering Timetable Guide</a></li>
+              <li><a href="/blog" class="hover:text-slate-900 dark:hover:text-white transition-colors">All Articles</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 class="font-semibold text-zinc-900 dark:text-white mb-3">Legal & Transparency</h4>
+            <h4 class="font-semibold text-slate-900 dark:text-white mb-3">Legal</h4>
             <ul class="space-y-2">
-              <li><a href="/privacy-policy" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy Policy (GDPR/CCPA)</a></li>
-              <li><a href="/terms-of-service" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="/about" class="hover:text-zinc-900 dark:hover:text-white transition-colors">About Our Mission</a></li>
-              <li><a href="/contact" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Contact Support</a></li>
+              <li><a href="/privacy-policy" class="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms-of-service" class="hover:text-slate-900 dark:hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="/about" class="hover:text-slate-900 dark:hover:text-white transition-colors">About Us</a></li>
+              <li><a href="/contact" class="hover:text-slate-900 dark:hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
-        <div class="pt-8 border-t border-zinc-200/60 dark:border-zinc-800/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} Class Schedule Optimizer. Non-commercial open educational software. Client-side privacy-first architecture.</p>
-          <div class="flex items-center gap-4 text-[11px] text-zinc-400">
-            <span>Zero Server Tracking</span>
+        <div class="pt-8 border-t border-slate-200 dark:border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 dark:text-zinc-500">
+          <p>© {new Date().getFullYear()} Class Schedule Optimizer. 100% Client-side. No user data stored.</p>
+          <div class="flex items-center gap-4 text-[11px]">
+            <span>Privacy First</span>
             <span>•</span>
-            <span>Browser LocalStorage Protected</span>
+            <span>Zero Tracking</span>
             <span>•</span>
-            <span>No Account Required</span>
+            <span>Local Storage</span>
           </div>
         </div>
       </div>
     </footer>
 
-    <!-- Theme Toggle Handler -->
+    <!-- Robust Theme Toggle Script -->
     <script is:inline>
-      const themeBtn = document.getElementById('theme-toggle');
-      if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-          const isDark = document.documentElement.classList.contains('dark');
-          if (isDark) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-          } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
+      (function() {
+        function updateThemeUI() {
+          var isDark = document.documentElement.classList.contains('dark');
+          var textEl = document.getElementById('theme-text');
+          if (textEl) {
+            textEl.textContent = isDark ? 'Dark' : 'Light';
           }
-        });
-      }
+        }
+
+        var btn = document.getElementById('theme-toggle');
+        if (btn) {
+          btn.addEventListener('click', function() {
+            var isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+              document.documentElement.classList.remove('dark');
+              try { localStorage.setItem('theme', 'light'); } catch(e) {}
+            } else {
+              document.documentElement.classList.add('dark');
+              try { localStorage.setItem('theme', 'dark'); } catch(e) {}
+            }
+            updateThemeUI();
+          });
+        }
+        updateThemeUI();
+      })();
     </script>
   </body>
 </html>
-

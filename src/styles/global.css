@@ -1,52 +1,64 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
-    --bg-canvas: #fbfbfd;
+    --bg-canvas: #f8fafc;
     --bg-surface: #ffffff;
-    --border-subtle: rgba(228, 228, 231, 0.8);
-    --text-primary: #1d1d1f;
-    --text-muted: #6e6e73;
-    --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", -apple-system, sans-serif;
+    --border-subtle: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
   }
 
   .dark {
-    --bg-canvas: #0a0a0c;
-    --bg-surface: #121215;
-    --border-subtle: rgba(39, 39, 42, 0.8);
-    --text-primary: #f5f5f7;
-    --text-muted: #a1a1a6;
+    --bg-canvas: #09090b;
+    --bg-surface: #18181b;
+    --border-subtle: #27272a;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html.dark {
+    background-color: #09090b;
+    color: #f8fafc;
   }
 
   body {
-    font-family: var(--font-sans);
-    background-color: var(--bg-canvas);
-    color: var(--text-primary);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.011em;
+    min-height: 100vh;
+    background-color: transparent;
   }
 }
 
-/* Custom scrollbar for dense schedule decks */
+/* Custom delicate scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(161, 161, 170, 0.3);
+  background: #cbd5e1;
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(161, 161, 170, 0.5);
+.dark ::-webkit-scrollbar-thumb {
+  background: #3f3f46;
 }
 
 /* Print Stylesheet for Timetable */
 @media print {
-  nav, footer, .no-print, header, .editorial-section {
+  nav, footer, .no-print, header, .editorial-section, #theme-toggle {
     display: none !important;
   }
   body {
@@ -55,12 +67,9 @@
     padding: 0 !important;
     margin: 0 !important;
   }
-  .print-only {
-    display: block !important;
-  }
   .timetable-print-target {
     box-shadow: none !important;
-    border: 1px solid #d4d4d8 !important;
+    border: 1px solid #cbd5e1 !important;
     width: 100% !important;
     page-break-inside: avoid;
   }
