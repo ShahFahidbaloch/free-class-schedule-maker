@@ -6,13 +6,15 @@ import {
   Download, 
   Printer, 
   Calendar, 
-  AlertTriangle, 
   Clock, 
   BookOpen, 
   RotateCcw, 
   Check, 
-  ChevronRight,
-  Layers
+  MapPin,
+  AlertCircle,
+  Layers,
+  ChevronDown,
+  Share2
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
@@ -21,13 +23,14 @@ export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
 
 export interface TimeSlot {
   day: DayOfWeek;
-  startTime: string; // e.g. "10:00"
-  endTime: string;   // e.g. "11:15"
+  startTime: string; // "10:00"
+  endTime: string;   // "11:15"
 }
 
 export interface Section {
   id: string;
   name: string;
+  room: string;
   slots: TimeSlot[];
 }
 
@@ -41,47 +44,42 @@ export interface Course {
   selectedSectionId: string;
 }
 
-// 5 Preset Apple Pastel Palettes (Linear & Apple Calendar inspired)
-export const PASTEL_PALETTES = [
+// 5 Sophisticated Muted Apple/Google Calendar Palettes with border-l-4
+export const SOPHISTICATED_PALETTES = [
   {
-    name: 'Muted Emerald',
-    bg: 'bg-emerald-50/90 dark:bg-emerald-950/40',
-    border: 'border-emerald-200 dark:border-emerald-800/80',
-    text: 'text-emerald-900 dark:text-emerald-200',
-    sub: 'text-emerald-700/80 dark:text-emerald-400/80',
-    dot: 'bg-emerald-500'
+    name: 'Muted Navy',
+    card: 'bg-blue-50/90 text-blue-950 border-l-blue-600 border border-blue-200/70 dark:bg-blue-950/40 dark:text-blue-100 dark:border-l-blue-500 dark:border-blue-900/60',
+    tag: 'bg-blue-100 dark:bg-blue-900/60 text-blue-900 dark:text-blue-200 border-blue-300 dark:border-blue-700',
+    accent: 'bg-blue-600',
+    timeText: 'text-blue-700 dark:text-blue-300'
   },
   {
-    name: 'Soft Sky',
-    bg: 'bg-sky-50/90 dark:bg-sky-950/40',
-    border: 'border-sky-200 dark:border-sky-800/80',
-    text: 'text-sky-900 dark:text-sky-200',
-    sub: 'text-sky-700/80 dark:text-sky-400/80',
-    dot: 'bg-sky-500'
+    name: 'Soft Forest',
+    card: 'bg-emerald-50/90 text-emerald-950 border-l-emerald-600 border border-emerald-200/70 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-l-emerald-500 dark:border-emerald-900/60',
+    tag: 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700',
+    accent: 'bg-emerald-600',
+    timeText: 'text-emerald-700 dark:text-emerald-300'
   },
   {
-    name: 'Lilac',
-    bg: 'bg-purple-50/90 dark:bg-purple-950/40',
-    border: 'border-purple-200 dark:border-purple-800/80',
-    text: 'text-purple-900 dark:text-purple-200',
-    sub: 'text-purple-700/80 dark:text-purple-400/80',
-    dot: 'bg-purple-500'
+    name: 'Warm Clay',
+    card: 'bg-amber-50/90 text-amber-950 border-l-amber-600 border border-amber-200/70 dark:bg-amber-950/40 dark:text-amber-100 dark:border-l-amber-500 dark:border-amber-900/60',
+    tag: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700',
+    accent: 'bg-amber-600',
+    timeText: 'text-amber-700 dark:text-amber-300'
   },
   {
-    name: 'Peach',
-    bg: 'bg-orange-50/90 dark:bg-orange-950/40',
-    border: 'border-orange-200 dark:border-orange-800/80',
-    text: 'text-orange-900 dark:text-orange-200',
-    sub: 'text-orange-700/80 dark:text-orange-400/80',
-    dot: 'bg-orange-500'
+    name: 'Pale Amethyst',
+    card: 'bg-purple-50/90 text-purple-950 border-l-purple-600 border border-purple-200/70 dark:bg-purple-950/40 dark:text-purple-100 dark:border-l-purple-500 dark:border-purple-900/60',
+    tag: 'bg-purple-100 dark:bg-purple-900/60 text-purple-900 dark:text-purple-200 border-purple-300 dark:border-purple-700',
+    accent: 'bg-purple-600',
+    timeText: 'text-purple-700 dark:text-purple-300'
   },
   {
-    name: 'Slate',
-    bg: 'bg-slate-100/90 dark:bg-zinc-800/60',
-    border: 'border-slate-300 dark:border-zinc-700/80',
-    text: 'text-slate-900 dark:text-zinc-200',
-    sub: 'text-slate-600 dark:text-zinc-400',
-    dot: 'bg-slate-500'
+    name: 'Apple Slate',
+    card: 'bg-zinc-100 text-zinc-900 border-l-zinc-600 border border-zinc-300/70 dark:bg-zinc-800/80 dark:text-zinc-100 dark:border-l-zinc-400 dark:border-zinc-700/60',
+    tag: 'bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-200 border-zinc-400 dark:border-zinc-600',
+    accent: 'bg-zinc-600',
+    timeText: 'text-zinc-700 dark:text-zinc-300'
   }
 ];
 
@@ -95,8 +93,8 @@ const DAY_LABELS: Record<DayOfWeek, string> = {
 };
 
 const START_HOUR = 8;  // 8:00 AM
-const END_HOUR = 18;   // 6:00 PM
-const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60; // 600 mins
+const END_HOUR = 19;   // 7:00 PM (11 hours total)
+const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60; // 660 mins
 
 function toMinutes(timeStr: string): number {
   if (!timeStr) return 0;
@@ -113,19 +111,20 @@ function formatTime12(timeStr: string): string {
   return `${displayH}:${displayM} ${ampm}`;
 }
 
-// 2 Pre-Filled Demo Courses as Requested
+// 2 Pre-Filled Real Demo Courses
 const DEMO_COURSES: Course[] = [
   {
-    id: 'demo-c1',
+    id: 'demo-cs101',
     code: 'CS 101',
-    title: 'Intro to Computer Science',
+    title: 'Programming Foundations',
     credits: 4,
-    colorIndex: 0, // Muted Emerald
-    selectedSectionId: 'sec-1a',
+    colorIndex: 0, // Muted Navy
+    selectedSectionId: 'sec-cs101-a',
     sections: [
       {
-        id: 'sec-1a',
-        name: 'Sec 01 (Morning MWF)',
+        id: 'sec-cs101-a',
+        name: 'Section 01 (Morning MWF)',
+        room: 'Turing Hall 102',
         slots: [
           { day: 'Mon', startTime: '10:00', endTime: '11:15' },
           { day: 'Wed', startTime: '10:00', endTime: '11:15' },
@@ -133,8 +132,9 @@ const DEMO_COURSES: Course[] = [
         ]
       },
       {
-        id: 'sec-1b',
-        name: 'Sec 02 (Afternoon TTh)',
+        id: 'sec-cs101-b',
+        name: 'Section 02 (Afternoon TTh)',
+        room: 'Gates Building 204',
         slots: [
           { day: 'Tue', startTime: '13:30', endTime: '15:00' },
           { day: 'Thu', startTime: '13:30', endTime: '15:00' }
@@ -143,16 +143,17 @@ const DEMO_COURSES: Course[] = [
     ]
   },
   {
-    id: 'demo-c2',
-    code: 'Calculus I',
-    title: 'Differential Calculus & Modeling',
+    id: 'demo-math21',
+    code: 'MATH 21',
+    title: 'Calculus & Analytical Geometry',
     credits: 4,
-    colorIndex: 1, // Soft Sky
-    selectedSectionId: 'sec-2a',
+    colorIndex: 1, // Soft Forest
+    selectedSectionId: 'sec-math21-a',
     sections: [
       {
-        id: 'sec-2a',
-        name: 'Sec 01 (Midday MWF)',
+        id: 'sec-math21-a',
+        name: 'Section 01 (Midday MWF)',
+        room: 'Science Quad 304',
         slots: [
           { day: 'Mon', startTime: '11:30', endTime: '12:45' },
           { day: 'Wed', startTime: '11:30', endTime: '12:45' },
@@ -160,8 +161,9 @@ const DEMO_COURSES: Course[] = [
         ]
       },
       {
-        id: 'sec-2b',
-        name: 'Sec 02 (Morning TTh)',
+        id: 'sec-math21-b',
+        name: 'Section 02 (Morning TTh)',
+        room: 'Math Corner 110',
         slots: [
           { day: 'Tue', startTime: '09:00', endTime: '10:30' },
           { day: 'Thu', startTime: '09:00', endTime: '10:30' }
@@ -183,7 +185,7 @@ export default function SchedulerEngine() {
   // Initialize from LocalStorage or Load 2-Course Demo
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('class_scheduler_notion_v1');
+      const saved = localStorage.getItem('schedule_os_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -192,9 +194,7 @@ export default function SchedulerEngine() {
           return;
         }
       }
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
     setCourses(DEMO_COURSES);
     setSelectedCourseId(DEMO_COURSES[0].id);
   }, []);
@@ -203,7 +203,7 @@ export default function SchedulerEngine() {
   useEffect(() => {
     if (courses.length > 0) {
       try {
-        localStorage.setItem('class_scheduler_notion_v1', JSON.stringify(courses));
+        localStorage.setItem('schedule_os_v1', JSON.stringify(courses));
       } catch (e) {}
     }
   }, [courses]);
@@ -218,6 +218,7 @@ export default function SchedulerEngine() {
       code: string;
       title: string;
       credits: number;
+      room: string;
       colorIndex: number;
       day: DayOfWeek;
       startTime: string;
@@ -236,7 +237,7 @@ export default function SchedulerEngine() {
         const startM = toMinutes(slot.startTime);
         const endM = toMinutes(slot.endTime);
         const dayStartM = START_HOUR * 60; // 480
-        const dayEndM = END_HOUR * 60;     // 1080
+        const dayEndM = END_HOUR * 60;     // 1140
 
         const clampedStart = Math.max(dayStartM, startM);
         const clampedEnd = Math.min(dayEndM, endM);
@@ -250,6 +251,7 @@ export default function SchedulerEngine() {
             code: course.code,
             title: course.title,
             credits: course.credits,
+            room: activeSection.room || 'Main Hall',
             colorIndex: course.colorIndex,
             day: slot.day,
             startTime: slot.startTime,
@@ -317,22 +319,23 @@ export default function SchedulerEngine() {
   const handleAddClass = () => {
     const newId = `c_${Date.now()}`;
     const newSecId = `s_${Date.now()}`;
-    const nextColor = courses.length % PASTEL_PALETTES.length;
+    const nextColor = courses.length % SOPHISTICATED_PALETTES.length;
 
     const newCourse: Course = {
       id: newId,
-      code: `Course ${courses.length + 1}`,
-      title: 'General Elective',
-      credits: 3,
+      code: `PHYS 41`,
+      title: 'Mechanics & Relativity',
+      credits: 4,
       colorIndex: nextColor,
       selectedSectionId: newSecId,
       sections: [
         {
           id: newSecId,
-          name: 'Section A (Default)',
+          name: 'Section 01 (Regular)',
+          room: 'Hewlett 200',
           slots: [
-            { day: 'Tue', startTime: '14:00', endTime: '15:15' },
-            { day: 'Thu', startTime: '14:00', endTime: '15:15' }
+            { day: 'Tue', startTime: '11:00', endTime: '12:30' },
+            { day: 'Thu', startTime: '11:00', endTime: '12:30' }
           ]
         }
       ]
@@ -363,9 +366,10 @@ export default function SchedulerEngine() {
         const newSec: Section = {
           id: newSecId,
           name: `Section ${letter} (Alternate)`,
+          room: 'Main Campus 101',
           slots: [
-            { day: 'Mon', startTime: '13:00', endTime: '14:15' },
-            { day: 'Wed', startTime: '13:00', endTime: '14:15' }
+            { day: 'Tue', startTime: '14:00', endTime: '15:15' },
+            { day: 'Thu', startTime: '14:00', endTime: '15:15' }
           ]
         };
         return { ...c, sections: [...c.sections, newSec] };
@@ -401,7 +405,7 @@ export default function SchedulerEngine() {
             if (s.id !== secId) return s;
             return {
               ...s,
-              slots: [...s.slots, { day: 'Fri', startTime: '11:00', endTime: '12:15' }]
+              slots: [...s.slots, { day: 'Fri', startTime: '13:00', endTime: '14:15' }]
             };
           })
         };
@@ -454,11 +458,23 @@ export default function SchedulerEngine() {
     );
   };
 
+  // Update room
+  const handleUpdateRoom = (courseId: string, secId: string, room: string) => {
+    setCourses(prev =>
+      prev.map(c => {
+        if (c.id !== courseId) return c;
+        return {
+          ...c,
+          sections: c.sections.map(s => (s.id === secId ? { ...s, room } : s))
+        };
+      })
+    );
+  };
+
   // One-Click Gap Optimizer
   const handleOptimize = () => {
     if (courses.length === 0) return;
 
-    // Cartesian product of sections
     const options = courses.map(c => c.sections.map(s => ({ courseId: c.id, sectionId: s.id, slots: s.slots })));
     function cartesian<T>(arrays: T[][]): T[][] {
       return arrays.reduce<T[][]>((acc, curr) => acc.flatMap(x => curr.map(y => [...x, y])), [[]]);
@@ -466,7 +482,7 @@ export default function SchedulerEngine() {
 
     const combos = cartesian(options);
     let bestCombo: { courseId: string; sectionId: string }[] | null = null;
-    let minPenalty = Infinity;
+    let minGaps = Infinity;
 
     for (const combo of combos) {
       const allSlots: { day: DayOfWeek; s: number; e: number }[] = [];
@@ -502,8 +518,8 @@ export default function SchedulerEngine() {
         }
       });
 
-      if (totalGaps < minPenalty) {
-        minPenalty = totalGaps;
+      if (totalGaps < minGaps) {
+        minGaps = totalGaps;
         bestCombo = combo;
       }
     }
@@ -516,9 +532,9 @@ export default function SchedulerEngine() {
         })
       );
       try {
-        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+        confetti({ particleCount: 75, spread: 60, origin: { y: 0.6 } });
       } catch (e) {}
-      setBanner(`Optimized! Found conflict-free timetable with only ${(minPenalty / 60).toFixed(1)}h of idle time.`);
+      setBanner(`Optimized! Found conflict-free timetable with ${(minGaps / 60).toFixed(1)}h total idle time.`);
       setTimeout(() => setBanner(null), 5000);
     } else {
       setBanner('No conflict-free combination found. Try adding alternate section options.');
@@ -536,7 +552,7 @@ export default function SchedulerEngine() {
         pixelRatio: 2
       });
       const a = document.createElement('a');
-      a.download = 'weekly-class-schedule.png';
+      a.download = 'timetable-os-schedule.png';
       a.href = dataUrl;
       a.click();
     } catch (e) {
@@ -551,7 +567,7 @@ export default function SchedulerEngine() {
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//ClassScheduleOptimizer//AppleCalendar//EN',
+      'PRODID:-//TimetableOS//DesktopCalendar//EN',
       'CALSCALE:GREGORIAN'
     ];
     const dayMap: Record<DayOfWeek, string> = { Mon: 'MO', Tue: 'TU', Wed: 'WE', Thu: 'TH', Fri: 'FR' };
@@ -576,6 +592,7 @@ export default function SchedulerEngine() {
 
         lines.push('BEGIN:VEVENT');
         lines.push(`SUMMARY:${c.code} - ${c.title}`);
+        lines.push(`LOCATION:${sec.room}`);
         lines.push(`DTSTART:${y}${m}${d}T${sh}${sm}00`);
         lines.push(`DTEND:${y}${m}${d}T${eh}${em}00`);
         lines.push(`RRULE:FREQ=WEEKLY;BYDAY=${dayMap[slot.day]};COUNT=15`);
@@ -593,77 +610,77 @@ export default function SchedulerEngine() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'college-class-schedule.ics';
+    a.download = 'academic-schedule.ics';
     a.click();
     URL.revokeObjectURL(url);
   };
 
   // Reset demo
   const handleReset = () => {
-    if (confirm('Reset to default 2-course demo schedule?')) {
+    if (confirm('Reset schedule to default demonstration courses?')) {
       setCourses(DEMO_COURSES);
       setSelectedCourseId(DEMO_COURSES[0].id);
-      localStorage.removeItem('class_scheduler_notion_v1');
+      localStorage.removeItem('schedule_os_v1');
     }
   };
 
   return (
-    <div className="w-full max-w-[1280px] mx-auto space-y-6">
-      {/* Toast Banner */}
+    <div id="scheduler" class="w-full max-w-7xl mx-auto space-y-6">
+      {/* Toast Alert Banner */}
       {banner && (
-        <div className="p-4 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs sm:text-sm font-medium shadow-md transition-all">
+        <div className="p-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs sm:text-sm font-medium shadow-md transition-all">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-400" />
             <span>{banner}</span>
           </div>
-          <button onClick={() => setBanner(null)} className="text-xs opacity-70 hover:opacity-100">
+          <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer">
             Dismiss
           </button>
         </div>
       )}
 
-      {/* Top Action & Metrics Bar */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#18181B] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        {/* Live Metrics */}
+      {/* Control Console & Metrics Toolbar */}
+      <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* Metrics Bar */}
         <div className="flex flex-wrap items-center gap-6 text-xs sm:text-sm">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-500 dark:text-zinc-400">Total Credits:</span>
-            <span className="font-bold text-slate-900 dark:text-white">{metrics.totalCredits}</span>
+            <BookOpen className="w-4 h-4 text-zinc-400" />
+            <span className="text-zinc-500 dark:text-zinc-400">Total Credits:</span>
+            <span className="font-bold text-zinc-900 dark:text-white font-mono">{metrics.totalCredits}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-500 dark:text-zinc-400">Weekly Gaps:</span>
-            <span className="font-bold text-slate-900 dark:text-white">{metrics.gapHours} hrs</span>
+            <Clock className="w-4 h-4 text-zinc-400" />
+            <span className="text-zinc-500 dark:text-zinc-400">Idle Gaps:</span>
+            <span className="font-bold text-zinc-900 dark:text-white font-mono">{metrics.gapHours} hrs</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <AlertTriangle className={`w-4 h-4 ${metrics.longestGapMinutes > 90 ? 'text-amber-500' : 'text-slate-400'}`} />
-            <span className="text-slate-500 dark:text-zinc-400">Longest Gap:</span>
-            <span className={`font-semibold ${metrics.longestGapMinutes > 90 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-white'}`}>
+            <AlertCircle className={`w-4 h-4 ${metrics.longestGapMinutes > 90 ? 'text-amber-500' : 'text-zinc-400'}`} />
+            <span className="text-zinc-500 dark:text-zinc-400">Longest Gap:</span>
+            <span className={`font-semibold font-mono ${metrics.longestGapMinutes > 90 ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-900 dark:text-white'}`}>
               {metrics.longestGapHours}h {metrics.longestGapDay ? `(${metrics.longestGapDay})` : ''}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5">
             {metrics.overlaps === 0 ? (
-              <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium text-xs">
-                <Check className="w-3.5 h-3.5" /> No Conflicts
+              <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold text-xs">
+                <Check className="w-3.5 h-3.5" /> 0 Conflicts
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-medium text-xs">
-                <AlertTriangle className="w-3.5 h-3.5" /> {metrics.overlaps} Overlap(s)
+              <span className="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-semibold text-xs">
+                <AlertCircle className="w-3.5 h-3.5" /> {metrics.overlaps} Overlap(s)
               </span>
             )}
           </div>
         </div>
 
-        {/* Buttons Suite */}
+        {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <button
             onClick={handleOptimize}
-            className="px-4 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-zinc-950 hover:bg-black dark:hover:bg-zinc-100 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all active:scale-98 cursor-pointer"
+            className="h-10 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-100 text-xs font-semibold flex items-center gap-2 shadow-xs transition active:scale-98 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             Optimize Gaps
@@ -672,16 +689,17 @@ export default function SchedulerEngine() {
           <button
             onClick={handleExportPNG}
             disabled={isExporting}
-            className="px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/80 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
-            title="Download high-resolution image"
+            className="h-10 px-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+            title="Download high-resolution wallpaper"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Save PNG</span>
           </button>
 
           <button
+            id="action-export-ics"
             onClick={handleExportICS}
-            className="px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/80 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="h-10 px-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
             title="Export to Apple Calendar and Google Calendar"
           >
             <Calendar className="w-3.5 h-3.5" />
@@ -689,79 +707,72 @@ export default function SchedulerEngine() {
           </button>
 
           <button
-            onClick={() => window.print()}
-            className="px-3 py-2 rounded-xl border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/80 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
-            title="Print clean timetable"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Print</span>
-          </button>
-
-          <button
             onClick={handleReset}
-            className="p-2 rounded-xl border border-slate-200 dark:border-zinc-800 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
-            title="Reset to demo"
+            className="h-10 w-10 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+            title="Reset to default demonstration"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Two-Column Spacious Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Panel: Course Deck (5 cols) */}
-        <div className="lg:col-span-5 space-y-5">
-          <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-[#18181B] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-6">
+      {/* Main Two-Column Console */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Left Panel: Course Form (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-6">
+            
             {/* Header + Add Class Button */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-zinc-800/60">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white tracking-tight">Enrolled Classes</h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Click a course tab to edit timings or add alternative sections</p>
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-white tracking-tight">Enrolled Courses</h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Configure sections and lecture timings</p>
               </div>
 
               <button
                 onClick={handleAddClass}
-                className="px-3.5 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-zinc-950 hover:bg-black dark:hover:bg-zinc-100 text-xs font-medium flex items-center gap-1.5 shadow-xs transition-transform active:scale-95 cursor-pointer"
+                className="h-9 px-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-100 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition active:scale-95 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                + Add Class
+                Add Class
               </button>
             </div>
 
             {/* Course Selector Tabs */}
             <div className="flex flex-wrap gap-2">
               {courses.map(course => {
-                const palette = PASTEL_PALETTES[course.colorIndex % PASTEL_PALETTES.length];
+                const palette = SOPHISTICATED_PALETTES[course.colorIndex % SOPHISTICATED_PALETTES.length];
                 const isSelected = activeCourse && course.id === activeCourse.id;
                 return (
                   <button
                     key={course.id}
                     onClick={() => setSelectedCourseId(course.id)}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-medium flex items-center gap-2 border transition-all cursor-pointer ${
+                    className={`h-9 px-3.5 rounded-lg text-xs font-medium flex items-center gap-2 border transition cursor-pointer ${
                       isSelected
-                        ? `${palette.bg} ${palette.border} ${palette.text} shadow-xs font-semibold`
-                        : 'border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900'
+                        ? `${palette.tag} shadow-xs font-semibold`
+                        : 'border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/40'
                     }`}
                   >
-                    <span className={`w-2 h-2 rounded-full ${palette.dot}`}></span>
+                    <span className={`w-2 h-2 rounded-full ${palette.accent}`}></span>
                     <span>{course.code || 'Untitled'}</span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Active Class Form */}
+            {/* Active Class Form Fields */}
             {activeCourse && (
-              <div className="space-y-5 pt-2">
-                <div className="p-4 sm:p-5 rounded-xl bg-slate-50/80 dark:bg-zinc-900/50 border border-slate-200/80 dark:border-zinc-800 space-y-4">
+              <div className="space-y-5 pt-1">
+                <div className="p-5 rounded-xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-600 dark:text-zinc-300 uppercase tracking-wider">
+                    <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
                       Course Parameters
                     </span>
                     {courses.length > 1 && (
                       <button
                         onClick={() => handleDeleteClass(activeCourse.id)}
-                        className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 transition-colors cursor-pointer"
+                        className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 transition cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         Delete Class
@@ -771,7 +782,7 @@ export default function SchedulerEngine() {
 
                   <div className="grid grid-cols-3 gap-3">
                     <div className="col-span-2">
-                      <label className="block text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5">
+                      <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
                         Course Code
                       </label>
                       <input
@@ -781,13 +792,13 @@ export default function SchedulerEngine() {
                           const val = e.target.value;
                           setCourses(prev => prev.map(c => (c.id === activeCourse.id ? { ...c, code: val } : c)));
                         }}
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
+                        className="w-full h-10 px-3 text-sm rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition"
                         placeholder="e.g. CS 101"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5">
+                      <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
                         Credits
                       </label>
                       <input
@@ -799,13 +810,13 @@ export default function SchedulerEngine() {
                           const val = Number(e.target.value);
                           setCourses(prev => prev.map(c => (c.id === activeCourse.id ? { ...c, credits: val } : c)));
                         }}
-                        className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
+                        className="w-full h-10 px-3 text-sm rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition font-mono"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-600 dark:text-zinc-400 mb-1.5">
+                    <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
                       Course Title
                     </label>
                     <input
@@ -815,19 +826,19 @@ export default function SchedulerEngine() {
                         const val = e.target.value;
                         setCourses(prev => prev.map(c => (c.id === activeCourse.id ? { ...c, title: val } : c)));
                       }}
-                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
-                      placeholder="e.g. Differential Calculus"
+                      className="w-full h-10 px-3 text-sm rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition"
+                      placeholder="e.g. Programming Foundations"
                     />
                   </div>
 
-                  {/* 5 Preset Apple Pastel Pill Colors */}
+                  {/* Sophisticated Palette Color Picker */}
                   <div>
-                    <label className="block text-xs font-medium text-slate-600 dark:text-zinc-400 mb-2">
-                      Color Tag
+                    <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                      Calendar Style Accent
                     </label>
                     <div className="flex flex-wrap items-center gap-2">
-                      {PASTEL_PALETTES.map((pal, idx) => {
-                        const isChosen = activeCourse.colorIndex % PASTEL_PALETTES.length === idx;
+                      {SOPHISTICATED_PALETTES.map((pal, idx) => {
+                        const isChosen = activeCourse.colorIndex % SOPHISTICATED_PALETTES.length === idx;
                         return (
                           <button
                             key={pal.name}
@@ -837,11 +848,11 @@ export default function SchedulerEngine() {
                                 prev.map(c => (c.id === activeCourse.id ? { ...c, colorIndex: idx } : c))
                               );
                             }}
-                            className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${pal.bg} ${pal.border} ${pal.text} ${
-                              isChosen ? 'ring-2 ring-slate-900 dark:ring-white font-semibold' : 'opacity-70 hover:opacity-100'
+                            className={`h-8 px-3 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition cursor-pointer ${pal.tag} ${
+                              isChosen ? 'ring-2 ring-zinc-950 dark:ring-white font-semibold' : 'opacity-70 hover:opacity-100'
                             }`}
                           >
-                            <span className={`w-2 h-2 rounded-full ${pal.dot}`}></span>
+                            <span className={`w-2 h-2 rounded-full ${pal.accent}`}></span>
                             <span>{pal.name}</span>
                           </button>
                         );
@@ -850,18 +861,18 @@ export default function SchedulerEngine() {
                   </div>
                 </div>
 
-                {/* Alternative Section Slots */}
+                {/* Section Timing Options */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-900 dark:text-white">Section Timings & Alternatives</h4>
-                      <p className="text-[11px] text-slate-500">Pick which section is active, or let the Gap Optimizer decide</p>
+                      <h4 className="text-xs font-semibold text-zinc-900 dark:text-white">Section Timings</h4>
+                      <p className="text-[11px] text-zinc-500">Add alternative sections to calculate optimal combinations</p>
                     </div>
                     <button
                       onClick={() => handleAddSection(activeCourse.id)}
-                      className="text-xs font-medium text-slate-900 dark:text-white hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-xs font-medium text-zinc-900 dark:text-white hover:underline flex items-center gap-1 cursor-pointer"
                     >
-                      <Plus className="w-3.5 h-3.5" /> Add Section Option
+                      <Plus className="w-3.5 h-3.5" /> Add Section
                     </button>
                   </div>
 
@@ -872,8 +883,8 @@ export default function SchedulerEngine() {
                         key={section.id}
                         className={`p-4 rounded-xl border transition-all ${
                           isSelectedSec
-                            ? 'bg-slate-50 dark:bg-zinc-900/60 border-slate-900 dark:border-white shadow-2xs'
-                            : 'bg-white dark:bg-zinc-900/20 border-slate-200 dark:border-zinc-800'
+                            ? 'bg-zinc-50/80 dark:bg-zinc-800/60 border-zinc-900 dark:border-white shadow-2xs'
+                            : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-3">
@@ -887,15 +898,15 @@ export default function SchedulerEngine() {
                                   prev.map(c => (c.id === activeCourse.id ? { ...c, selectedSectionId: section.id } : c))
                                 );
                               }}
-                              className="text-slate-900 focus:ring-0 cursor-pointer"
+                              className="text-zinc-950 focus:ring-0 cursor-pointer"
                               id={`sec_radio_${section.id}`}
                             />
-                            <label htmlFor={`sec_radio_${section.id}`} className="text-xs font-semibold text-slate-900 dark:text-white cursor-pointer">
+                            <label htmlFor={`sec_radio_${section.id}`} className="text-xs font-semibold text-zinc-900 dark:text-white cursor-pointer">
                               {section.name}
                             </label>
                             {isSelectedSec && (
-                              <span className="px-2 py-0.5 rounded text-[10px] bg-slate-900 text-white dark:bg-white dark:text-zinc-950 font-medium">
-                                Active on Grid
+                              <span className="px-1.5 py-0.5 rounded text-[10px] bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-mono font-medium">
+                                Active
                               </span>
                             )}
                           </div>
@@ -903,12 +914,26 @@ export default function SchedulerEngine() {
                           {activeCourse.sections.length > 1 && (
                             <button
                               onClick={() => handleDeleteSection(activeCourse.id, section.id)}
-                              className="text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                              className="text-zinc-400 hover:text-rose-500 transition cursor-pointer"
                               title="Delete alternative section"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           )}
+                        </div>
+
+                        {/* Room input */}
+                        <div className="mb-3">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3 h-3 text-zinc-400" />
+                            <input
+                              type="text"
+                              value={section.room || ''}
+                              onChange={e => handleUpdateRoom(activeCourse.id, section.id, e.target.value)}
+                              placeholder="Hall / Room (e.g. Turing Hall 102)"
+                              className="w-full text-xs bg-transparent border-b border-zinc-200 dark:border-zinc-700 py-1 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:border-zinc-900 dark:focus:border-white"
+                            />
+                          </div>
                         </div>
 
                         {/* Slots */}
@@ -919,7 +944,7 @@ export default function SchedulerEngine() {
                                 <select
                                   value={slot.day}
                                   onChange={e => handleUpdateSlot(activeCourse.id, section.id, sIdx, 'day', e.target.value)}
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white cursor-pointer"
+                                  className="w-full h-8 px-2 text-xs rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white cursor-pointer"
                                 >
                                   {DAYS.map(d => (
                                     <option key={d} value={d}>
@@ -934,18 +959,18 @@ export default function SchedulerEngine() {
                                   type="time"
                                   value={slot.startTime}
                                   onChange={e => handleUpdateSlot(activeCourse.id, section.id, sIdx, 'startTime', e.target.value)}
-                                  className="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-mono"
+                                  className="w-full h-8 px-2 text-xs rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white font-mono"
                                 />
                               </div>
 
-                              <div className="col-span-1 text-center text-slate-400 text-xs">-</div>
+                              <div className="col-span-1 text-center text-zinc-400 text-xs">-</div>
 
                               <div className="col-span-3">
                                 <input
                                   type="time"
                                   value={slot.endTime}
                                   onChange={e => handleUpdateSlot(activeCourse.id, section.id, sIdx, 'endTime', e.target.value)}
-                                  className="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white font-mono"
+                                  className="w-full h-8 px-2 text-xs rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white font-mono"
                                 />
                               </div>
 
@@ -953,7 +978,7 @@ export default function SchedulerEngine() {
                                 {section.slots.length > 1 && (
                                   <button
                                     onClick={() => handleRemoveSlot(activeCourse.id, section.id, sIdx)}
-                                    className="text-slate-400 hover:text-rose-500 cursor-pointer"
+                                    className="text-zinc-400 hover:text-rose-500 cursor-pointer font-bold"
                                   >
                                     ×
                                   </button>
@@ -963,12 +988,12 @@ export default function SchedulerEngine() {
                           ))}
                         </div>
 
-                        <div className="mt-3 pt-2 border-t border-slate-100 dark:border-zinc-800/60 flex justify-end">
+                        <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
                           <button
                             onClick={() => handleAddSlot(activeCourse.id, section.id)}
-                            className="text-[11px] text-slate-500 hover:text-slate-900 dark:hover:text-white font-medium flex items-center gap-1 cursor-pointer"
+                            className="text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-medium flex items-center gap-1 cursor-pointer"
                           >
-                            <Plus className="w-3 h-3" /> Add recurring class day
+                            <Plus className="w-3 h-3" /> Add day
                           </button>
                         </div>
                       </div>
@@ -980,18 +1005,19 @@ export default function SchedulerEngine() {
           </div>
         </div>
 
-        {/* Right Panel: Spacious Visual Matrix (7 cols) */}
+        {/* Right Panel: Spacious Visual Grid (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
+          
           {/* Mobile Day Selector Tabs */}
-          <div className="flex md:hidden items-center justify-between p-1 rounded-xl bg-white dark:bg-[#18181B] border border-slate-200 dark:border-zinc-800">
+          <div className="flex md:hidden items-center justify-between p-1 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
             {DAYS.map(day => (
               <button
                 key={day}
                 onClick={() => setMobileDay(day)}
                 className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                   mobileDay === day
-                    ? 'bg-slate-900 text-white dark:bg-white dark:text-zinc-950'
-                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                    : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 {day}
@@ -999,33 +1025,34 @@ export default function SchedulerEngine() {
             ))}
           </div>
 
-          {/* Grid Card */}
+          {/* Real Desktop Calendar Matrix */}
           <div
             ref={timetableRef}
-            className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-[#18181B] border border-slate-200/90 dark:border-zinc-800 shadow-sm timetable-print-target overflow-hidden"
+            className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm timetable-print-target overflow-hidden"
           >
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-zinc-800/80 mb-4">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800 mb-4">
               <div>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white tracking-tight">Weekly Visual Timetable</h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">8:00 AM to 6:00 PM • Clear campus hours</p>
+                <h3 className="text-base font-bold text-zinc-900 dark:text-white tracking-tight">Weekly Calendar Matrix</h3>
+                <p className="text-xs text-zinc-500 font-mono">08:00 AM – 07:00 PM (11 Academic Hours)</p>
               </div>
               <div className="text-right">
-                <span className="text-xs text-slate-400">Viewing Load:</span>{' '}
-                <span className="text-xs font-bold text-slate-900 dark:text-white">{metrics.totalCredits} Credit Hours</span>
+                <span className="text-xs text-zinc-400">Total Credits:</span>{' '}
+                <span className="text-xs font-bold text-zinc-900 dark:text-white font-mono">{metrics.totalCredits}</span>
               </div>
             </div>
 
             {/* Matrix Viewport */}
             <div className="relative overflow-x-auto">
-              <div className="min-w-[580px] md:min-w-0">
-                {/* Day Headers */}
-                <div className="grid grid-cols-11 border-b border-slate-200 dark:border-zinc-800 pb-2.5 mb-2">
-                  <div className="col-span-1 text-[11px] font-medium text-slate-400 text-center">Time</div>
+              <div className="min-w-[620px] md:min-w-0">
+                {/* Day Headers (Bold, Legible) */}
+                <div className="grid grid-cols-11 border-b border-zinc-200 dark:border-zinc-800 pb-3 mb-2">
+                  <div className="col-span-1 text-xs font-mono font-medium text-zinc-400 text-center">TIME</div>
                   {DAYS.map(d => (
                     <div
                       key={d}
-                      className={`col-span-2 text-center text-xs font-semibold ${
-                        mobileDay === d ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-zinc-400'
+                      className={`col-span-2 text-center text-sm font-semibold tracking-tight ${
+                        mobileDay === d ? 'text-zinc-950 dark:text-white font-bold' : 'text-zinc-700 dark:text-zinc-300'
                       }`}
                     >
                       {DAY_LABELS[d]}
@@ -1033,10 +1060,11 @@ export default function SchedulerEngine() {
                   ))}
                 </div>
 
-                {/* Grid Canvas: 8 AM to 6 PM (10 Hours, 620px height) */}
-                <div className="relative h-[620px] grid grid-cols-11 select-none">
-                  {/* Left Column: Hour Markings */}
-                  <div className="col-span-1 relative border-r border-slate-100 dark:border-zinc-800/60">
+                {/* Calendar Canvas: 680px Height (62px per hour slot) */}
+                <div className="relative h-[680px] grid grid-cols-11 select-none">
+                  
+                  {/* Left Column: Hours 8:00 AM to 7:00 PM */}
+                  <div className="col-span-1 relative border-r border-zinc-100 dark:border-zinc-800/80">
                     {Array.from({ length: END_HOUR - START_HOUR + 1 }).map((_, idx) => {
                       const hour = START_HOUR + idx;
                       const topPercent = (idx / (END_HOUR - START_HOUR)) * 100;
@@ -1046,24 +1074,24 @@ export default function SchedulerEngine() {
                         <div
                           key={hour}
                           style={{ top: `${topPercent}%` }}
-                          className="absolute -translate-y-2 left-0 right-1.5 text-right text-[10px] text-slate-400 font-mono"
+                          className="absolute -translate-y-2 left-0 right-2 text-right text-xs text-zinc-400 dark:text-zinc-500 font-mono font-medium"
                         >
-                          {displayH} {ampm}
+                          {displayH}:00 {ampm}
                         </div>
                       );
                     })}
                   </div>
 
-                  {/* Day Columns */}
+                  {/* 5 Day Columns */}
                   <div className="col-span-10 grid grid-cols-5 relative h-full">
-                    {/* Hour Lines */}
+                    {/* Horizontal Hour Lines */}
                     {Array.from({ length: END_HOUR - START_HOUR + 1 }).map((_, idx) => {
                       const topPercent = (idx / (END_HOUR - START_HOUR)) * 100;
                       return (
                         <div
                           key={idx}
                           style={{ top: `${topPercent}%` }}
-                          className="absolute left-0 right-0 border-t border-slate-100 dark:border-zinc-800/40 pointer-events-none"
+                          className="absolute left-0 right-0 border-t border-zinc-100 dark:border-zinc-800/50 pointer-events-none"
                         />
                       );
                     })}
@@ -1074,12 +1102,12 @@ export default function SchedulerEngine() {
                       return (
                         <div
                           key={day}
-                          className={`relative h-full border-r border-slate-100 dark:border-zinc-800/60 last:border-r-0 ${
-                            mobileDay === day ? 'bg-slate-50/40 dark:bg-zinc-900/20' : ''
+                          className={`relative h-full border-r border-zinc-100 dark:border-zinc-800/60 last:border-r-0 ${
+                            mobileDay === day ? 'bg-zinc-50/40 dark:bg-zinc-800/20' : ''
                           }`}
                         >
                           {dayEvents.map(event => {
-                            const palette = PASTEL_PALETTES[event.colorIndex % PASTEL_PALETTES.length];
+                            const palette = SOPHISTICATED_PALETTES[event.colorIndex % SOPHISTICATED_PALETTES.length];
                             return (
                               <div
                                 key={`${event.courseId}-${event.day}-${event.startTime}`}
@@ -1088,16 +1116,27 @@ export default function SchedulerEngine() {
                                   height: `${event.heightPercent}%`
                                 }}
                                 onClick={() => setSelectedCourseId(event.courseId)}
-                                className={`absolute inset-x-1.5 p-2.5 rounded-xl border transition-all cursor-pointer shadow-2xs hover:shadow-md hover:z-20 overflow-hidden flex flex-col justify-between ${palette.bg} ${palette.border} ${palette.text}`}
+                                className={`absolute inset-x-1.5 p-2.5 rounded-lg border-l-4 transition-all cursor-pointer shadow-xs hover:shadow-md hover:z-20 overflow-hidden flex flex-col justify-between ${palette.card}`}
                               >
-                                <div className="leading-tight">
+                                <div>
                                   <div className="flex items-center justify-between gap-1 mb-0.5">
-                                    <span className="font-bold text-xs tracking-tight truncate">{event.code}</span>
-                                    <span className="text-[10px] font-mono opacity-80">{event.credits}cr</span>
+                                    <span className="font-bold text-xs tracking-tight truncate leading-tight">
+                                      {event.code}
+                                    </span>
+                                    <span className="text-[10px] font-mono opacity-75 font-semibold">
+                                      {event.credits}cr
+                                    </span>
                                   </div>
-                                  <div className="text-[11px] truncate opacity-90">{event.title}</div>
+                                  <div className="text-xs truncate font-medium leading-tight">
+                                    {event.title}
+                                  </div>
+                                  <div className="text-[11px] truncate opacity-80 flex items-center gap-1 mt-0.5">
+                                    <MapPin className="w-2.5 h-2.5 shrink-0" />
+                                    <span>{event.room}</span>
+                                  </div>
                                 </div>
-                                <div className={`text-[10px] font-mono ${palette.sub} pt-1 flex items-center justify-between`}>
+
+                                <div className={`text-[10px] font-mono font-semibold ${palette.timeText} pt-1 flex items-center justify-between border-t border-black/5 dark:border-white/5`}>
                                   <span>{formatTime12(event.startTime)}</span>
                                   <span>{formatTime12(event.endTime)}</span>
                                 </div>

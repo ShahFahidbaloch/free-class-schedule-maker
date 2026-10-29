@@ -15,7 +15,7 @@ const {
   schemaJson
 } = Astro.props;
 
-const siteName = "Class Schedule Maker & Gap Optimizer";
+const siteName = "ScheduleOS — Academic Timetable Optimizer";
 ---
 
 <!doctype html>
@@ -36,7 +36,7 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <!-- Theme Script: STRICTLY DEFAULT TO LIGHT MODE FIRST -->
+    <!-- Theme Script: Default to Light Mode First -->
     <script is:inline>
       (function() {
         var savedTheme = null;
@@ -44,7 +44,6 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
           savedTheme = localStorage.getItem('theme');
         } catch (e) {}
 
-        // Default strictly to Light Mode unless user explicitly clicked Dark Mode before
         if (savedTheme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
@@ -57,55 +56,76 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
       <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
     )}
   </head>
-  <body class="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#09090B] text-slate-900 dark:text-zinc-100 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-150">
-    <!-- Navbar (Notion/Linear Inspired) -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-[#09090B]/90 border-b border-slate-200/80 dark:border-zinc-800/80 transition-colors">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2.5 group">
-          <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-white flex items-center justify-center text-white dark:text-zinc-950 font-semibold text-xs shadow-xs transition-transform group-hover:scale-105">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-sm font-semibold tracking-tight text-slate-900 dark:text-white leading-none">ScheduleMaker</span>
-            <span class="text-[11px] text-slate-500 dark:text-zinc-400 font-normal leading-tight">Gap Optimizer</span>
-          </div>
-        </a>
+  <body class="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-150">
+    <!-- Navbar (shadcn/ui style floating glassmorphic bar) -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/75 dark:bg-zinc-950/75 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        <!-- Brand Title + Version Pill -->
+        <div class="flex items-center gap-3">
+          <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-zinc-900 dark:text-white text-sm hover:opacity-85 transition">
+            <span class="w-6 h-6 rounded-md bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center font-mono text-xs font-bold">
+              //
+            </span>
+            <span class="font-mono tracking-tight font-bold">TIMETABLE // OS</span>
+          </a>
+          <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+            v1.0
+          </span>
+        </div>
 
-        <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-zinc-300">
-          <a href="/" class="hover:text-slate-950 dark:hover:text-white transition-colors">Scheduler</a>
-          <a href="#how-it-works" class="hover:text-slate-950 dark:hover:text-white transition-colors">How It Works</a>
-          <a href="#planning-guide" class="hover:text-slate-950 dark:hover:text-white transition-colors">Planning Guide</a>
-          <a href="/blog" class="hover:text-slate-950 dark:hover:text-white transition-colors">Articles</a>
-          <a href="#faq" class="hover:text-slate-950 dark:hover:text-white transition-colors">FAQ</a>
+        <!-- Center Nav Links -->
+        <nav class="hidden md:flex items-center gap-7 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          <a href="#scheduler" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Workspace</a>
+          <a href="#how-it-works" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Algorithm</a>
+          <a href="#templates" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Templates</a>
+          <a href="#guide" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Guide</a>
+          <a href="/blog" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Docs</a>
+          <a href="#faq" class="hover:text-zinc-900 dark:hover:text-white transition-colors">FAQ</a>
         </nav>
 
-        <div class="flex items-center gap-3">
-          <!-- Working Theme Toggle Button -->
+        <!-- Right Suite: Actions + Theme Toggle -->
+        <div class="flex items-center gap-2">
+          <!-- Print / PDF Outline Button -->
+          <button 
+            type="button"
+            onclick="window.print()"
+            class="hidden sm:inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition shadow-2xs cursor-pointer"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span>Print / PDF</span>
+          </button>
+
+          <!-- Export .ICS Solid Button -->
+          <button 
+            type="button"
+            id="nav-export-ics"
+            onclick="document.getElementById('action-export-ics')?.click()"
+            class="h-8 px-3 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-medium inline-flex items-center gap-1.5 shadow-xs transition active:scale-98 cursor-pointer"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Export .ICS</span>
+          </button>
+
+          <!-- Apple-Style Theme Toggle -->
           <button 
             id="theme-toggle" 
             type="button"
-            aria-label="Toggle visual theme"
-            class="h-9 px-3 rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors shadow-2xs cursor-pointer"
+            aria-label="Toggle theme"
+            class="w-8 h-8 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
           >
-            <!-- Sun Icon (visible in Dark Mode) -->
-            <svg id="theme-icon-sun" class="w-4 h-4 text-amber-500 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Sun (when dark) -->
+            <svg id="theme-sun" class="w-3.5 h-3.5 hidden dark:block text-zinc-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <!-- Moon Icon (visible in Light Mode) -->
-            <svg id="theme-icon-moon" class="w-4 h-4 text-slate-600 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Moon (when light) -->
+            <svg id="theme-moon" class="w-3.5 h-3.5 block dark:hidden text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
-            <span id="theme-text" class="hidden sm:inline">Light</span>
           </button>
-
-          <!-- Free Badge -->
-          <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Free Open Tool
-          </div>
         </div>
       </div>
     </header>
@@ -115,75 +135,67 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-zinc-800/80 bg-white dark:bg-[#09090B] text-xs text-slate-500 dark:text-zinc-400 mt-20">
+    <!-- Clean shadcn/ui minimal footer -->
+    <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs text-zinc-500 dark:text-zinc-400 mt-24">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           <div class="space-y-3">
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md bg-zinc-900 dark:bg-white flex items-center justify-center text-white dark:text-zinc-950 font-semibold text-xs">
-                CS
-              </div>
-              <span class="font-semibold text-slate-900 dark:text-white">Class Schedule Optimizer</span>
+            <div class="flex items-center gap-2 text-zinc-900 dark:text-white font-mono font-bold text-xs">
+              <span class="w-5 h-5 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center text-[10px]">
+                //
+              </span>
+              <span>TIMETABLE // OS</span>
             </div>
-            <p class="leading-relaxed text-slate-500 dark:text-zinc-400">
-              Clean, client-side academic schedule builder. Eliminate awkward campus gaps and export to Apple & Google Calendar.
+            <p class="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+              High-performance client-side academic schedule builder. Solves section permutations to eliminate dead gaps on campus.
             </p>
           </div>
 
           <div>
-            <h4 class="font-semibold text-slate-900 dark:text-white mb-3">Tools</h4>
-            <ul class="space-y-2">
-              <li><a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Gap Optimizer</a></li>
-              <li><a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Export .ICS Calendar</a></li>
-              <li><a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Save PNG Timetable</a></li>
+            <h4 class="font-semibold text-zinc-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Features</h4>
+            <ul class="space-y-2 text-xs">
+              <li><a href="#scheduler" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Gap Minimizer</a></li>
+              <li><a href="#scheduler" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Google & Apple iCal Sync</a></li>
+              <li><a href="#templates" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Printable Templates</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 class="font-semibold text-slate-900 dark:text-white mb-3">Resources</h4>
-            <ul class="space-y-2">
-              <li><a href="/blog/how-to-optimize-college-schedule" class="hover:text-slate-900 dark:hover:text-white transition-colors">Eliminating Campus Gaps</a></li>
-              <li><a href="/blog/engineering-majors-guide-to-conflict-free-timetables" class="hover:text-slate-900 dark:hover:text-white transition-colors">Engineering Timetable Guide</a></li>
-              <li><a href="/blog" class="hover:text-slate-900 dark:hover:text-white transition-colors">All Articles</a></li>
+            <h4 class="font-semibold text-zinc-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Research</h4>
+            <ul class="space-y-2 text-xs">
+              <li><a href="/blog/how-to-optimize-college-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Eliminating Campus Gaps</a></li>
+              <li><a href="/blog/engineering-majors-guide-to-conflict-free-timetables" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Engineering Major's Guide</a></li>
+              <li><a href="/blog" class="hover:text-zinc-900 dark:hover:text-white transition-colors">All Articles</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 class="font-semibold text-slate-900 dark:text-white mb-3">Legal</h4>
-            <ul class="space-y-2">
-              <li><a href="/privacy-policy" class="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="/terms-of-service" class="hover:text-slate-900 dark:hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="/about" class="hover:text-slate-900 dark:hover:text-white transition-colors">About Us</a></li>
-              <li><a href="/contact" class="hover:text-slate-900 dark:hover:text-white transition-colors">Contact</a></li>
+            <h4 class="font-semibold text-zinc-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Legal & Transparency</h4>
+            <ul class="space-y-2 text-xs">
+              <li><a href="/privacy-policy" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms-of-service" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="/about" class="hover:text-zinc-900 dark:hover:text-white transition-colors">About Us</a></li>
+              <li><a href="/contact" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
-        <div class="pt-8 border-t border-slate-200 dark:border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 dark:text-zinc-500">
-          <p>© {new Date().getFullYear()} Class Schedule Optimizer. 100% Client-side. No user data stored.</p>
-          <div class="flex items-center gap-4 text-[11px]">
-            <span>Privacy First</span>
+        <div class="pt-8 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-zinc-400 font-mono">
+          <p>© {new Date().getFullYear()} TIMETABLE // OS. Open educational tool. Zero external tracking.</p>
+          <div class="flex items-center gap-3">
+            <span>CLIENT-SIDE PRIVACY</span>
             <span>•</span>
-            <span>Zero Tracking</span>
+            <span>LOCALSTORAGE ENCRYPTED</span>
             <span>•</span>
-            <span>Local Storage</span>
+            <span>NO COOKIE TRACKING</span>
           </div>
         </div>
       </div>
     </footer>
 
-    <!-- Robust Theme Toggle Script -->
+    <!-- Theme Toggle Script -->
     <script is:inline>
       (function() {
-        function updateThemeUI() {
-          var isDark = document.documentElement.classList.contains('dark');
-          var textEl = document.getElementById('theme-text');
-          if (textEl) {
-            textEl.textContent = isDark ? 'Dark' : 'Light';
-          }
-        }
-
         var btn = document.getElementById('theme-toggle');
         if (btn) {
           btn.addEventListener('click', function() {
@@ -195,10 +207,8 @@ const siteName = "Class Schedule Maker & Gap Optimizer";
               document.documentElement.classList.add('dark');
               try { localStorage.setItem('theme', 'dark'); } catch(e) {}
             }
-            updateThemeUI();
           });
         }
-        updateThemeUI();
       })();
     </script>
   </body>
