@@ -1,24 +1,70 @@
-# build output
+# ==============================================================================
+# Security & Build GitIgnore
+# Prevents sensitive credentials, environment keys, local cache, and builds from leaking
+# ==============================================================================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build and Production outputs
 dist/
-# generated types
+build/
 .astro/
 
-# dependencies
-node_modules/
+# Cloudflare & Wrangler local state, tokens, and workers storage
+.wrangler/
+.cloudflare/
 
-# logs
+# Environment Variables, Secrets & API Keys (STRICTLY FORBIDDEN FROM GIT)
+.env
+.env.*
+!.env.example
+*.env
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+credentials.json
+service-account*.json
+auth*.json
+secrets*.json
+tokens*.json
+
+# Logs and Debug files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
+# Runtime, Cache, and Temporary files
+*.local
+tmp/
+temp/
+.temp/
+*.sqlite
+*.sqlite3
+*.db
+.cache/
 
-# environment variables
-.env
-.env.production
-
-# macOS-specific files
+# OS-Specific metadata (Windows & macOS)
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 
-# jetbrains setting folder
+# IDE & Editor Settings
 .idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
