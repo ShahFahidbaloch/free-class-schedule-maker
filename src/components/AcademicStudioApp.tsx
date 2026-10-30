@@ -278,6 +278,18 @@ const DEFAULT_SAMPLE_COURSES: Course[] = [
   }
 ];
 
+const MOBILE_NAV_LABELS: Record<SupportedLocale, { tasks: string; optimize: string; export: string }> = {
+  en: { tasks: 'Tasks', optimize: 'Optimize', export: 'Export' },
+  es: { tasks: 'Tareas', optimize: 'Optimizar', export: 'Exportar' },
+  pt: { tasks: 'Tarefas', optimize: 'Otimizar', export: 'Exportar' },
+  de: { tasks: 'Aufgaben', optimize: 'Optimieren', export: 'Export' },
+  fr: { tasks: 'Tâches', optimize: 'Optimiser', export: 'Exporter' },
+  it: { tasks: 'Compiti', optimize: 'Ottimizza', export: 'Esporta' },
+  ja: { tasks: 'タスク', optimize: '最適化', export: '出力' },
+  ko: { tasks: '과제', optimize: '최적화', export: '내보내기' },
+  fil: { tasks: 'Gawain', optimize: 'Ayusin', export: 'I-export' },
+};
+
 export default function AcademicStudioApp() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [tasks, setTasks] = useState<TaskItem[]>([]);
@@ -339,6 +351,7 @@ export default function AcademicStudioApp() {
   };
 
   const t = useMemo(() => getTranslations(locale), [locale]);
+  const navLabels = MOBILE_NAV_LABELS[locale] || MOBILE_NAV_LABELS.en;
 
   // Modals state
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
@@ -1583,7 +1596,7 @@ export default function AcademicStudioApp() {
       </div>
 
       {/* Mobile Bottom Navigation Bar (iOS / Android Style: Fixed at Bottom) */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 z-40 px-3 flex items-center justify-around select-none">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 z-40 px-2 grid grid-cols-5 items-center justify-items-center select-none">
         
         {/* 1. Day / Today Indicator */}
         <button
@@ -1597,18 +1610,20 @@ export default function AcademicStudioApp() {
               setMobileDay('Mon');
             }
           }}
-          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12"
+          className="w-full flex flex-col items-center justify-center gap-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer h-12 overflow-hidden px-1"
         >
-          <Calendar className="w-4 h-4" />
-          <span className="text-[10px] font-bold">{mobileDay}</span>
+          <Calendar className="w-4 h-4 shrink-0" />
+          <span className="text-[10px] font-bold tracking-tight truncate max-w-full text-center">
+            {t.days?.short?.[mobileDay] || mobileDay}
+          </span>
         </button>
 
         {/* 2. Tasks / Checklist */}
         <button
           onClick={() => setIsTaskModalOpen(true)}
-          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12 relative"
+          className="w-full flex flex-col items-center justify-center gap-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer h-12 overflow-hidden px-1 relative"
         >
-          <div className="relative">
+          <div className="relative shrink-0">
             <CheckSquare className="w-4 h-4" />
             {tasks.filter(t => !t.completed).length > 0 && (
               <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-[9px] font-bold rounded-full flex items-center justify-center">
@@ -1616,35 +1631,43 @@ export default function AcademicStudioApp() {
               </span>
             )}
           </div>
-          <span className="text-[10px] font-medium">{t.tasks.title}</span>
+          <span className="text-[10px] font-medium tracking-tight truncate max-w-full text-center">
+            {navLabels.tasks}
+          </span>
         </button>
 
         {/* 3. Center Elevated Add Class Button */}
-        <button
-          onClick={() => handleOpenNewClassModal(mobileDay)}
-          className="w-12 h-12 rounded-full bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center shadow-lg -mt-4 active:scale-95 transition cursor-pointer"
-          title={t.actions.newClass}
-        >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
-        </button>
+        <div className="w-full flex items-center justify-center">
+          <button
+            onClick={() => handleOpenNewClassModal(mobileDay)}
+            className="w-12 h-12 rounded-full bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center shadow-lg -mt-5 active:scale-95 transition cursor-pointer shrink-0"
+            title={t.actions.newClass}
+          >
+            <Plus className="w-6 h-6 stroke-[2.5]" />
+          </button>
+        </div>
 
         {/* 4. Optimizer */}
         <button
           onClick={handleOptimizeGaps}
-          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12"
+          className="w-full flex flex-col items-center justify-center gap-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer h-12 overflow-hidden px-1"
           title={t.actions.autoOptimize}
         >
-          <Sliders className="w-4 h-4" />
-          <span className="text-[10px] font-medium">Optimize</span>
+          <Sliders className="w-4 h-4 shrink-0" />
+          <span className="text-[10px] font-medium tracking-tight truncate max-w-full text-center">
+            {navLabels.optimize}
+          </span>
         </button>
 
         {/* 5. Export */}
         <button
           onClick={() => setIsExportModalOpen(true)}
-          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12"
+          className="w-full flex flex-col items-center justify-center gap-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer h-12 overflow-hidden px-1"
         >
-          <Download className="w-4 h-4" />
-          <span className="text-[10px] font-medium">{t.actions.export}</span>
+          <Download className="w-4 h-4 shrink-0" />
+          <span className="text-[10px] font-medium tracking-tight truncate max-w-full text-center">
+            {navLabels.export}
+          </span>
         </button>
 
       </nav>
@@ -1700,9 +1723,9 @@ export default function AcademicStudioApp() {
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => setShowWeekends(false)}
+                    onClick={() => setIncludeWeekend(false)}
                     className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
-                      !showWeekends
+                      !includeWeekend
                         ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 border-zinc-950 dark:border-white shadow-2xs'
                         : 'bg-zinc-50 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800'
                     }`}
@@ -1710,9 +1733,9 @@ export default function AcademicStudioApp() {
                     5 Days (Mon-Fri)
                   </button>
                   <button
-                    onClick={() => setShowWeekends(true)}
+                    onClick={() => setIncludeWeekend(true)}
                     className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
-                      showWeekends
+                      includeWeekend
                         ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 border-zinc-950 dark:border-white shadow-2xs'
                         : 'bg-zinc-50 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800'
                     }`}
