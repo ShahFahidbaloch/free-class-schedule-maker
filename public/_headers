@@ -6,5 +6,15 @@
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
-https://:project.pages.dev/*
+# Disallow indexing on all Cloudflare Pages staging / subdomains
+https://freeclassschedule.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://*.freeclassschedule.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://class-schedule-optimizer.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://*.class-schedule-optimizer.pages.dev/*
   X-Robots-Tag: noindex, nofollow

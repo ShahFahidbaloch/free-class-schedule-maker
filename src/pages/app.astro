@@ -23,6 +23,16 @@ import { SUPPORTED_LANGUAGES } from '../data/i18nData';
         href={`https://freeclassschedule.com/${locale.code}/app`} 
       />
     ))}
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-BWREB9S4SB"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-BWREB9S4SB');
+    </script>
+
     <!-- Favicons & App Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
