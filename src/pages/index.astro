@@ -12,86 +12,159 @@ import {
   CalendarDays,
   Shield,
   Layers,
-  Sparkles
+  Sparkles,
+  GraduationCap,
+  School,
+  Laptop,
+  Check,
+  Zap,
+  Sliders,
+  Share2
 } from 'lucide-react';
+
+const pageTitle = "Class Schedule Maker — Free Weekly College & School Schedule Maker Online";
+const pageDescription = "Design your ideal class schedule with our free weekly class schedule maker online. Effortlessly create conflict-free college, school, PCC, and UF class schedules with zero gaps. Export to iCal, Google Calendar, and printable PDF.";
+const pageKeywords = "class schedule, class schedule maker, free class schedule maker, weekly class schedule maker, class schedule maker template, pcc class schedule, college class schedule, uf class schedule, class schedule maker online, class schedule maker free, school schedule maker";
 
 const faqList = [
   {
-    q: "How does this tool help remove awkward gaps between my classes?",
-    a: "When you enter your courses and alternative section options, our scheduling engine tests every possible conflict-free combination of your classes. It calculates the idle minutes sitting between consecutive lectures on the same day and highlights the specific timetable configuration that minimizes awkward 1-to-2 hour dead spots, giving you solid blocks of free time."
+    q: "What is the best free class schedule maker online for students?",
+    a: "Class Schedule Maker is a completely free class schedule maker online that requires zero accounts, sign-ups, or subscriptions. It runs client-side in your web browser, allowing university, college, and high school students to build weekly class timetables, resolve schedule conflicts, optimize awkward campus gaps, and export directly to Apple Calendar, Google Calendar, and printable PDFs."
   },
   {
-    q: "Why are 1-hour or 2-hour gaps on campus so unproductive?",
-    a: "In real college life, an isolated 75-minute break between lectures is almost useless for serious studying. Once you pack your bag, walk across campus, find an open desk or library chair, and unpack, you only have about 25 minutes left before you need to pack up again. Grouping classes close together protects long 3-to-4 hour afternoon blocks where you can actually get work done or head home early."
+    q: "How do I build a PCC class schedule using this tool?",
+    a: "Whether you attend Pasadena City College or Portland Community College, planning your PCC class schedule requires balancing 5-digit CRN course registration numbers and multi-campus travel. In our Schedule Studio (/app), enter your PCC course code (e.g. ENGL 1A or MTH 111), toggle meeting days (such as Monday/Wednesday or Tuesday/Thursday), and plug in the start and end times. The tool detects overlapping sections and ensures you have sufficient passing time between campuses or remote zoom sessions before registration opens."
   },
   {
-    q: "Can I export my finished schedule directly into Apple Calendar or Google Calendar?",
-    a: "Yes. In the Schedule Studio (/app), clicking 'Export .ICS' downloads a standard calendar file that imports directly into Apple Calendar on your Mac or iPhone, Google Calendar, and Microsoft Outlook. It automatically schedules recurring weekly events for all 15 or 16 weeks of your semester, complete with 15-minute advance notifications."
+    q: "How do I plan my UF class schedule for the University of Florida?",
+    a: "UF uses an 11-period scheduling matrix (Period 1 starting at 7:25 AM through Period 11 ending at 8:10 PM, plus evening periods) on ONE.UF. When building your UF class schedule, simply translate your ONE.UF period times into our weekly timetable grid. Because walking between Turlington Hall, the Reitz Union, and the engineering quad can take 15 minutes, our visual conflict matrix highlights tight turnarounds and gives you a clear visual blueprint for Drop/Add week."
   },
   {
-    q: "Does this schedule maker save or upload my university courses anywhere?",
-    a: "No. Everything runs strictly in your web browser. None of your courses, timings, room numbers, or notes ever touch a database or remote server. When you close your browser or return later, your schedule is securely retrieved from your device's local browser storage."
+    q: "Can I use this tool as a school schedule maker for middle or high school?",
+    a: "Yes. Our school schedule maker is fully customizable for K-12, secondary academies, and middle schools. Whether your school follows a traditional 7-period day, an alternating A/B block schedule, or a rotating weekly timetable, you can enter subjects, teacher names, and room numbers. You can also switch between a 5-day school week and a 7-day academic planner."
   },
   {
-    q: "What is the best way to balance classes between Monday/Wednesday/Friday and Tuesday/Thursday?",
-    a: "A healthy 15-credit semester usually works best with a 9-credit and 6-credit split. Taking three 50-minute lectures on Monday, Wednesday, and Friday, paired with two 75-minute classes on Tuesday and Thursday, keeps your daily mental workload predictable and stops multiple midterms or heavy project deadlines from crashing down on the same afternoon."
+    q: "How does the weekly class schedule maker handle course conflicts and overlapping classes?",
+    a: "Unlike basic calendar apps that hide or stack overlapping classes on top of each other, our weekly class schedule maker uses dynamic interval clustering. When two lectures or labs overlap on the same day, they automatically render in side-by-side lanes with a prominent red clash indicator. This visual cues you to select alternative section times before your registration window opens."
   },
   {
-    q: "How should I fit mandatory 3-hour lab classes into my schedule?",
-    a: "Because university science and engineering labs require physical equipment benches, their class sizes are capped and section times rarely change. Always pick and place your 3-hour lab periods on Tuesday or Thursday afternoons first. Once your labs are locked down, fit your large lecture sections around them, leaving at least 30 minutes of rest right after your lab finishes."
+    q: "Can I download a printable class schedule maker template in PDF or Excel format?",
+    a: "Yes. The Studio engine lets you export your finalized class schedule in multiple formats: a clean, high-contrast black-and-white printable PDF template formatted for A4 and US Letter paper, a tabular spreadsheet layout for Microsoft Excel or Google Sheets, a high-resolution lock-screen wallpaper PNG for your smartphone, and an industry-standard .ICS calendar file."
+  },
+  {
+    q: "How does the Auto-Gap Optimizer help eliminate awkward campus 'dead time'?",
+    a: "Our Auto-Gap Optimizer evaluates all active lectures in your weekly class schedule and calculates total idle waiting time between classes on each day. It tests section permutations to find the tightest, most cohesive timetable—helping you avoid awkward 90-minute gaps so you can finish your classes early and enjoy long, uninterrupted study or work afternoons."
+  },
+  {
+    q: "Is this class schedule maker free forever, and is my academic data private?",
+    a: "Yes, this class schedule maker free tool is 100% free and client-side private. None of your courses, room locations, or notes are stored on external servers or tracked by third-party databases. Everything is securely saved directly in your personal browser's local storage (localStorage)."
   }
 ];
 
-const faqSchema = {
+const structuredSchema = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqList.map(item => ({
-    "@type": "Question",
-    "name": item.q,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": item.a
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://classscheduleoptimizer.com/#webapp",
+      "name": "Class Schedule Maker & Academic Planner",
+      "url": "https://classscheduleoptimizer.com",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": "Free weekly class schedule maker online. Build conflict-free college, school, PCC, and UF class schedules with automated gap optimization and calendar export.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "5-Day and 7-Day Weekly Class Schedule Matrix",
+        "Interactive Overlap and Conflict Detection",
+        "Campus Dead-Time Gap Optimizer",
+        "PCC and UF University Schedule Planning",
+        "Export to Apple Calendar and Google Calendar (.ICS)",
+        "Printable PDF and Excel Schedule Maker Templates",
+        "Zero Account Required and Client-Side Privacy"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://classscheduleoptimizer.com/#faq",
+      "mainEntity": faqList.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.a
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://classscheduleoptimizer.com/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://classscheduleoptimizer.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Schedule Studio",
+          "item": "https://classscheduleoptimizer.com/app"
+        }
+      ]
     }
-  }))
+  ]
 };
 ---
 
 <Layout 
-  title="Class Schedule Maker & Academic Planner — Build Your Ideal Schedule"
-  description="Build your ideal class schedule with zero clutter. Effortlessly plan semester timetables, eliminate awkward campus gaps, and export directly to your calendar."
-  schemaJson={faqSchema}
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
 >
   <!-- Minimalist Hero Section -->
-  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-16 text-center space-y-6">
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 text-center space-y-6">
     
-    <!-- Micro Badge -->
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
-      <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white"></span>
-      <span>100% Free &bull; Zero Accounts Required &bull; Private</span>
+    <!-- Micro Trust Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
+      <span class="w-2 h-2 rounded-full bg-zinc-900 dark:bg-white animate-pulse"></span>
+      <span>100% Free &bull; Zero Accounts Required &bull; Works Offline &bull; Client-Side Private</span>
     </div>
 
-    <!-- Bold, Clean Headline -->
+    <!-- Keyword-Optimized H1 Headline -->
     <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.08]">
-      Build Your Ideal Class Schedule. Zero Clutter.
+      Class Schedule Maker: Free Weekly College & School Schedule Maker Online
     </h1>
 
-    <!-- Subtitle -->
-    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
-      Effortlessly plan semester timetables, eliminate awkward campus gaps, and export directly to your calendar.
+    <!-- Subtitle with Natural Keyword Integration -->
+    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto font-normal leading-relaxed">
+      Design your ideal <strong>class schedule</strong> in seconds. Effortlessly build conflict-free <strong>college class schedules</strong>, plan weekly school timetables, eliminate awkward campus gaps, and export directly to Google Calendar, Apple Calendar, or printable PDF.
     </p>
 
-    <!-- Central Action: Large, Elegant, Micro-Animated Apple-Style Button -->
+    <!-- Central Call To Action Button -->
     <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
       <a
         href="/app"
         class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98]"
       >
-        <span>Launch Schedule Studio</span>
+        <span>Launch Schedule Studio (Free)</span>
         <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </a>
+      <a
+        href="#templates-hub"
+        class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-800 dark:text-zinc-200 text-sm font-semibold transition"
+      >
+        <FileText class="w-4 h-4" />
+        <span>View Free Schedule Templates</span>
       </a>
     </div>
 
-    <!-- Subtle Live Studio Visual Teaser -->
+    <!-- Interactive Live Studio Teaser Card -->
     <div class="pt-8 max-w-3xl mx-auto">
       <div class="p-4 sm:p-6 rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-sm space-y-4 text-left">
         <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
@@ -99,9 +172,9 @@ const faqSchema = {
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
-            <span class="text-xs font-mono font-semibold text-zinc-400 ml-2">STUDIO ENGINE &bull; 08:00 AM – 08:00 PM</span>
+            <span class="text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400 ml-2">ACADEMIC STUDIO &bull; 08:00 AM – 08:00 PM</span>
           </div>
-          <span class="text-xs font-mono text-zinc-500 font-semibold">5-Day / 7-Day Matrix Active</span>
+          <span class="text-xs font-mono text-zinc-600 dark:text-zinc-400 font-semibold">5-Day / 7-Day Grid Active</span>
         </div>
 
         <div class="grid grid-cols-5 gap-2 text-center text-xs font-bold py-1 text-zinc-500">
@@ -139,178 +212,316 @@ const faqSchema = {
 
   </section>
 
-  <!-- Humanized Editorial & SEO Hub (1,500+ Words in Structured Bento Grid) -->
+  <!-- Editorial & SEO Authority Content Hub (1,200+ Words in Structured Bento Layout) -->
   <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 space-y-16">
     
-    <!-- Bento Card 1: The Cognitive Cost of Campus 'Dead Time' & Gap Optimization Algorithms -->
-    <section id="dead-time" class="scroll-mt-20">
+    <!-- Bento Card 1: What is Class Schedule Maker? -->
+    <section id="about-tool" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            SECTION 01 &bull; TIME BLOCKING SCIENCE
+            OVERVIEW &bull; FREE CLASS SCHEDULE MAKER ONLINE
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            The Cognitive Cost of Campus 'Dead Time' & Gap Optimization Algorithms
+            What is the Class Schedule Maker? The Modern Solution for School and College Students
           </h2>
         </div>
 
         <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
           <p>
-            Every college student has lived through the misery of awkward schedule gaps: you finish an introductory chemistry lecture at 10:15 AM, and your next required history seminar doesn't start until 12:45 PM. On paper, two and a half hours sounds like plenty of time to catch up on readings or study in the university library. In practice, it almost never works out that way.
+            Planning a university semester or high school term has historically been an exercise in frustration. Students are typically forced to navigate archaic university registrar portals like Ellucian Banner, PeopleSoft, Canvas, or Blackboard on registration morning, frantically juggling course reference numbers (CRNs), course codes, and classroom locations across dozens of open browser tabs.
           </p>
 
           <p>
-            When you factor in gathering your laptop, walking out of a crowded lecture hall, hiking across campus through rainy or freezing weather, hunting for an open table near a power outlet, pulling out your notes, and getting your head back into gear, thirty minutes have already vanished. Then, twenty minutes before your next class begins, you have to pack everything back into your backpack and start walking again. Your two and a half hours of supposed free time just shrunk into forty minutes of shallow, distracted browsing on your phone.
+            <strong>Class Schedule Maker</strong> was engineered to replace clunky portal interfaces, messy spreadsheets, and paper planners with a fast, zero-distraction <strong>weekly class schedule maker</strong>. As a 100% <strong>free class schedule maker online</strong>, our tool requires no user login, no email submission, and zero software installation. Whether you are mapping out a heavy 16-credit <strong>college class schedule</strong> with 3-hour wet labs, arranging an alternating high school block schedule with our <strong>school schedule maker</strong>, or coordinating lectures across community college campuses, our scheduler renders your full weekly matrix in real time.
+          </p>
+
+          <!-- Core Pillars Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white font-bold">
+                <Zap class="w-4 h-4" />
+              </div>
+              <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+                Zero Latency & Instant Setup
+              </h3>
+              <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Add courses, credits, meeting days, and venues with a few keystrokes. Toggle multi-day lectures across Monday, Wednesday, and Friday with a single click.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white font-bold">
+                <Sliders class="w-4 h-4" />
+              </div>
+              <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+                Clash & Overlap Collision Engine
+              </h3>
+              <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Never miss an accidental time conflict. Overlapping lectures automatically split into parallel side-by-side lanes with an alert border, making double-bookings immediately visible.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white font-bold">
+                <Shield class="w-4 h-4" />
+              </div>
+              <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+                100% Client-Side Privacy
+              </h3>
+              <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Your academic timetable, study tasks, and course notes remain entirely on your device. We do not store, track, or sell your schedule data to third parties.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 2: The Science of Gap Minimization in College Class Schedules -->
+    <section id="dead-time" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            ACADEMIC PRODUCTIVITY &bull; TIME BLOCKING SCIENCE
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            The Cognitive Cost of Campus 'Dead Time' & Gap Minimization in Your Class Schedule
+          </h2>
+        </div>
+
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
+          <p>
+            Every college student has endured the frustration of awkward schedule gaps: finishing an introductory lecture at 10:15 AM, only to find their next required lab does not start until 1:00 PM. On paper, two hours and forty-five minutes feels like ample time to study, finish homework, or read textbook chapters in the campus library. In practice, behavioral research and cognitive science prove that fragmented daytime gaps severely destroy student productivity.
+          </p>
+
+          <p>
+            When you factor in leaving a crowded lecture hall, traversing across campus through rain or snow, hunting for a vacant study desk near a power outlet, unpacking your laptop, and overcoming attention residue, nearly thirty minutes disappear. Then, twenty minutes before your next class begins, you must pack your bag again and walk to the next lecture hall. Your supposed three-hour study window shrinks into a disjointed forty-five minutes of shallow, distracted phone scrolling.
           </p>
 
           <!-- Bento Inner Highlight Blocks -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
               <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
-                THE REALITY OF CONTEXT SWITCHING
+                THE REALITY OF CONTEXT SWITCHING & ATTENTION RESIDUE
               </span>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                Switching mental gears between completely different academic fields takes a real toll on your focus. When your schedule forces you into frequent short stops and starts, your brain never settles into deep concentration. You end up spending your entire day feeling busy and exhausted without finishing your primary assignments.
+                Switching mental gears between calculus calculations and literary analysis imposes significant cognitive friction. When your weekly schedule forces you into frequent stops and starts, your brain never enters deep focus. You end your day exhausted, yet your main homework remains unfinished.
               </p>
             </div>
 
             <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
               <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
-                CONSOLIDATED MORNING FOCUS
+                CONSOLIDATED MORNING BLOCKS (FINISH BY 1:00 PM)
               </span>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                Stitching your lectures together back-to-back with clean 15-minute passing walks changes your entire semester. When you finish all your classes by 1:00 PM, you gain a massive uninterrupted afternoon block. You can sit down once, stay in one place, and knock out assignments without watching the clock.
+                Consolidating your classes back-to-back with clean 15-minute passing walks fundamentally transforms your semester. Finishing lectures by 1:00 PM unlocks a massive, uninterrupted 4-to-5 hour afternoon block for uninterrupted studying, part-time jobs, campus research, or sports.
               </p>
             </div>
           </div>
 
           <p>
-            Our gap optimization algorithm handles this calculation automatically. Instead of forcing you to open twelve browser tabs with your university's course catalog and manually compare overlapping section codes on a scratchpad, our engine checks every permutation. It evaluates all open sections, spots time clashes before they happen, and surfaces the schedules that give you the tightest, cleanest daily flow.
+            Our built-in <strong>Auto-Gap Optimizer</strong> automates this time-blocking strategy. Instead of manually cross-referencing dozens of potential section times, our algorithmic engine tests possible class combinations, measures daily idle waiting intervals, and highlights the specific timetable configuration that minimizes campus dead time.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Bento Card 2: Semester Registration Strategy: Balancing 15-Credit Loads with Heavy Labs -->
-    <section id="course-planning" class="scroll-mt-20">
+    <!-- Bento Card 3: University Schedule Guides: PCC & UF Class Schedule Planning -->
+    <section id="university-guides" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            SECTION 02 &bull; COURSE REGISTRATION STRATEGY
+            CAMPUS REGISTRATION &bull; PCC & UF SPECIALIZED GUIDES
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            Semester Registration Strategy: Balancing 15-Credit Loads with Heavy Labs
+            University & College Class Schedule Guides: Planning PCC and UF Schedules
           </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            Practical strategies for mastering course registration systems at major institutions like PCC and the University of Florida.
+          </p>
         </div>
 
-        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
-          <p>
-            Graduating on time usually requires earning 120 credit hours over four years, which comes out to an average of 15 credits per semester. But one of the biggest traps first-year and second-year college students fall into is assuming that all credits demand the exact same amount of energy.
-          </p>
-
-          <p>
-            A 3-credit course in multivariable calculus or organic chemistry with weekly problem sets and rigorous exams demands far more mental stamina than a 3-credit general education elective with two short essays. If you register for four quantitative heavyweights in the same term, you will find yourself drowning when midterm exams hit all in the same 48-hour window.
-          </p>
-
-          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-3">
-            <h3 class="text-sm font-bold text-zinc-900 dark:text-white">A Practical Workload Balancing Framework</h3>
-            <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm">
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-6">
+          
+          <!-- Sub-Guide 1: PCC Class Schedule -->
+          <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-3">
+            <div class="flex items-center gap-2">
+              <School class="w-5 h-5 text-zinc-900 dark:text-white" />
+              <h3 class="text-base font-bold text-zinc-900 dark:text-white">
+                How to Plan Your PCC Class Schedule (Pasadena City College & Portland Community College)
+              </h3>
+            </div>
+            <p>
+              Students enrolling in a <strong>PCC class schedule</strong> (at either Pasadena City College in California or Portland Community College in Oregon) face specific scheduling challenges:
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
               <li>
-                <strong>Two Heavy Major Requirements (6–8 Credits):</strong> Core courses that define your degree progress, such as Data Structures, Microeconomics, or Organic Chemistry. These need steady weekly study habits.
+                <strong>Multi-Campus Transit Windows:</strong> At Portland Community College, courses are distributed across four main campuses (Sylvania, Rock Creek, Cascade, and Southeast) plus centers. When building your <strong>pcc class schedule</strong>, never schedule back-to-back classes across different campuses without leaving at least 45 to 60 minutes for the PCC inter-campus shuttle or TriMet transit.
               </li>
               <li>
-                <strong>Two Reading or Writing Electives (6 Credits):</strong> General education courses or humanities requirements evaluated mainly through discussion and term papers rather than weekly homework calculations.
+                <strong>CRN Number Priority:</strong> PCC courses use 5-digit Course Reference Numbers (CRNs). Use our free schedule studio to input your desired CRNs and section times well before your priority registration date. When registration opens on MyPCC or LancerPoint, paste your verified CRNs directly into the quick-add registration box.
               </li>
               <li>
-                <strong>One Hands-On Lab or Studio (1–3 Credits):</strong> Physical laboratory blocks or creative studios that involve hands-on work rather than reading textbooks, giving your analytical brain a break.
+                <strong>IGETC / Transfer Curriculum Alignment:</strong> PCC transfer students balancing general education requirements with STEM prerequisites must watch out for co-requisite labs (such as General Chemistry or Anatomy & Physiology). Lock in your lab times first before filling in flexible social science or humanities electives.
               </li>
             </ul>
           </div>
 
-          <h3 class="text-base font-bold text-zinc-900 dark:text-white pt-2">How to Handle 3-Hour Wet Labs and Engineering Workshops</h3>
-          <p>
-            Laboratory sections are always the hardest puzzle piece when building a college schedule. Because chemistry and engineering labs depend on physical equipment benches, class capacities are strictly limited to 18 to 24 students. The university cannot easily add extra sections, meaning lab meeting times are basically set in stone.
-          </p>
-          <p>
-            The golden rule of schedule making is to <strong>anchor your non-negotiable lab blocks first</strong>, preferably on Tuesday or Thursday afternoons. Once your lab slots are locked onto your grid, build your flexible lecture courses around them. Never schedule a demanding quantitative lecture directly after a three-hour lab session; your brain will be exhausted, and your notes will suffer.
-          </p>
+          <!-- Sub-Guide 2: UF Class Schedule -->
+          <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-3">
+            <div class="flex items-center gap-2">
+              <GraduationCap class="w-5 h-5 text-zinc-900 dark:text-white" />
+              <h3 class="text-base font-bold text-zinc-900 dark:text-white">
+                How to Build Your UF Class Schedule (University of Florida / ONE.UF)
+              </h3>
+            </div>
+            <p>
+              Creating a balanced <strong>UF class schedule</strong> at the University of Florida requires mastering UF's standardized 11-period bell schedule on the ONE.UF portal:
+            </p>
+            <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+              <li>
+                <strong>Converting UF Periods to Clock Times:</strong> UF classes are scheduled by period numbers rather than standard clock times. Period 1 begins at 7:25 AM, Period 2 at 8:30 AM, Period 3 at 9:35 AM, Period 4 at 10:40 AM, through Period 11 concluding at 8:10 PM (with 15-minute passing periods between classes). When using our <strong>weekly class schedule maker</strong>, enter the corresponding start and end clock times to visualize your daily load accurately.
+              </li>
+              <li>
+                <strong>Campus Geography & Walking Times:</strong> The UF campus spans over 2,000 acres. Walking from Turlington Plaza or the Plaza of the Americas to the Wertheim College of Engineering or the Health Science Center easily takes 12 to 15 minutes. Our schedule maker allows you to input exact building room numbers so you can spot physically impossible back-to-back lecture leaps before Drop/Add week.
+              </li>
+              <li>
+                <strong>Double-Booking Prevention during Drop/Add Week:</strong> During the chaotic first five days of the UF semester, seats open and close in fractions of a second. Having a visual blueprint in our <strong>class schedule maker free</strong> studio lets you instantly evaluate if an open ONE.UF section will conflict with your required discussion sections.
+              </li>
+            </ul>
+          </div>
+
         </div>
       </div>
     </section>
 
-    <!-- Bento Card 3: Printable Schedule Formats Hub: Previews for PDF, Excel, and Wallpaper Formats -->
+    <!-- Bento Card 4: Step-by-Step Tutorial on Building Your Schedule -->
+    <section id="step-by-step" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            TUTORIAL &bull; FAST 3-MINUTE SETUP
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            Step-by-Step Guide: How to Create Your Weekly Class Schedule Online
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            A simple, intuitive workflow to map out conflict-free university and school schedules.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-3">
+            <span class="text-2xl font-black font-mono text-zinc-300 dark:text-zinc-700">01</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Enter Course Details</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Open the Schedule Studio (/app) and click <strong>+ Add Class</strong>. Type your Course Code (e.g. CS 101, MAC 2311), Title, and optional Credit count.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-3">
+            <span class="text-2xl font-black font-mono text-zinc-300 dark:text-zinc-700">02</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">One-Click Multi-Day Selection</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Click the segmented day pills: <strong>[ M ] [ T ] [ W ] [ Th ] [ F ]</strong>. Selecting Monday, Wednesday, and Friday slots all three class periods concurrently.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-3">
+            <span class="text-2xl font-black font-mono text-zinc-300 dark:text-zinc-700">03</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Auto-Conflict Checking</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              If two classes share identical hours, the engine displays them side-by-side with an alert badge, preventing accidental double-registration before it happens.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-3">
+            <span class="text-2xl font-black font-mono text-zinc-300 dark:text-zinc-700">04</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Export & Sync Calendars</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Export to Apple Calendar, Google Calendar (.ICS), download a high-res lock-screen PNG, or print a crisp A4/Letter PDF for your desk binder.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 5: Class Schedule Maker Template Hub: PDF, Excel, and Wallpapers -->
     <section id="templates-hub" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            SECTION 03 &bull; EXPORT FORMATS & TEMPLATES
+            DOWNLOADABLE TEMPLATES &bull; FREE FORMATS
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            Printable Schedule Formats Hub: PDF, Excel, and Phone Wallpapers
+            Class Schedule Maker Template Hub: Printable PDF, Excel, and Wallpaper Formats
           </h2>
           <p class="text-xs text-zinc-500 dark:text-zinc-400">
-            Different situations call for different formats. Our studio engine exports your timetable into the exact medium you need.
+            Different academic environments require different formats. Our schedule studio exports your weekly timetable into all popular media.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           
           <!-- Format 1: PDF Printable -->
-          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+          <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
-              <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
-                <FileText class="w-4 h-4" />
+              <div class="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white">
+                <FileText class="w-5 h-5" />
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Printable Clean PDF</h3>
-              <p class="text-xs text-zinc-500 leading-relaxed">
-                Formatted for standard A4 and Letter paper. Strips away all web navigation, buttons, and menus for a crisp black-and-white grid to tape onto your dorm wall or desk organizer.
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Printable Class Schedule Template (PDF)</h3>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Clean, high-contrast black-and-white grid formatted for standard US Letter and A4 printing. Eliminates browser chrome, banners, and menus for a clean physical sheet to pin to your study bulletin board.
               </p>
             </div>
             <a 
               href="/app" 
               class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
             >
-              <span>Create in Studio</span>
+              <span>Build & Print PDF</span>
               <span>&rarr;</span>
             </a>
           </div>
 
           <!-- Format 2: Excel / Google Sheets -->
-          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+          <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
-              <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
-                <FileSpreadsheet class="w-4 h-4" />
+              <div class="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white">
+                <FileSpreadsheet class="w-5 h-5" />
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Spreadsheet Timetable</h3>
-              <p class="text-xs text-zinc-500 leading-relaxed">
-                A clean tabular layout designed for Google Sheets or Microsoft Excel. Includes built-in formulas for credit hour totals and easy manual customization.
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Excel & Google Sheets Schedule Template</h3>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Structured tabular spreadsheet layout ideal for spreadsheet enthusiasts. Easily calculate weekly contact hours, tally tuition credit hour budgets, and share with academic advisors.
               </p>
             </div>
             <a 
               href="/app" 
               class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
             >
-              <span>Build Spreadsheet</span>
+              <span>Create Spreadsheet</span>
               <span>&rarr;</span>
             </a>
           </div>
 
           <!-- Format 3: Lock Screen Wallpaper -->
-          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+          <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
-              <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
-                <Download class="w-4 h-4" />
+              <div class="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white">
+                <Download class="w-5 h-5" />
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Lock Screen Wallpaper</h3>
-              <p class="text-xs text-zinc-500 leading-relaxed">
-                A sharp high-resolution image rendered with 2x pixel density. Perfect for setting as your iPhone or Android lock screen during syllabus week so you never walk into the wrong room.
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Smartphone Lock Screen Wallpaper (PNG)</h3>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                High-DPI 2x rasterized image sized for iPhone and Android lock screens. Keep your classroom numbers, room halls, and section times visible with a glance during the first hectic weeks of classes.
               </p>
             </div>
             <a 
               href="/app" 
               class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
             >
-              <span>Export Wallpaper</span>
+              <span>Export Phone Wallpaper</span>
               <span>&rarr;</span>
             </a>
           </div>
@@ -319,46 +530,77 @@ const faqSchema = {
       </div>
     </section>
 
-    <!-- Bento Card 4: University Portal Integration Guides -->
-    <section id="portal-guides" class="scroll-mt-20">
+    <!-- Bento Card 6: Tool Comparison Matrix Table -->
+    <section id="comparison-table" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            SECTION 04 &bull; UNIVERSITY PORTAL COMPATIBILITY
+            FEATURE COMPARISON &bull; CLASS SCHEDULE MAKER ONLINE
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            University Portal Integration Guides: Matching Courses & Syllabus Codes
+            Comparing Class Schedule Maker with Traditional Timetable Software
           </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            See why students choose our free weekly class schedule maker over legacy schedule planners and spreadsheet templates.
+          </p>
         </div>
 
-        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
-          <p>
-            Navigating university registrar systems—whether your school runs on Ellucian Banner, Canvas, PeopleSoft, Blackboard, or a custom student portal—is notoriously stressful on registration morning. When registration opens, servers slow to a crawl, class seats vanish in seconds, and you don't have time to second-guess section codes or room locations.
-          </p>
-
-          <p>
-            To avoid losing your preferred schedule on registration day, keep your primary schedule and two backup alternatives planned ahead of time:
-          </p>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-            <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-1.5">
-              <span class="font-bold text-xs text-zinc-900 dark:text-white uppercase font-mono">1. Record Five-Digit CRN Numbers</span>
-              <p class="text-xs text-zinc-600 dark:text-zinc-400">
-                Always note down the exact Course Reference Number (CRN) alongside your course title. On registration day, entering raw 5-digit CRNs is ten times faster than searching by professor or department.
-              </p>
-            </div>
-
-            <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-1.5">
-              <span class="font-bold text-xs text-zinc-900 dark:text-white uppercase font-mono">2. Match Syllabus Prerequisites</span>
-              <p class="text-xs text-zinc-600 dark:text-zinc-400">
-                Check whether your lecture requires a mandatory co-requisite discussion or recitation session. Missing a required zero-credit recitation will trigger registration errors when you submit.
-              </p>
-            </div>
-          </div>
-
-          <p>
-            By designing your ideal weekly matrix in our Schedule Studio beforehand, you know the exact rhythm of your semester before spending a single dollar on tuition or course materials.
-          </p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 font-mono text-[11px] uppercase">
+                <th class="py-3 px-4 font-bold">Key Capability</th>
+                <th class="py-3 px-4 font-bold text-zinc-900 dark:text-white bg-zinc-100/60 dark:bg-zinc-800/40 rounded-t-lg">Class Schedule Maker</th>
+                <th class="py-3 px-4 font-bold">University ERP Portals</th>
+                <th class="py-3 px-4 font-bold">Static Excel Sheets</th>
+                <th class="py-3 px-4 font-bold">Paper Planners</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-zinc-600 dark:text-zinc-300">
+              <tr>
+                <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">Price & Account Requirement</td>
+                <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400 bg-zinc-100/40 dark:bg-zinc-800/20">100% Free / No Account</td>
+                <td class="py-3 px-4">Mandatory Student Login</td>
+                <td class="py-3 px-4">Requires Office/Excel</td>
+                <td class="py-3 px-4">Paid Physical Book ($15-$30)</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">Automated Collision Detection</td>
+                <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400 bg-zinc-100/40 dark:bg-zinc-800/20">Side-by-Side Visual Lanes</td>
+                <td class="py-3 px-4">Cryptic Error Code on Submit</td>
+                <td class="py-3 px-4">Manual Eye Check</td>
+                <td class="py-3 px-4">Manual Cross-Outs</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">Campus Dead-Time Optimizer</td>
+                <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400 bg-zinc-100/40 dark:bg-zinc-800/20">Permutation Algorithm</td>
+                <td class="py-3 px-4">No Optimization</td>
+                <td class="py-3 px-4">No Optimization</td>
+                <td class="py-3 px-4">No Optimization</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">Calendar Sync (.ICS / Google)</td>
+                <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400 bg-zinc-100/40 dark:bg-zinc-800/20">One-Click Recurring .ICS</td>
+                <td class="py-3 px-4">Rare / Buggy Sync</td>
+                <td class="py-3 px-4">Requires Third-Party Script</td>
+                <td class="py-3 px-4">Impossible</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">5-Day & 7-Day Weekend Switch</td>
+                <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400 bg-zinc-100/40 dark:bg-zinc-800/20">Instant Toggle (5D / 7D)</td>
+                <td class="py-3 px-4">Rigid Portal Format</td>
+                <td class="py-3 px-4">Manual Row Resizing</td>
+                <td class="py-3 px-4">Fixed Printed Columns</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">Mobile-Responsive Day Tabs</td>
+                <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400 bg-zinc-100/40 dark:bg-zinc-800/20">Segmented Touch Tabs</td>
+                <td class="py-3 px-4">Non-Responsive Desktop UI</td>
+                <td class="py-3 px-4">Pinch-to-Zoom Lag</td>
+                <td class="py-3 px-4">Must Carry Everywhere</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -368,13 +610,13 @@ const faqSchema = {
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            SECTION 05 &bull; STUDENT QUESTIONS & ANSWERS
+            QUESTIONS & ANSWERS &bull; ON-PAGE SEO FAQ
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            Frequently Asked Questions
+            Frequently Asked Questions About Class Schedule Maker
           </h2>
           <p class="text-xs text-zinc-500 dark:text-zinc-400">
-            Answers to common questions about timetable optimization, calendar syncing, and privacy.
+            Everything you need to know about timetable optimization, PCC & UF scheduling, templates, and calendar syncing.
           </p>
         </div>
 
@@ -398,22 +640,21 @@ const faqSchema = {
 
   </div>
 
-  <!-- Bottom Conversion CTA -->
+  <!-- Bottom Conversion Call To Action -->
   <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pb-20">
     <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-xl">
       <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
-        Build your semester schedule in seconds.
+        Build Your Weekly Class Schedule in Seconds
       </h3>
       <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto">
-        No accounts, no downloads, zero server tracking. Open the studio and organize your weekly college timetable right in your browser.
+        Join thousands of students and teachers who use our <strong>free class schedule maker online</strong> to build balanced, gap-free college and school timetables.
       </p>
       <div class="pt-2">
         <a
           href="/app"
           class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-black font-bold text-xs sm:text-sm transition shadow-sm"
         >
-          <span>Launch Schedule Studio</span>
-          <ArrowRight class="w-4 h-4" />
+          <span>Launch Schedule Studio Now &rarr;</span>
         </a>
       </div>
     </div>

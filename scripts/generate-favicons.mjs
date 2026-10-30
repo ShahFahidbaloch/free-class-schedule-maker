@@ -124,3 +124,4 @@ function createIco(images) {
 }
 
 generate().catch(console.error);
+

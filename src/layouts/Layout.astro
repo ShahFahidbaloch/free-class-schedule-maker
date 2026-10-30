@@ -4,18 +4,22 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  keywords?: string;
   canonicalUrl?: string;
+  ogImage?: string;
   schemaJson?: object;
 }
 
 const {
-  title = "Class Schedule — The Smart College Timetable & Gap Optimizer",
-  description = "Build conflict-free weekly college schedules in seconds. Eliminate awkward campus gaps and export to Apple Calendar, Google Calendar, and PDF.",
+  title = "Class Schedule Maker — Free Weekly College & School Schedule Maker Online",
+  description = "Design your ideal class schedule with our free weekly class schedule maker online. Effortlessly create conflict-free college, school, PCC, and UF class schedules with zero gaps. Export to iCal, Google Calendar, and printable PDF.",
+  keywords = "class schedule, class schedule maker, free class schedule maker, weekly class schedule maker, class schedule maker template, pcc class schedule, college class schedule, uf class schedule, class schedule maker online, class schedule maker free, school schedule maker",
   canonicalUrl = Astro.url.href,
+  ogImage = "https://classscheduleoptimizer.com/logo.png",
   schemaJson
 } = Astro.props;
 
-const siteName = "Class Schedule";
+const siteName = "Class Schedule Maker";
 ---
 
 <!doctype html>
@@ -25,14 +29,28 @@ const siteName = "Class Schedule";
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalUrl} />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={siteName} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="600" />
+    <meta property="og:image:height" content="600" />
+    <meta property="og:image:alt" content="Class Schedule Maker & Academic Timetable Planner" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- Favicons & App Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
