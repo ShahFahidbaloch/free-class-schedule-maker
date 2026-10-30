@@ -821,7 +821,7 @@ export default function ScheduleStudio() {
                   : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60'
               }`}
             >
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <Sliders className="w-4 h-4 text-zinc-500" />
               <span>Gap Optimizer Engine</span>
             </button>
 
@@ -883,7 +883,6 @@ export default function ScheduleStudio() {
           {banner && (
             <div className="p-3.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-mono shadow-sm">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
                 <span>{banner}</span>
               </div>
               <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer">

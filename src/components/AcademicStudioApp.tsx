@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Plus, 
   Trash2, 
-  Sparkles, 
   Download, 
   Printer, 
   Calendar, 
@@ -24,10 +23,17 @@ import {
   Square,
   Sliders,
   ChevronRight,
-  Share2
+  Share2,
+  Globe
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
+import { 
+  TRANSLATIONS, 
+  LOCALES, 
+  type SupportedLocale, 
+  getTranslations 
+} from '../i18n/uiTranslations';
 
 export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 
@@ -279,6 +285,45 @@ export default function AcademicStudioApp() {
   const [banner, setBanner] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [mobileDay, setMobileDay] = useState<DayOfWeek>('Mon');
+
+  // Multi-Language State & i18n
+  const [locale, setLocale] = useState<SupportedLocale>('en');
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('preferred_lang');
+      if (savedLang && (TRANSLATIONS as any)[savedLang]) {
+        setLocale(savedLang as SupportedLocale);
+      } else {
+        const pathPart = window.location.pathname.split('/').filter(Boolean)[0];
+        if (pathPart && (TRANSLATIONS as any)[pathPart]) {
+          setLocale(pathPart as SupportedLocale);
+        }
+      }
+    } catch (e) {}
+
+    const handleLangEvent = (e: any) => {
+      const newLang = e.detail;
+      if (newLang && (TRANSLATIONS as any)[newLang]) {
+        setLocale(newLang as SupportedLocale);
+      }
+    };
+    window.addEventListener('langchange', handleLangEvent);
+    return () => window.removeEventListener('langchange', handleLangEvent);
+  }, []);
+
+  const changeLocale = (newLang: SupportedLocale) => {
+    setLocale(newLang);
+    try {
+      localStorage.setItem('preferred_lang', newLang);
+      document.documentElement.lang = newLang;
+    } catch (e) {}
+    setIsLangMenuOpen(false);
+    window.dispatchEvent(new CustomEvent('langchange', { detail: newLang }));
+  };
+
+  const t = useMemo(() => getTranslations(locale), [locale]);
 
   // Modals state
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
@@ -1000,7 +1045,7 @@ export default function AcademicStudioApp() {
             className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
             title="Run Gap Optimizer Engine"
           >
-            <Sparkles className="w-4 h-4 text-amber-500" />
+            <Sliders className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
           </button>
 
           {/* Export Hub */}
@@ -1059,7 +1104,7 @@ export default function AcademicStudioApp() {
           {/* Left: Title & Quick Stats */}
           <div className="flex items-center gap-3">
             <h1 className="text-sm sm:text-base font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
-              <span>Class Schedule Studio</span>
+              <span>{t.nav?.scheduleStudio || 'Class Schedule Studio'}</span>
             </h1>
 
             <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">&bull;</span>
@@ -1067,17 +1112,24 @@ export default function AcademicStudioApp() {
             {/* Subtle Top Status Pill (Strictly Monochrome Slate - No Green Pills) */}
             <div className="hidden sm:inline-flex items-center gap-2 text-xs font-mono font-medium px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
               <span className="text-zinc-700 dark:text-zinc-300">
-                Total Credits: <strong className="font-bold text-zinc-900 dark:text-white">{metrics.totalCredits}</strong>
+                {t.metrics.credits}: <strong className="font-bold text-zinc-900 dark:text-white">{metrics.totalCredits}</strong>
               </span>
               <span className="text-zinc-300 dark:text-zinc-700">|</span>
               <span className="text-zinc-700 dark:text-zinc-300">
-                Idle Gaps: <strong className="font-bold text-zinc-900 dark:text-white">{metrics.gapHours} hrs</strong>
+                {t.metrics.idleGaps}: <strong className="font-bold text-zinc-900 dark:text-white">{metrics.gapHours} hrs</strong>
               </span>
-              {metrics.conflicts > 0 && (
+              {metrics.conflicts > 0 ? (
                 <>
                   <span className="text-zinc-300 dark:text-zinc-700">|</span>
                   <span className="text-rose-600 dark:text-rose-400 font-bold">
-                    {metrics.conflicts} Conflict(s)
+                    {metrics.conflicts} {t.metrics.conflicts}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-zinc-300 dark:text-zinc-700">|</span>
+                  <span className="text-zinc-600 dark:text-zinc-400 font-medium">
+                    {t.metrics.conflictFree}
                   </span>
                 </>
               )}
@@ -1093,28 +1145,62 @@ export default function AcademicStudioApp() {
               className="h-9 px-3 sm:px-3.5 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition active:scale-[0.98] cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>New Class</span>
+              <span>{t.actions.newClass}</span>
             </button>
 
             {/* Print */}
             <button
               onClick={() => window.print()}
               className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
-              title="Print Schedule"
+              title={t.actions.print}
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print</span>
+              <span>{t.actions.print}</span>
             </button>
 
             {/* Export */}
             <button
               onClick={() => setIsExportModalOpen(true)}
               className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
-              title="Export PNG, PDF, .ICS"
+              title={t.actions.export}
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Export</span>
+              <span>{t.actions.export}</span>
             </button>
+
+            {/* Language Selector Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                title="Select Language"
+              >
+                <Globe className="w-3.5 h-3.5 text-zinc-500" />
+                <span className="text-[11px] font-mono uppercase">{locale}</span>
+              </button>
+
+              {isLangMenuOpen && (
+                <div className="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-lg p-1.5 z-50 flex flex-col gap-0.5 text-xs animate-in fade-in duration-100">
+                  {Object.values(LOCALES).map((loc) => (
+                    <button
+                      key={loc.code}
+                      onClick={() => changeLocale(loc.code)}
+                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors cursor-pointer ${
+                        locale === loc.code
+                          ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white'
+                          : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span>{loc.flag}</span>
+                        <span>{loc.nativeName}</span>
+                      </span>
+                      {locale === loc.code && <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-white" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Reset */}
             <button
@@ -1132,7 +1218,6 @@ export default function AcademicStudioApp() {
         {banner && (
           <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-semibold shadow-md animate-in fade-in duration-150">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>{banner}</span>
             </div>
             <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer">
@@ -1153,7 +1238,7 @@ export default function AcademicStudioApp() {
                   : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
               }`}
             >
-              {DAY_LABELS[d].short}
+              {t.days.short[d] || DAY_LABELS[d].short}
             </button>
           ))}
         </div>
@@ -1182,7 +1267,7 @@ export default function AcademicStudioApp() {
                         className="py-3 text-center border-r border-zinc-200 dark:border-zinc-800 last:border-r-0"
                       >
                         <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
-                          {DAY_LABELS[day].full}
+                          {t.days.full[day] || DAY_LABELS[day].full}
                         </span>
                       </div>
                     ))}
@@ -1386,10 +1471,10 @@ export default function AcademicStudioApp() {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
-                  {selectedEventForEdit ? 'Edit Class Details' : 'Add New Class'}
+                  {selectedEventForEdit ? t.form.modalEditTitle : t.form.modalAddTitle}
                 </h2>
                 <p className="text-xs text-zinc-500">
-                  {selectedEventForEdit ? 'Modify timings or duplicate to other days' : 'Fill in course timing and slot into timetable'}
+                  {selectedEventForEdit ? t.form.modalSubtitleEdit : t.form.modalSubtitleAdd}
                 </p>
               </div>
               <button
@@ -1416,13 +1501,13 @@ export default function AcademicStudioApp() {
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    Course Code <span className="text-rose-500">*</span>
+                    {t.form.courseCode} <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formCode}
                     onChange={e => setFormCode(e.target.value)}
-                    placeholder="e.g. CS 301"
+                    placeholder={t.form.courseCodePlaceholder || "e.g. CS 301"}
                     required
                     className="w-full h-11 px-3.5 text-sm font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition"
                   />
@@ -1430,7 +1515,7 @@ export default function AcademicStudioApp() {
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    Credits
+                    {t.form.creditHours}
                   </label>
                   <select
                     value={formCredits}
@@ -1446,13 +1531,13 @@ export default function AcademicStudioApp() {
 
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Course Title <span className="text-zinc-400 font-normal">(optional)</span>
+                  {t.form.courseTitle}
                 </label>
                 <input
                   type="text"
                   value={formTitle}
                   onChange={e => setFormTitle(e.target.value)}
-                  placeholder="e.g. Data Structures & Algorithms"
+                  placeholder={t.form.courseTitlePlaceholder || "e.g. Data Structures & Algorithms"}
                   className="w-full h-11 px-3.5 text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 />
               </div>
@@ -1460,7 +1545,7 @@ export default function AcademicStudioApp() {
               {/* Class Days Multi-Selector Pills */}
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  Class Days <span className="text-rose-500">*</span>
+                  {t.form.classDays} <span className="text-rose-500">*</span>
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                   {WEEKDAY_DAYS.map(d => {
@@ -1476,7 +1561,7 @@ export default function AcademicStudioApp() {
                             : 'bg-zinc-50 border-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-100'
                         }`}
                       >
-                        {DAY_LABELS[d].short}
+                        {t.days.short[d] || DAY_LABELS[d].short}
                       </button>
                     );
                   })}
@@ -1487,7 +1572,7 @@ export default function AcademicStudioApp() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                    Start Time
+                    {t.form.startTime}
                   </label>
                   <input
                     type="text"
@@ -1504,7 +1589,7 @@ export default function AcademicStudioApp() {
 
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                    End Time
+                    {t.form.endTime}
                   </label>
                   <input
                     type="text"
@@ -1521,7 +1606,7 @@ export default function AcademicStudioApp() {
 
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                    Room / Hall
+                    {t.form.classroom}
                   </label>
                   <input
                     type="text"
@@ -1561,7 +1646,7 @@ export default function AcademicStudioApp() {
               {selectedEventForEdit && (
                 <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
                   <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 block mb-1.5">
-                    Duplicate to another day:
+                    {t.form.duplicateToOtherDays}
                   </span>
                   <div className="flex flex-wrap items-center gap-1.5">
                     {WEEKDAY_DAYS.filter(d => !formDays.includes(d)).map(d => (
@@ -1572,7 +1657,7 @@ export default function AcademicStudioApp() {
                         className="px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1 transition cursor-pointer"
                       >
                         <Copy className="w-3 h-3 text-zinc-400" />
-                        <span>Add {DAY_LABELS[d].full}</span>
+                        <span>Add {t.days.full[d] || DAY_LABELS[d].full}</span>
                       </button>
                     ))}
                   </div>
@@ -1588,7 +1673,7 @@ export default function AcademicStudioApp() {
                     className="h-11 px-4 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
-                    <span>Delete Class</span>
+                    <span>{t.form.deleteClass}</span>
                   </button>
                 ) : <div />}
 
@@ -1596,7 +1681,7 @@ export default function AcademicStudioApp() {
                   type="submit"
                   className="h-11 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold shadow-md transition cursor-pointer ml-auto"
                 >
-                  Save Class
+                  {t.form.saveClass}
                 </button>
               </div>
 
@@ -1614,9 +1699,9 @@ export default function AcademicStudioApp() {
               <div>
                 <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
                   <CheckSquare className="w-4 h-4 text-zinc-500" />
-                  <span>Tasks & Semester Todo</span>
+                  <span>{t.tasks.title}</span>
                 </h3>
-                <p className="text-xs text-zinc-500">Track deadlines and assignments</p>
+                <p className="text-xs text-zinc-500">{t.tasks.placeholder}</p>
               </div>
               <button onClick={() => setIsTaskModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
                 <X className="w-4 h-4" />
@@ -1628,35 +1713,35 @@ export default function AcademicStudioApp() {
                 type="text"
                 value={newTaskTitle}
                 onChange={e => setNewTaskTitle(e.target.value)}
-                placeholder="Add assignment or exam date..."
+                placeholder={t.tasks.placeholder}
                 className="flex-1 h-10 px-3 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400"
               />
               <button
                 type="submit"
                 className="h-10 px-3.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 text-xs font-bold"
               >
-                Add
+                {t.tasks.addBtn}
               </button>
             </form>
 
             <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
               {tasks.length === 0 ? (
-                <div className="py-6 text-center text-xs text-zinc-400">No tasks added yet.</div>
+                <div className="py-6 text-center text-xs text-zinc-400">{t.tasks.empty}</div>
               ) : (
-                tasks.map(t => (
+                tasks.map(task => (
                   <div
-                    key={t.id}
-                    onClick={() => toggleTask(t.id)}
+                    key={task.id}
+                    onClick={() => toggleTask(task.id)}
                     className="p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between gap-3 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-850"
                   >
                     <div className="flex items-center gap-2.5">
-                      {t.completed ? (
+                      {task.completed ? (
                         <CheckSquare className="w-4 h-4 text-zinc-900 dark:text-white" />
                       ) : (
                         <Square className="w-4 h-4 text-zinc-400" />
                       )}
-                      <span className={t.completed ? 'line-through text-zinc-400' : 'font-medium text-zinc-800 dark:text-zinc-200'}>
-                        {t.title}
+                      <span className={task.completed ? 'line-through text-zinc-400' : 'font-medium text-zinc-800 dark:text-zinc-200'}>
+                        {task.title}
                       </span>
                     </div>
                   </div>
@@ -1673,8 +1758,8 @@ export default function AcademicStudioApp() {
           <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <h3 className="text-base font-bold text-zinc-950 dark:text-white">Export Your Schedule</h3>
-                <p className="text-xs text-zinc-500">Choose your preferred timetable format</p>
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white">{t.actions.export}</h3>
+                <p className="text-xs text-zinc-500">Apple Calendar (.ICS), PNG, PDF</p>
               </div>
               <button onClick={() => setIsExportModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
                 <X className="w-4 h-4" />
@@ -1745,8 +1830,8 @@ export default function AcademicStudioApp() {
             
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <h3 className="text-base font-bold text-zinc-950 dark:text-white">Student Feedback & Rating</h3>
-                <p className="text-xs text-zinc-500">Help us make timetable planning effortless</p>
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white">{t.feedback.title}</h3>
+                <p className="text-xs text-zinc-500">{t.feedback.subtitle}</p>
               </div>
               <button onClick={() => setIsFeedbackModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
                 <X className="w-4 h-4" />
@@ -1785,7 +1870,7 @@ export default function AcademicStudioApp() {
               {/* Category Pills */}
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-2">
-                  What can we improve?
+                  {t.feedback.categoryLabel}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['Feature Request', 'Timetable Bug', 'Export Issue', 'Other'] as const).map(cat => (
@@ -1808,12 +1893,12 @@ export default function AcademicStudioApp() {
               {/* Message Textarea */}
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  Your Suggestions
+                  {t.feedback.title}
                 </label>
                 <textarea
                   value={feedbackMessage}
                   onChange={e => setFeedbackMessage(e.target.value)}
-                  placeholder="Tell us what feature would make your semester easier..."
+                  placeholder={t.feedback.placeholder}
                   rows={3}
                   required
                   className="w-full p-3 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
@@ -1824,11 +1909,10 @@ export default function AcademicStudioApp() {
                 type="submit"
                 className="w-full h-11 bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold rounded-xl shadow-md transition cursor-pointer"
               >
-                Submit Feedback
+                {t.feedback.submitBtn}
               </button>
 
             </form>
-
           </div>
         </div>
       )}

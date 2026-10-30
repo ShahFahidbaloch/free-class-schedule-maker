@@ -148,6 +148,7 @@ const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPOR
                 {SUPPORTED_LANGUAGES.map((item) => (
                   <a
                     href={`${item.code === 'en' ? (cleanPath || '/') : `/${item.code}${cleanPath}`}`}
+                    onclick={`try { localStorage.setItem('preferred_lang', '${item.code}'); window.dispatchEvent(new CustomEvent('langchange', { detail: '${item.code}' })); } catch(e){}`}
                     class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors ${
                       item.code === lang 
                         ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white' 

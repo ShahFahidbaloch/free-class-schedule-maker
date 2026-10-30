@@ -731,7 +731,6 @@ export default function SchedulerEngine() {
       {banner && (
         <div className="p-3.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-sm font-semibold shadow-lg animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2.5">
-            <Sparkles className="w-4 h-4 text-amber-400" />
             <span>{banner}</span>
           </div>
           <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer font-bold px-2 py-1">
@@ -1066,15 +1065,9 @@ export default function SchedulerEngine() {
 
               <div className="inline-flex px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-850 items-center gap-2">
                 {metrics.conflicts === 0 ? (
-                  <>
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">Conflict-Free</span>
-                  </>
+                  <span className="text-zinc-700 dark:text-zinc-300 font-medium">Conflict-Free</span>
                 ) : (
-                  <>
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-                    <span className="text-rose-600 dark:text-rose-400 font-bold">{metrics.conflicts} Conflict(s)</span>
-                  </>
+                  <span className="text-zinc-900 dark:text-white font-semibold">{metrics.conflicts} Conflict(s)</span>
                 )}
               </div>
             </div>
@@ -1083,10 +1076,9 @@ export default function SchedulerEngine() {
             <div className="flex items-center gap-2.5">
               <button
                 onClick={handleOptimizeGaps}
-                className="h-10 px-4 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-sm transition active:scale-98 cursor-pointer"
+                className="h-10 px-4 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
                 title="Automatically choose sections with minimum campus waiting time"
               >
-                <Sparkles className="w-4 h-4 text-amber-400 dark:text-amber-600 shrink-0" />
                 <span>Auto-Optimize</span>
               </button>
 
