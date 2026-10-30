@@ -13,7 +13,8 @@ import {
   MapPin, 
   AlertCircle,
   CalendarDays,
-  ListPlus
+  ListPlus,
+  GraduationCap
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
@@ -219,7 +220,7 @@ export default function SchedulerEngine() {
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(['Mon', 'Wed', 'Fri']);
   const [newStartTime, setNewStartTime] = useState('09:00 AM');
   const [newEndTime, setNewEndTime] = useState('10:15 AM');
-  const [newRoom, setNewRoom] = useState('Hall A');
+  const [newRoom, setNewRoom] = useState('Lab 2');
 
   const timetableRef = useRef<HTMLDivElement>(null);
 
@@ -335,11 +336,10 @@ export default function SchedulerEngine() {
 
         if (colliding.length > 1) {
           events[i].hasClash = true;
-          // Sort cluster by start time / index and assign lane
           colliding.sort();
           const laneIdx = colliding.indexOf(i);
           events[i].lane = laneIdx;
-          events[i].totalLanes = Math.min(colliding.length, 2); // Split into 2 columns
+          events[i].totalLanes = Math.min(colliding.length, 2);
         }
       }
     });
@@ -385,7 +385,7 @@ export default function SchedulerEngine() {
       longestGapMinutes,
       longestGapHours,
       longestGapDay,
-      overlaps: Math.floor(overlaps / 2) // pair counted
+      overlaps: Math.floor(overlaps / 2)
     };
   }, [courses, placedEventsByDay]);
 
@@ -596,10 +596,10 @@ export default function SchedulerEngine() {
   };
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full space-y-4">
       {/* Toast Alert Banner */}
       {banner && (
-        <div className="p-3 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-mono shadow-sm">
+        <div className="p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-mono shadow-sm">
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>{banner}</span>
@@ -635,203 +635,254 @@ export default function SchedulerEngine() {
           }`}
         >
           <ListPlus className="w-3.5 h-3.5" />
-          <span>Add Course ({courses.length})</span>
+          <span>Course Registration ({courses.length})</span>
         </button>
       </div>
 
       {/* Main 12-Column Unified Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
-        {/* Left Column: Form & Enrolled Roster (4 Cols) */}
-        <div className={`space-y-4 lg:col-span-4 ${mobileView === 'courses' ? 'block' : 'hidden lg:block'}`}>
+        {/* Left Column: Academic Portal / School ERP Registration Card (Col 1-4) */}
+        <div className={`space-y-5 lg:col-span-4 ${mobileView === 'courses' ? 'block' : 'hidden lg:block'}`}>
           
-          {/* Registration Form Card */}
-          <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800/80 shadow-2xs space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-xs bg-zinc-900 dark:bg-white"></span>
-                <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
-                  Add Course
+          {/* Outer Card: High-End School ERP Registration Card */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm p-6 mb-6">
+            
+            {/* Section Header */}
+            <div className="mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                  Course Registration
                 </h2>
+                <p className="text-xs text-zinc-500 font-normal mt-0.5">
+                  Academic Portal &bull; Course enrollment & session allocation
+                </p>
               </div>
-              <span className="text-[10px] font-mono text-zinc-400">Class Schedule</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+                ERP MODULE
+              </span>
             </div>
 
-            <form onSubmit={handleRegisterCourse} className="space-y-3.5">
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                  <label className="block text-[11px] font-mono font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-                    COURSE CODE
+            <form onSubmit={handleRegisterCourse} className="space-y-4">
+              
+              {/* Form Fields: Strict 2-Column Structured Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Course Code */}
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                    Course Code <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={newCode}
                     onChange={e => setNewCode(e.target.value)}
-                    placeholder="e.g. CS 101"
+                    placeholder="e.g. CS101"
                     required
-                    className="w-full h-9 px-3 text-xs font-mono rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-white transition"
+                    className="w-full h-10 px-3 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition"
                   />
                 </div>
+
+                {/* Credits */}
                 <div>
-                  <label className="block text-[11px] font-mono font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-                    CREDITS
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                    Credits <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="8"
+                  <select
                     value={newCredits}
                     onChange={e => setNewCredits(Number(e.target.value))}
-                    className="w-full h-9 px-2 text-xs font-mono rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-white transition"
+                    className="w-full h-10 px-3 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition cursor-pointer"
+                  >
+                    {[1, 2, 3, 4, 5, 6].map(cr => (
+                      <option key={cr} value={cr}>
+                        {cr} {cr === 1 ? 'Credit' : 'Credits'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Course Title: Full Width md:col-span-2 */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                    Course Title
+                  </label>
+                  <input
+                    type="text"
+                    value={newTitle}
+                    onChange={e => setNewTitle(e.target.value)}
+                    placeholder="e.g. Introduction to Database Systems"
+                    className="w-full h-10 px-3 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-mono font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-                  COURSE TITLE
-                </label>
-                <input
-                  type="text"
-                  value={newTitle}
-                  onChange={e => setNewTitle(e.target.value)}
-                  placeholder="e.g. Intro to Computer Science"
-                  className="w-full h-9 px-3 text-xs rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-white transition"
-                />
-              </div>
-
-              {/* One-Click Multi-Day Selector [ M ] [ T ] [ W ] [ Th ] [ F ] */}
-              <div className="space-y-1.5 pt-1">
-                <label className="block text-[11px] font-mono font-medium text-zinc-600 dark:text-zinc-400">
-                  SELECT CLASS DAYS (MULTI-SELECT)
-                </label>
-                <div className="flex items-center gap-1.5">
-                  {DAYS.map(d => {
-                    const isSelected = selectedDays.includes(d);
-                    return (
-                      <button
-                        key={d}
-                        type="button"
-                        onClick={() => toggleDay(d)}
-                        className={`flex-1 h-9 rounded-md font-mono text-xs font-bold transition cursor-pointer border ${
-                          isSelected
-                            ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 border-zinc-900 dark:border-white shadow-xs'
-                            : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-                        }`}
-                        title={DAY_LABELS[d].full}
-                      >
-                        {DAY_LABELS[d].pill}
-                      </button>
-                    );
-                  })}
+              {/* Section & Timing Block (ERP Style Nested Box) */}
+              <div className="bg-zinc-50/70 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 mt-2 space-y-3.5">
+                
+                {/* Row 1 - Day Checkbox Bar */}
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                    Class Days (Select all that apply) <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    {DAYS.map(d => {
+                      const isSelected = selectedDays.includes(d);
+                      return (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => toggleDay(d)}
+                          className={`flex-1 h-9 rounded-lg font-mono text-xs font-semibold transition cursor-pointer border ${
+                            isSelected
+                              ? 'bg-zinc-900 text-white font-semibold border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white shadow-2xs'
+                              : 'bg-white border border-zinc-200 text-zinc-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                          }`}
+                          title={DAY_LABELS[d].full}
+                        >
+                          {DAY_LABELS[d].pill}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[10px] text-zinc-400 font-mono mt-1">
+                    Selected: {selectedDays.map(d => DAY_LABELS[d].short).join(', ')}
+                  </p>
                 </div>
-                <p className="text-[10px] text-zinc-400 font-mono">
-                  Active: {selectedDays.map(d => DAY_LABELS[d].short).join(' • ')}
-                </p>
-              </div>
 
-              {/* Writable Class Timings & Room Input */}
-              <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 space-y-2.5">
-                <div className="grid grid-cols-2 gap-2">
+                {/* Row 2 - Times & Venue (3-Column Grid) */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                  
+                  {/* Start Time */}
                   <div>
-                    <label className="block text-[10px] font-mono text-zinc-500 mb-1">START TIME</label>
+                    <label className="block text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
+                      Start Time <span className="text-rose-500">*</span>
+                    </label>
                     <input
                       type="text"
                       value={newStartTime}
                       onChange={e => setNewStartTime(e.target.value)}
-                      placeholder="10:00 AM"
-                      className="w-full h-8 px-2 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                      placeholder="e.g. 09:00 AM"
+                      className="w-full h-9 px-2.5 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-1 focus:ring-zinc-950"
                     />
                   </div>
+
+                  {/* End Time */}
                   <div>
-                    <label className="block text-[10px] font-mono text-zinc-500 mb-1">END TIME</label>
+                    <label className="block text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
+                      End Time <span className="text-rose-500">*</span>
+                    </label>
                     <input
                       type="text"
                       value={newEndTime}
                       onChange={e => setNewEndTime(e.target.value)}
-                      placeholder="11:15 AM"
-                      className="w-full h-8 px-2 text-xs font-mono rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                      placeholder="e.g. 10:30 AM"
+                      className="w-full h-9 px-2.5 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-1 focus:ring-zinc-950"
                     />
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-[10px] font-mono text-zinc-500 mb-1">ROOM / HALL</label>
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                  {/* Room / Hall */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
+                      Room / Hall
+                    </label>
                     <input
                       type="text"
                       value={newRoom}
                       onChange={e => setNewRoom(e.target.value)}
-                      placeholder="e.g. Science Quad 101"
-                      className="w-full h-7 px-2 text-xs rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                      placeholder="e.g. Lab 2"
+                      className="w-full h-9 px-2.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-1 focus:ring-zinc-950"
                     />
                   </div>
                 </div>
+
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full h-10 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold tracking-wide transition active:scale-98 cursor-pointer"
+                className="w-full h-11 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs active:scale-[0.99]"
               >
-                + Register Course
+                <Plus className="w-4 h-4" />
+                <span>Enroll Course in Timetable</span>
               </button>
             </form>
           </div>
 
-          {/* Enrolled Courses Roster Card */}
-          <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800/80 shadow-2xs space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
+          {/* Enrolled Courses Summary: Clean Data-Table / Card View */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm p-5 space-y-3">
+            
+            <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
-                Enrolled Courses ({courses.length})
+                Enrolled Courses Summary ({courses.length})
               </span>
-              <span className="text-[11px] font-mono text-zinc-500 font-semibold">{metrics.totalCredits} Credits</span>
+              <span className="text-[11px] font-mono text-zinc-500 font-semibold">
+                {metrics.totalCredits} Credits Total
+              </span>
             </div>
 
-            <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
-              {courses.map(course => {
-                const palette = PALETTES[course.colorIndex % PALETTES.length];
-                const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
-                return (
-                  <div
-                    key={course.id}
-                    className="p-3 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 flex items-center justify-between text-xs transition"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-xs ${palette.bar}`}></span>
-                        <span className="font-mono font-bold text-zinc-900 dark:text-white">{course.code}</span>
-                        <span className="text-[11px] font-mono text-zinc-500">({course.credits}cr)</span>
-                      </div>
-                      <div className="text-[11px] text-zinc-600 dark:text-zinc-400 truncate max-w-[210px]">{course.title}</div>
-                      
-                      {activeSec && (
-                        <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                          <span className="font-bold text-zinc-700 dark:text-zinc-300">
-                            {activeSec.days.join('')}
-                          </span>
-                          <span>•</span>
-                          <span>{formatTime12(activeSec.startTime)} - {formatTime12(activeSec.endTime)}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <button
-                      onClick={() => handleDeleteCourse(course.id)}
-                      className="text-zinc-400 hover:text-rose-500 p-1.5 cursor-pointer transition"
-                      title="Delete course"
+            {courses.length === 0 ? (
+              <div className="p-6 text-center text-xs text-zinc-400">
+                No courses enrolled yet. Use the registration card above to add your first subject.
+              </div>
+            ) : (
+              <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80 max-h-[300px] overflow-y-auto">
+                {courses.map(course => {
+                  const palette = PALETTES[course.colorIndex % PALETTES.length];
+                  const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
+                  return (
+                    <div
+                      key={course.id}
+                      className="py-3 px-1.5 flex items-center justify-between text-xs hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition rounded-lg"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                      <div className="space-y-1 pr-2">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2 h-2 rounded-xs ${palette.bar}`}></span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-white">
+                            {course.code}
+                          </span>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                            {course.credits} cr
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-zinc-600 dark:text-zinc-400 truncate max-w-[210px]">
+                          {course.title}
+                        </div>
+                        
+                        {activeSec && (
+                          <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                            <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                              {activeSec.days.join(', ')}
+                            </span>
+                            <span>&bull;</span>
+                            <span>{formatTime12(activeSec.startTime)} - {formatTime12(activeSec.endTime)}</span>
+                            {activeSec.room && (
+                              <>
+                                <span>&bull;</span>
+                                <span className="truncate max-w-[80px]">{activeSec.room}</span>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => handleDeleteCourse(course.id)}
+                        className="text-zinc-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                        title="Delete course"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
         </div>
 
-        {/* Right Column: Full 5-Column Weekly Matrix (8 Cols) */}
+        {/* Right Column: Full 5-Column Weekly Matrix (Col 5-12) */}
         <div className={`space-y-3 lg:col-span-8 ${mobileView === 'calendar' ? 'block' : 'hidden lg:block'}`}>
           
           {/* Action Toolbar */}
