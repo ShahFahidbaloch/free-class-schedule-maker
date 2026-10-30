@@ -1242,7 +1242,7 @@ export default function AcademicStudioApp() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         {/* Top Control Bar */}
-        <header className="h-14 px-3 sm:px-6 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-[#121215]/80 backdrop-blur-md flex items-center justify-between gap-2 sm:gap-4 select-none shrink-0">
+        <header className="relative z-40 h-14 px-3 sm:px-6 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md flex items-center justify-between gap-2 sm:gap-4 select-none shrink-0">
           
           {/* Left: Mobile Home / Brand Link & Title */}
           <div className="flex items-center gap-2 sm:gap-3">
@@ -1333,25 +1333,37 @@ export default function AcademicStudioApp() {
               </button>
 
               {isLangMenuOpen && (
-                <div className="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-lg p-1.5 z-50 flex flex-col gap-0.5 text-xs animate-in fade-in duration-100">
-                  {Object.values(LOCALES).map((loc) => (
-                    <button
-                      key={loc.code}
-                      onClick={() => changeLocale(loc.code)}
-                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-colors cursor-pointer ${
-                        locale === loc.code
-                          ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white'
-                          : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span>{loc.flag}</span>
-                        <span>{loc.nativeName}</span>
-                      </span>
-                      {locale === loc.code && <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-white" />}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  {/* Backdrop click dismiss */}
+                  <div 
+                    className="fixed inset-0 z-40 cursor-default" 
+                    onClick={() => setIsLangMenuOpen(false)} 
+                  />
+                  
+                  {/* Dropdown Menu Layer */}
+                  <div className="absolute right-0 mt-1.5 w-48 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-2xl p-1.5 z-50 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 duration-100">
+                    {Object.values(LOCALES).map((loc) => (
+                      <button
+                        key={loc.code}
+                        onClick={() => {
+                          changeLocale(loc.code);
+                          setIsLangMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                          locale === loc.code
+                            ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white'
+                            : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <span className="text-sm">{loc.flag}</span>
+                          <span className="font-medium">{loc.nativeName}</span>
+                        </span>
+                        {locale === loc.code && <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-white" />}
+                      </button>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
 
