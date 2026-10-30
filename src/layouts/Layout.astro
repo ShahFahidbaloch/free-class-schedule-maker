@@ -132,8 +132,8 @@ const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPOR
           <a href="/blog" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Articles</a>
         </nav>
 
-        <!-- Right Actions -->
-        <div class="flex items-center gap-2">
+        <!-- Desktop Right Actions -->
+        <div class="hidden md:flex items-center gap-2">
           <!-- Language Selector Dropdown -->
           <div class="relative">
             <details class="group relative">
@@ -168,7 +168,7 @@ const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPOR
 
           <!-- Launch Studio CTA -->
           <a
-            href={lang === 'en' ? '/app' : `/${lang}/app`}
+            href={lang === 'en' ? '/editor' : `/${lang}/app`}
             class="h-8.5 px-3 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs"
           >
             <span>Launch Studio</span>
@@ -190,8 +190,125 @@ const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPOR
             </svg>
           </button>
         </div>
+
+        <!-- Mobile Hamburger Button (< 768px) -->
+        <div class="flex md:hidden items-center gap-2">
+          <button
+            id="mobile-menu-open-btn"
+            type="button"
+            aria-label="Open Mobile Menu"
+            class="w-11 h-11 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer select-none"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
+
+    <!-- Mobile Drawer Overlay & Sheet (< 768px) -->
+    <div
+      id="mobile-drawer-backdrop"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-200 opacity-0 pointer-events-none md:hidden"
+    >
+      <div
+        id="mobile-drawer-sheet"
+        class="fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white dark:bg-[#121215] border-l border-zinc-200 dark:border-zinc-800 p-6 flex flex-col justify-between shadow-2xl transition-transform duration-200 translate-x-full overflow-y-auto"
+      >
+        <div class="space-y-6">
+          <!-- Drawer Header -->
+          <div class="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="Logo" class="w-7 h-7 rounded-lg" />
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-zinc-900 dark:text-white">Class Schedule</span>
+                <span class="text-[10px] font-mono text-zinc-500">Timetable Optimizer</span>
+              </div>
+            </div>
+            <button
+              id="mobile-drawer-close-btn"
+              type="button"
+              aria-label="Close menu"
+              class="w-11 h-11 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-950 dark:hover:text-white cursor-pointer"
+            >
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Drawer Primary CTA -->
+          <a
+            href={lang === 'en' ? '/editor' : `/${lang}/app`}
+            class="w-full h-12 px-4 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+          >
+            <span>Launch Schedule Studio</span>
+            <span>&rarr;</span>
+          </a>
+
+          <!-- Page Links -->
+          <nav class="flex flex-col space-y-1">
+            <a href="/editor" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-semibold text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>Schedule Studio</span>
+              <span class="text-xs text-zinc-400">&rarr;</span>
+            </a>
+            <a href="/#dead-time" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>Gap Optimization</span>
+            </a>
+            <a href="/#course-planning" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>Registration Strategy</span>
+            </a>
+            <a href="/#templates-hub" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>Templates Hub</span>
+            </a>
+            <a href="/#portal-guides" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>Portal Guides</span>
+            </a>
+            <a href="/#faq" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>FAQ</span>
+            </a>
+            <a href="/blog" class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span>Articles</span>
+            </a>
+          </nav>
+
+          <!-- Drawer Language Selector -->
+          <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Language</span>
+            <div class="grid grid-cols-2 gap-1.5 text-xs">
+              {SUPPORTED_LANGUAGES.map((item) => (
+                <a
+                  href={`${item.code === 'en' ? (cleanPath || '/') : `/${item.code}${cleanPath}`}`}
+                  onclick={`try { localStorage.setItem('preferred_lang', '${item.code}'); window.dispatchEvent(new CustomEvent('langchange', { detail: '${item.code}' })); } catch(e){}`}
+                  class={`flex items-center gap-2 p-2.5 rounded-lg border transition ${
+                    item.code === lang 
+                      ? 'border-zinc-900 bg-zinc-100 dark:border-white dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white' 
+                      : 'border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850'
+                  }`}
+                >
+                  <span>{item.flag}</span>
+                  <span class="truncate">{item.nativeName}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Drawer Bottom: Theme Toggle & Info -->
+        <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+          <span class="text-xs font-medium text-zinc-500">Theme</span>
+          <button 
+            id="mobile-theme-toggle" 
+            type="button"
+            class="h-10 px-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center gap-2 text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer"
+          >
+            <span class="dark:hidden">☀️ Light Mode</span>
+            <span class="hidden dark:inline">🌙 Dark Mode</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Content Workspace -->
     <main class="flex-1">
@@ -221,22 +338,63 @@ const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPOR
       </div>
     </footer>
 
-    <!-- Theme Toggle Script -->
+    <!-- Theme Toggle & Mobile Drawer Scripts -->
     <script is:inline>
       (function() {
+        // Theme Toggles (Desktop & Mobile)
+        function toggleTheme() {
+          var isDark = document.documentElement.classList.contains('dark');
+          if (isDark) {
+            document.documentElement.classList.remove('dark');
+            try { localStorage.setItem('theme', 'light'); } catch(e) {}
+          } else {
+            document.documentElement.classList.add('dark');
+            try { localStorage.setItem('theme', 'dark'); } catch(e) {}
+          }
+        }
+
         var btn = document.getElementById('theme-toggle');
-        if (btn) {
-          btn.addEventListener('click', function() {
-            var isDark = document.documentElement.classList.contains('dark');
-            if (isDark) {
-              document.documentElement.classList.remove('dark');
-              try { localStorage.setItem('theme', 'light'); } catch(e) {}
-            } else {
-              document.documentElement.classList.add('dark');
-              try { localStorage.setItem('theme', 'dark'); } catch(e) {}
-            }
+        if (btn) btn.addEventListener('click', toggleTheme);
+
+        var mobThemeBtn = document.getElementById('mobile-theme-toggle');
+        if (mobThemeBtn) mobThemeBtn.addEventListener('click', toggleTheme);
+
+        // Mobile Drawer Controller
+        var openBtn = document.getElementById('mobile-menu-open-btn');
+        var closeBtn = document.getElementById('mobile-drawer-close-btn');
+        var backdrop = document.getElementById('mobile-drawer-backdrop');
+        var sheet = document.getElementById('mobile-drawer-sheet');
+
+        function openDrawer() {
+          if (!backdrop || !sheet) return;
+          backdrop.classList.remove('opacity-0', 'pointer-events-none');
+          backdrop.classList.add('opacity-100');
+          sheet.classList.remove('translate-x-full');
+          sheet.classList.add('translate-x-0');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+          if (!backdrop || !sheet) return;
+          backdrop.classList.remove('opacity-100');
+          backdrop.classList.add('opacity-0', 'pointer-events-none');
+          sheet.classList.remove('translate-x-0');
+          sheet.classList.add('translate-x-full');
+          document.body.style.overflow = '';
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openDrawer);
+        if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+        if (backdrop) {
+          backdrop.addEventListener('click', function(e) {
+            if (e.target === backdrop) closeDrawer();
           });
         }
+
+        // Close on link click inside drawer
+        document.querySelectorAll('.mobile-nav-link').forEach(function(link) {
+          link.addEventListener('click', closeDrawer);
+        });
       })();
     </script>
   </body>

@@ -24,7 +24,8 @@ import {
   Sliders,
   ChevronRight,
   Share2,
-  Globe
+  Globe,
+  Menu
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
@@ -289,6 +290,7 @@ export default function AcademicStudioApp() {
   // Multi-Language State & i18n
   const [locale, setLocale] = useState<SupportedLocale>('en');
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isStudioMenuOpen, setIsStudioMenuOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -998,11 +1000,152 @@ export default function AcademicStudioApp() {
 
   const totalGridHeight = (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * HOUR_ROW_HEIGHT;
 
+  // Render Day Column (Shared between Desktop multi-column and Mobile single-day view)
+  const renderDayColumn = (day: DayOfWeek, isMobileSingle = false) => {
+    const events = placedEventsByDay[day] || [];
+    const isDayDragTarget = dragOverDay === day;
+
+    return (
+      <div
+        key={day}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (dragOverDay !== day) setDragOverDay(day);
+        }}
+        onDragLeave={(e) => {
+          if (e.currentTarget === e.target) {
+            setDragOverDay(null);
+          }
+        }}
+        onDrop={(e) => handleDropOnDay(e, day)}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickY = e.clientY - rect.top;
+            const hoursFrom8 = clickY / HOUR_ROW_HEIGHT;
+            const totalMins = 8 * 60 + Math.floor(hoursFrom8 * 60);
+            const roundedMins = Math.floor(totalMins / 30) * 30;
+            const h = Math.floor(roundedMins / 60);
+            const m = roundedMins % 60;
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const displayH = h % 12 === 0 ? 12 : h % 12;
+            const displayM = m < 10 ? `0${m}` : m;
+            handleOpenNewClassModal(day, `${displayH}:${displayM} ${ampm}`);
+          }
+        }}
+        className={`relative h-full ${isMobileSingle ? 'w-full' : 'border-r border-zinc-200 dark:border-zinc-800 last:border-r-0'} cursor-pointer transition-colors ${
+          isDayDragTarget ? 'bg-zinc-200/60 dark:bg-zinc-800/60 ring-2 ring-inset ring-zinc-500' : ''
+        }`}
+        title={`Click on ${DAY_LABELS[day].full} to add a class or drag an existing class here`}
+      >
+        {events.map(event => {
+          const pal = APPLE_TAG_PALETTES[event.colorIndex % APPLE_TAG_PALETTES.length];
+          const isClashed = event.hasClash;
+          const totalCols = event.totalLanes || 1;
+          const colWidthPercent = 100 / totalCols;
+
+          const leftPos = totalCols === 1
+            ? '4px'
+            : `calc(${event.lane * colWidthPercent}% + 2px)`;
+          const blockWidth = totalCols === 1
+            ? 'calc(100% - 8px)'
+            : `calc(${colWidthPercent}% - 4px)`;
+
+          return (
+            <div
+              key={event.id}
+              draggable={true}
+              onDragStart={(e) => {
+                e.stopPropagation();
+                const dur = (event.endMins - event.startMins) || 60;
+                setDraggedEvent({
+                  courseId: event.courseId,
+                  sectionId: event.rawSection.id,
+                  sourceDay: day,
+                  durationMins: dur,
+                  code: event.code
+                });
+                e.dataTransfer.setData('text/plain', event.courseId);
+                e.dataTransfer.effectAllowed = 'move';
+              }}
+              onDragEnd={() => {
+                setDraggedEvent(null);
+                setDragOverDay(null);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedEventForEdit({ course: event.rawCourse, section: event.rawSection });
+                setFormCode(event.rawCourse.code);
+                setFormTitle(event.rawCourse.title);
+                setFormCredits(event.rawCourse.credits);
+                setFormDays(event.rawSection.days);
+                setFormStartTime(event.rawSection.startTime);
+                setFormEndTime(event.rawSection.endTime);
+                setFormRoom(event.rawSection.room || '');
+                setFormColorIndex(event.rawCourse.colorIndex);
+                setFormError(null);
+                setIsClassModalOpen(true);
+              }}
+              style={{
+                top: `${event.topPx}px`,
+                height: `${event.heightPx}px`,
+                left: leftPos,
+                width: blockWidth
+              }}
+              className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
+                isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
+              }`}
+              title={`${event.code} - ${event.title}\nClick to edit or drag to reschedule`}
+            >
+              <div className="leading-tight">
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <span className={`font-bold text-xs sm:text-sm tracking-tight truncate ${pal.textCode}`}>
+                    {event.code}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteCourse(event.courseId);
+                    }}
+                    className="opacity-60 md:opacity-0 md:group-hover:opacity-100 hover:text-rose-600 transition p-1 rounded cursor-pointer"
+                    title="Delete class"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {event.title && (
+                  <div className={`text-[11px] font-medium truncate ${pal.textTitle}`}>
+                    {event.title}
+                  </div>
+                )}
+
+                {event.room && (
+                  <div className={`text-[10px] font-mono truncate flex items-center gap-1 mt-0.5 opacity-80 ${pal.textMeta}`}>
+                    <MapPin className="w-2.5 h-2.5 shrink-0" />
+                    <span>{event.room}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className={`text-[10px] font-mono font-semibold pt-1 truncate flex items-center gap-1 border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
+                <Clock className="w-2.5 h-2.5 shrink-0 opacity-75" />
+                <span className="truncate">{formatClassTimeRange(event.startTime, event.endTime, !isMobileSingle && totalCols > 1)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen flex bg-[#FBFBFD] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950">
+    <div className="min-h-screen flex bg-[#FBFBFD] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 overflow-x-hidden">
       
-      {/* 1. Left Micro-Sidebar (Inspired by schedulebuilder.net) */}
-      <aside className="w-16 sm:w-20 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] flex flex-col items-center justify-between py-5 select-none z-30 transition-colors">
+      {/* 1. Left Micro-Sidebar (Desktop Only: hidden on mobile) */}
+      <aside className="hidden md:flex w-16 sm:w-20 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] flex-col items-center justify-between py-5 select-none z-30 transition-colors">
         
         {/* Top: Home Link & New Class Trigger */}
         <div className="flex flex-col items-center gap-4 w-full px-2">
@@ -1099,12 +1242,23 @@ export default function AcademicStudioApp() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         {/* Top Control Bar */}
-        <header className="h-14 px-4 sm:px-6 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-[#121215]/80 backdrop-blur-md flex items-center justify-between gap-4 select-none shrink-0">
+        <header className="h-14 px-3 sm:px-6 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-[#121215]/80 backdrop-blur-md flex items-center justify-between gap-2 sm:gap-4 select-none shrink-0">
           
-          {/* Left: Title & Quick Stats */}
-          <div className="flex items-center gap-3">
+          {/* Left: Mobile Home / Brand Link & Title */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <a 
+              href="/"
+              className="md:hidden flex items-center gap-1.5 text-zinc-900 dark:text-white font-bold text-xs p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+              title="Return to Home"
+            >
+              <div className="w-7 h-7 rounded-lg bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center font-black text-xs">
+                CS
+              </div>
+            </a>
+
             <h1 className="text-sm sm:text-base font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
-              <span>{t.nav?.scheduleStudio || 'Class Schedule Studio'}</span>
+              <span className="hidden sm:inline">{t.nav?.scheduleStudio || 'Class Schedule Studio'}</span>
+              <span className="sm:hidden">{t.days.full[mobileDay] || DAY_LABELS[mobileDay].full}</span>
             </h1>
 
             <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">&bull;</span>
@@ -1137,18 +1291,19 @@ export default function AcademicStudioApp() {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             
             {/* Quick Add Button */}
             <button
-              onClick={() => handleOpenNewClassModal()}
+              onClick={() => handleOpenNewClassModal(mobileDay)}
               className="h-9 px-3 sm:px-3.5 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition active:scale-[0.98] cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>{t.actions.newClass}</span>
+              <span className="hidden xs:inline">{t.actions.newClass}</span>
+              <span className="xs:hidden">Class</span>
             </button>
 
-            {/* Print */}
+            {/* Print (Desktop only) */}
             <button
               onClick={() => window.print()}
               className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
@@ -1158,7 +1313,7 @@ export default function AcademicStudioApp() {
               <span>{t.actions.print}</span>
             </button>
 
-            {/* Export */}
+            {/* Export (Desktop only) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
               className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
@@ -1168,8 +1323,8 @@ export default function AcademicStudioApp() {
               <span>{t.actions.export}</span>
             </button>
 
-            {/* Language Selector Dropdown */}
-            <div className="relative">
+            {/* Language Selector Dropdown (Desktop Only) */}
+            <div className="relative hidden md:block">
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                 className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
@@ -1202,13 +1357,22 @@ export default function AcademicStudioApp() {
               )}
             </div>
 
-            {/* Reset */}
+            {/* Reset (Desktop Only) */}
             <button
               onClick={handleResetSchedule}
-              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hidden md:flex items-center justify-center transition cursor-pointer"
               title="Reset sample schedule"
             >
               <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Mobile Drawer Trigger (< 768px) */}
+            <button
+              onClick={() => setIsStudioMenuOpen(true)}
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 md:hidden flex items-center justify-center transition cursor-pointer"
+              aria-label="Open Studio Menu"
+            >
+              <Menu className="w-4 h-4" />
             </button>
           </div>
 
@@ -1216,7 +1380,7 @@ export default function AcademicStudioApp() {
 
         {/* Toast Alert Banner */}
         {banner && (
-          <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-semibold shadow-md animate-in fade-in duration-150">
+          <div className="mx-3 sm:mx-6 mt-3 p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-semibold shadow-md animate-in fade-in duration-150 shrink-0">
             <div className="flex items-center gap-2">
               <span>{banner}</span>
             </div>
@@ -1226,235 +1390,166 @@ export default function AcademicStudioApp() {
           </div>
         )}
 
-        {/* Mobile Day Tabs Bar (< 768px) */}
-        <div className="flex md:hidden items-center gap-1 px-4 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] overflow-x-auto">
-          {activeDaysList.map(d => (
-            <button
-              key={d}
-              onClick={() => setMobileDay(d)}
-              className={`flex-1 min-w-[50px] py-1.5 text-xs font-bold rounded-lg transition ${
-                mobileDay === d
-                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-2xs'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-              }`}
-            >
-              {t.days.short[d] || DAY_LABELS[d].short}
-            </button>
-          ))}
+        {/* Mobile Day Tabs Bar (< 768px: Segmented Control) */}
+        <div className="flex md:hidden items-center gap-1.5 px-3 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-sm select-none shrink-0 overflow-x-auto">
+          {activeDaysList.map(d => {
+            const dayEvents = placedEventsByDay[d] || [];
+            const hasClasses = dayEvents.length > 0;
+            const isSelected = mobileDay === d;
+            return (
+              <button
+                key={d}
+                onClick={() => setMobileDay(d)}
+                className={`flex-1 min-w-[48px] py-2 px-1 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center relative cursor-pointer ${
+                  isSelected
+                    ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 shadow-sm'
+                    : 'bg-zinc-100/60 dark:bg-zinc-850/60 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                }`}
+              >
+                <span>{t.days.short[d] || DAY_LABELS[d].short}</span>
+                {hasClasses && (
+                  <span className={`w-1.5 h-1.5 rounded-full mt-0.5 ${
+                    isSelected ? 'bg-white dark:bg-zinc-950' : 'bg-zinc-500 dark:bg-zinc-400'
+                  }`} />
+                )}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Main Weekly Matrix Canvas */}
-        <div className="flex-1 overflow-auto p-3 sm:p-6 timetable-print-target" ref={timetableRef}>
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs overflow-hidden">
+        {/* Desktop Weekly Matrix Canvas (hidden on mobile, multi-day grid) */}
+        <div className="hidden md:flex flex-1 overflow-auto p-4 sm:p-6 pb-6 timetable-print-target" ref={timetableRef}>
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs overflow-hidden w-full">
             
-            <div className="overflow-x-auto">
-              <div className="min-w-[700px] md:min-w-0 w-full">
-                
-                {/* Day Header Row */}
-                <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/70 dark:bg-zinc-850/80">
-                  {/* Left Time Column Gutter */}
-                  <div className="w-[64px] shrink-0 border-r border-zinc-200 dark:border-zinc-800 py-3 text-center">
-                    <span className="text-[11px] font-mono font-bold text-zinc-500 dark:text-zinc-400 uppercase">
-                      TIME
+            {/* Day Header Row */}
+            <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/70 dark:bg-zinc-850/80">
+              {/* Left Time Column Gutter */}
+              <div className="w-[64px] shrink-0 border-r border-zinc-200 dark:border-zinc-800 py-3 text-center">
+                <span className="text-[11px] font-mono font-bold text-zinc-500 dark:text-zinc-400 uppercase">
+                  TIME
+                </span>
+              </div>
+
+              {/* Day Columns Headers */}
+              <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${activeDaysList.length}, minmax(0, 1fr))` }}>
+                {activeDaysList.map(day => (
+                  <div
+                    key={day}
+                    className="py-3 text-center border-r border-zinc-200 dark:border-zinc-800 last:border-r-0"
+                  >
+                    <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
+                      {t.days.full[day] || DAY_LABELS[day].full}
                     </span>
                   </div>
+                ))}
+              </div>
+            </div>
 
-                  {/* Day Columns Headers */}
-                  <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${activeDaysList.length}, minmax(0, 1fr))` }}>
-                    {activeDaysList.map(day => (
-                      <div
-                        key={day}
-                        className="py-3 text-center border-r border-zinc-200 dark:border-zinc-800 last:border-r-0"
-                      >
-                        <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
-                          {t.days.full[day] || DAY_LABELS[day].full}
-                        </span>
-                      </div>
-                    ))}
+            {/* Calendar Body: Hours Grid & Event Overlay */}
+            <div className="relative flex" style={{ height: `${totalGridHeight}px` }}>
+              
+              {/* Left Time Column (64px width) */}
+              <div className="w-[64px] shrink-0 relative border-r border-zinc-200 dark:border-zinc-800 select-none bg-zinc-50/50 dark:bg-zinc-900/60">
+                {hoursList.slice(0, -1).map(item => (
+                  <div
+                    key={item.hour}
+                    style={{ height: `${HOUR_ROW_HEIGHT}px` }}
+                    className="border-b border-zinc-200 dark:border-zinc-800 flex items-start justify-end pr-2.5 pt-1.5 text-xs font-mono font-bold text-zinc-500 dark:text-zinc-400"
+                  >
+                    {item.label}
                   </div>
+                ))}
+              </div>
+
+              {/* Day Columns Canvas */}
+              <div className="flex-1 relative h-full">
+                
+                {/* Background Hour Lines */}
+                <div className="absolute inset-0 pointer-events-none select-none">
+                  {hoursList.slice(0, -1).map(item => (
+                    <div
+                      key={item.hour}
+                      style={{ height: `${HOUR_ROW_HEIGHT}px` }}
+                      className="border-b border-zinc-200 dark:border-zinc-800 relative"
+                    >
+                      <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-zinc-100 dark:border-zinc-800/60" />
+                    </div>
+                  ))}
                 </div>
 
-                {/* Calendar Body: Hours Grid & Event Overlay */}
-                <div className="relative flex" style={{ height: `${totalGridHeight}px` }}>
-                  
-                  {/* Left Time Column (64px width) */}
-                  <div className="w-[64px] shrink-0 relative border-r border-zinc-200 dark:border-zinc-800 select-none bg-zinc-50/50 dark:bg-zinc-900/60">
-                    {hoursList.slice(0, -1).map(item => (
-                      <div
-                        key={item.hour}
-                        style={{ height: `${HOUR_ROW_HEIGHT}px` }}
-                        className="border-b border-zinc-200 dark:border-zinc-800 flex items-start justify-end pr-2.5 pt-1.5 text-xs font-mono font-bold text-zinc-500 dark:text-zinc-400"
-                      >
-                        {item.label}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Day Columns Canvas */}
-                  <div className="flex-1 relative h-full">
-                    
-                    {/* Background Hour Lines */}
-                    <div className="absolute inset-0 pointer-events-none select-none">
-                      {hoursList.slice(0, -1).map(item => (
-                        <div
-                          key={item.hour}
-                          style={{ height: `${HOUR_ROW_HEIGHT}px` }}
-                          className="border-b border-zinc-200 dark:border-zinc-800 relative"
-                        >
-                          <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-zinc-100 dark:border-zinc-800/60" />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Columns Grid */}
-                    <div className="grid h-full relative" style={{ gridTemplateColumns: `repeat(${activeDaysList.length}, minmax(0, 1fr))` }}>
-                      {activeDaysList.map(day => {
-                        const events = placedEventsByDay[day] || [];
-                        const isDayDragTarget = dragOverDay === day;
-                        return (
-                          <div
-                            key={day}
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.dataTransfer.dropEffect = 'move';
-                              if (dragOverDay !== day) setDragOverDay(day);
-                            }}
-                            onDragLeave={(e) => {
-                              if (e.currentTarget === e.target) {
-                                setDragOverDay(null);
-                              }
-                            }}
-                            onDrop={(e) => handleDropOnDay(e, day)}
-                            onClick={(e) => {
-                              // Click empty space on column to add class
-                              if (e.target === e.currentTarget) {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                const clickY = e.clientY - rect.top;
-                                const hoursFrom8 = clickY / HOUR_ROW_HEIGHT;
-                                const totalMins = 8 * 60 + Math.floor(hoursFrom8 * 60);
-                                const roundedMins = Math.floor(totalMins / 30) * 30;
-                                const h = Math.floor(roundedMins / 60);
-                                const m = roundedMins % 60;
-                                const ampm = h >= 12 ? 'PM' : 'AM';
-                                const displayH = h % 12 === 0 ? 12 : h % 12;
-                                const displayM = m < 10 ? `0${m}` : m;
-                                handleOpenNewClassModal(day, `${displayH}:${displayM} ${ampm}`);
-                              }
-                            }}
-                            className={`relative h-full border-r border-zinc-200 dark:border-zinc-800 last:border-r-0 cursor-pointer transition-colors ${
-                              isDayDragTarget ? 'bg-zinc-200/60 dark:bg-zinc-800/60 ring-2 ring-inset ring-zinc-500' : ''
-                            }`}
-                            title={`Click on ${DAY_LABELS[day].full} to add a class or drag an existing class here`}
-                          >
-                            {events.map(event => {
-                              const pal = APPLE_TAG_PALETTES[event.colorIndex % APPLE_TAG_PALETTES.length];
-                              const isClashed = event.hasClash;
-                              const totalCols = event.totalLanes || 1;
-                              const colWidthPercent = 100 / totalCols;
-
-                              const leftPos = totalCols === 1
-                                ? '3px'
-                                : `calc(${event.lane * colWidthPercent}% + 2px)`;
-                              const blockWidth = totalCols === 1
-                                ? 'calc(100% - 6px)'
-                                : `calc(${colWidthPercent}% - 4px)`;
-
-                              return (
-                                <div
-                                  key={event.id}
-                                  draggable={true}
-                                  onDragStart={(e) => {
-                                    e.stopPropagation();
-                                    const dur = (event.endMins - event.startMins) || 60;
-                                    setDraggedEvent({
-                                      courseId: event.courseId,
-                                      sectionId: event.rawSection.id,
-                                      sourceDay: day,
-                                      durationMins: dur,
-                                      code: event.code
-                                    });
-                                    e.dataTransfer.setData('text/plain', event.courseId);
-                                    e.dataTransfer.effectAllowed = 'move';
-                                  }}
-                                  onDragEnd={() => {
-                                    setDraggedEvent(null);
-                                    setDragOverDay(null);
-                                  }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // Open Edit / Duplicate Modal
-                                    setSelectedEventForEdit({ course: event.rawCourse, section: event.rawSection });
-                                    setFormCode(event.rawCourse.code);
-                                    setFormTitle(event.rawCourse.title);
-                                    setFormCredits(event.rawCourse.credits);
-                                    setFormDays(event.rawSection.days);
-                                    setFormStartTime(event.rawSection.startTime);
-                                    setFormEndTime(event.rawSection.endTime);
-                                    setFormRoom(event.rawSection.room || '');
-                                    setFormColorIndex(event.rawCourse.colorIndex);
-                                    setFormError(null);
-                                    setIsClassModalOpen(true);
-                                  }}
-                                  style={{
-                                    top: `${event.topPx}px`,
-                                    height: `${event.heightPx}px`,
-                                    left: leftPos,
-                                    width: blockWidth
-                                  }}
-                                  className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
-                                    isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
-                                  }`}
-                                  title={`${event.code} - ${event.title}\nDrag to reschedule or click to edit`}
-                                >
-                                  <div className="leading-tight">
-                                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                                      <span className={`font-bold text-xs sm:text-sm tracking-tight truncate ${pal.textCode}`}>
-                                        {event.code}
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteCourse(event.courseId);
-                                        }}
-                                        className="opacity-0 group-hover:opacity-100 hover:text-rose-600 transition p-0.5 rounded cursor-pointer"
-                                        title="Delete class"
-                                      >
-                                        <X className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-
-                                    {event.title && (
-                                      <div className={`text-[11px] font-medium truncate ${pal.textTitle}`}>
-                                        {event.title}
-                                      </div>
-                                    )}
-
-                                    {event.room && (
-                                      <div className={`text-[10px] font-mono truncate flex items-center gap-1 mt-0.5 opacity-80 ${pal.textMeta}`}>
-                                        <MapPin className="w-2.5 h-2.5 shrink-0" />
-                                        <span>{event.room}</span>
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  <div className={`text-[10px] font-mono font-semibold pt-1 truncate flex items-center gap-1 border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
-                                    <Clock className="w-2.5 h-2.5 shrink-0 opacity-75" />
-                                    <span className="truncate">{formatClassTimeRange(event.startTime, event.endTime, totalCols > 1)}</span>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                  </div>
-
+                {/* Columns Grid */}
+                <div className="grid h-full relative" style={{ gridTemplateColumns: `repeat(${activeDaysList.length}, minmax(0, 1fr))` }}>
+                  {activeDaysList.map(day => renderDayColumn(day, false))}
                 </div>
 
               </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* Mobile Single-Day Canvas (< 768px: Zero Horizontal Scroll, 100% Column Width) */}
+        <div className="flex md:hidden flex-1 flex-col overflow-y-auto px-3 py-2 pb-24 timetable-print-target">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs overflow-hidden w-full flex flex-col">
+            
+            {/* Header: Day Name & Quick Event Count */}
+            <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/80">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                  {t.days.full[mobileDay] || DAY_LABELS[mobileDay].full}
+                </span>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-zinc-200/70 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                  {(placedEventsByDay[mobileDay] || []).length} {t.metrics.enrolledClasses || 'Classes'}
+                </span>
+              </div>
+              <button
+                onClick={() => handleOpenNewClassModal(mobileDay)}
+                className="text-xs font-bold text-zinc-900 dark:text-white flex items-center gap-1 hover:underline cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{t.actions.newClass}</span>
+              </button>
+            </div>
+
+            {/* Mobile Calendar Body */}
+            <div className="relative flex w-full" style={{ height: `${totalGridHeight}px` }}>
+              
+              {/* Minimal Left Time Axis (44px) */}
+              <div className="w-[44px] shrink-0 relative border-r border-zinc-200 dark:border-zinc-800 select-none bg-zinc-50/50 dark:bg-zinc-900/60">
+                {hoursList.slice(0, -1).map(item => (
+                  <div
+                    key={item.hour}
+                    style={{ height: `${HOUR_ROW_HEIGHT}px` }}
+                    className="border-b border-zinc-200 dark:border-zinc-800 flex items-start justify-center pt-1.5 text-[10px] font-mono font-bold text-zinc-400 dark:text-zinc-500"
+                  >
+                    {item.hour % 12 === 0 ? 12 : item.hour % 12}
+                    <span className="text-[8px] font-sans ml-0.5">{item.hour >= 12 ? 'P' : 'A'}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Single Day Canvas occupying 100% of remaining width */}
+              <div className="flex-1 relative h-full">
+                
+                {/* Background Hour Lines */}
+                <div className="absolute inset-0 pointer-events-none select-none">
+                  {hoursList.slice(0, -1).map(item => (
+                    <div
+                      key={item.hour}
+                      style={{ height: `${HOUR_ROW_HEIGHT}px` }}
+                      className="border-b border-zinc-200 dark:border-zinc-800 relative"
+                    >
+                      <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-zinc-100 dark:border-zinc-800/60" />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Render ONLY the active mobileDay */}
+                {renderDayColumn(mobileDay, true)}
+
+              </div>
+
             </div>
 
           </div>
@@ -1462,10 +1557,254 @@ export default function AcademicStudioApp() {
 
       </div>
 
-      {/* 2. Clean Event Creation / Edit Modal (Google Forms / ERP Style) */}
+      {/* Mobile Bottom Navigation Bar (iOS / Android Style: Fixed at Bottom) */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 h-16 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 z-40 px-3 flex items-center justify-around select-none">
+        
+        {/* 1. Day / Today Indicator */}
+        <button
+          onClick={() => {
+            const today = new Date().getDay();
+            const dayMap: DayOfWeek[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const todayCode = dayMap[today];
+            if (activeDaysList.includes(todayCode)) {
+              setMobileDay(todayCode);
+            } else {
+              setMobileDay('Mon');
+            }
+          }}
+          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12"
+        >
+          <Calendar className="w-4 h-4" />
+          <span className="text-[10px] font-bold">{mobileDay}</span>
+        </button>
+
+        {/* 2. Tasks / Checklist */}
+        <button
+          onClick={() => setIsTaskModalOpen(true)}
+          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12 relative"
+        >
+          <div className="relative">
+            <CheckSquare className="w-4 h-4" />
+            {tasks.filter(t => !t.completed).length > 0 && (
+              <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-[9px] font-bold rounded-full flex items-center justify-center">
+                {tasks.filter(t => !t.completed).length}
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] font-medium">{t.tasks.title}</span>
+        </button>
+
+        {/* 3. Center Elevated Add Class Button */}
+        <button
+          onClick={() => handleOpenNewClassModal(mobileDay)}
+          className="w-12 h-12 rounded-full bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center shadow-lg -mt-4 active:scale-95 transition cursor-pointer"
+          title={t.actions.newClass}
+        >
+          <Plus className="w-6 h-6 stroke-[2.5]" />
+        </button>
+
+        {/* 4. Optimizer */}
+        <button
+          onClick={handleOptimizeGaps}
+          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12"
+          title={t.actions.autoOptimize}
+        >
+          <Sliders className="w-4 h-4" />
+          <span className="text-[10px] font-medium">Optimize</span>
+        </button>
+
+        {/* 5. Export */}
+        <button
+          onClick={() => setIsExportModalOpen(true)}
+          className="flex flex-col items-center justify-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer min-w-[52px] h-12"
+        >
+          <Download className="w-4 h-4" />
+          <span className="text-[10px] font-medium">{t.actions.export}</span>
+        </button>
+
+      </nav>
+
+      {/* Studio Mobile Menu Drawer (< 768px: Slide-Over) */}
+      {isStudioMenuOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 md:hidden">
+          <div className="w-4/5 max-w-sm h-full bg-white dark:bg-[#121215] border-l border-zinc-200 dark:border-zinc-800 p-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-200 overflow-y-auto">
+            
+            <div className="space-y-6">
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center font-bold text-xs">
+                    CS
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-zinc-950 dark:text-white">Studio Settings</h2>
+                    <p className="text-[11px] text-zinc-500">Preferences & Academic Tools</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsStudioMenuOpen(false)}
+                  className="w-8 h-8 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Metrics Summary Card */}
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block">Timetable Stats</span>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="p-2 rounded-xl bg-white dark:bg-zinc-850 border border-zinc-200/60 dark:border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 block">{t.metrics.credits}</span>
+                    <span className="text-sm font-bold text-zinc-900 dark:text-white">{metrics.totalCredits}</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white dark:bg-zinc-850 border border-zinc-200/60 dark:border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 block">Idle Gaps</span>
+                    <span className="text-sm font-bold text-zinc-900 dark:text-white">{metrics.gapHours}h</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white dark:bg-zinc-850 border border-zinc-200/60 dark:border-zinc-800">
+                    <span className="text-[10px] text-zinc-500 block">Conflicts</span>
+                    <span className={`text-sm font-bold ${metrics.conflicts > 0 ? 'text-rose-600' : 'text-zinc-900 dark:text-white'}`}>
+                      {metrics.conflicts}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Day Range Toggle: 5 Days vs 7 Days */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-2">
+                  Calendar Span
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setShowWeekends(false)}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                      !showWeekends
+                        ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 border-zinc-950 dark:border-white shadow-2xs'
+                        : 'bg-zinc-50 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800'
+                    }`}
+                  >
+                    5 Days (Mon-Fri)
+                  </button>
+                  <button
+                    onClick={() => setShowWeekends(true)}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                      showWeekends
+                        ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 border-zinc-950 dark:border-white shadow-2xs'
+                        : 'bg-zinc-50 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800'
+                    }`}
+                  >
+                    7 Days (Full Week)
+                  </button>
+                </div>
+              </div>
+
+              {/* Theme Selector */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-2">
+                  Visual Appearance
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => { if (isDarkTheme) toggleTheme(); }}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition ${
+                      !isDarkTheme
+                        ? 'bg-zinc-950 text-white border-zinc-950 shadow-2xs'
+                        : 'bg-zinc-50 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800'
+                    }`}
+                  >
+                    <Sun className="w-3.5 h-3.5" />
+                    <span>Light Mode</span>
+                  </button>
+                  <button
+                    onClick={() => { if (!isDarkTheme) toggleTheme(); }}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition ${
+                      isDarkTheme
+                        ? 'bg-white text-zinc-950 border-white shadow-2xs'
+                        : 'bg-zinc-50 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800'
+                    }`}
+                  >
+                    <Moon className="w-3.5 h-3.5" />
+                    <span>Dark Mode</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Language Selector */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Language / Idioma</span>
+                </label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {Object.values(LOCALES).map(loc => (
+                    <button
+                      key={loc.code}
+                      onClick={() => {
+                        changeLocale(loc.code);
+                        setIsStudioMenuOpen(false);
+                      }}
+                      className={`p-2 rounded-xl text-xs font-medium border flex items-center gap-2 transition text-left ${
+                        locale === loc.code
+                          ? 'bg-zinc-950 text-white border-zinc-950 dark:bg-white dark:text-zinc-950 dark:border-white font-bold'
+                          : 'bg-zinc-50 dark:bg-zinc-850 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-400'
+                      }`}
+                    >
+                      <span>{loc.flag}</span>
+                      <span className="truncate">{loc.nativeName}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Actions List */}
+              <div className="space-y-1.5 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                <button
+                  onClick={() => {
+                    setIsStudioMenuOpen(false);
+                    setIsFeedbackModalOpen(true);
+                  }}
+                  className="w-full p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-xs font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-2.5 transition"
+                >
+                  <MessageSquare className="w-4 h-4 text-zinc-400" />
+                  <span>{t.feedback.title}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsStudioMenuOpen(false);
+                    handleResetSchedule();
+                  }}
+                  className="w-full p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-xs font-semibold text-zinc-600 dark:text-zinc-400 flex items-center gap-2.5 transition"
+                >
+                  <RotateCcw className="w-4 h-4 text-zinc-400" />
+                  <span>Reset Sample Schedule</span>
+                </button>
+              </div>
+
+            </div>
+
+            {/* Drawer Footer Link to Home */}
+            <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <a
+                href="/"
+                className="w-full py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white text-xs font-bold flex items-center justify-center gap-1.5 transition"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Return to Landing Page</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 2. Clean Event Creation / Edit Modal (Mobile Bottom-Sheet / Desktop Centered) */}
       {isClassModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-lg p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg max-h-[92vh] sm:max-h-[85vh] overflow-y-auto p-5 sm:p-7 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            {/* Mobile Sheet Drag Handle */}
+            <div className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 mx-auto -mt-1 mb-2 sm:hidden shrink-0" />
             
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
@@ -1691,10 +2030,12 @@ export default function AcademicStudioApp() {
         </div>
       )}
 
-      {/* 3. Tasks & Todo Modal */}
+      {/* 3. Tasks & Todo Modal (Mobile Bottom-Sheet / Desktop Centered) */}
       {isTaskModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            {/* Mobile Sheet Drag Handle */}
+            <div className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 mx-auto -mt-1 mb-2 sm:hidden shrink-0" />
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
                 <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
@@ -1752,10 +2093,12 @@ export default function AcademicStudioApp() {
         </div>
       )}
 
-      {/* 4. Export Hub Modal (PNG / PDF / .ICS) */}
+      {/* 4. Export Hub Modal (PNG / PDF / .ICS - Mobile Bottom-Sheet / Desktop Centered) */}
       {isExportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            {/* Mobile Sheet Drag Handle */}
+            <div className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 mx-auto -mt-1 mb-2 sm:hidden shrink-0" />
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
                 <h3 className="text-base font-bold text-zinc-950 dark:text-white">{t.actions.export}</h3>
@@ -1823,10 +2166,12 @@ export default function AcademicStudioApp() {
         </div>
       )}
 
-      {/* 5. Interactive Student Feedback & Rating System Modal */}
+      {/* 5. Interactive Student Feedback & Rating System Modal (Mobile Bottom-Sheet / Desktop Centered) */}
       {isFeedbackModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-7 space-y-5 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            {/* Mobile Sheet Drag Handle */}
+            <div className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 mx-auto -mt-1 mb-2 sm:hidden shrink-0" />
             
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>

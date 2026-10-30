@@ -156,36 +156,36 @@ const structuredSchema = {
   schemaJson={structuredSchema}
 >
   <!-- Minimalist Hero Section -->
-  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 text-center space-y-6">
+  <section class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 pt-12 sm:pt-20 md:pt-24 pb-10 sm:pb-12 text-center space-y-5 sm:space-y-6">
     
     <!-- Micro Trust Badge -->
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
-      <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white"></span>
-      <span>Free for students &bull; No account needed &bull; 100% Client-Side Private</span>
+    <div class="inline-flex max-w-full items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-[11px] sm:text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs text-center">
+      <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white shrink-0"></span>
+      <span class="truncate">Free for students &bull; No account needed &bull; 100% Client-Side Private</span>
     </div>
 
-    <!-- Humanized World-Class H1 Headline -->
-    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.08]">
+    <!-- Humanized World-Class H1 Headline (Responsive font with no collision) -->
+    <h1 class="text-2xl sm:text-4xl md:text-6xl font-bold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-tight sm:leading-[1.1]">
       Build Your Ideal Semester Schedule.
     </h1>
 
     <!-- Clean, High-Converting Subheadline -->
-    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto font-normal leading-relaxed">
+    <p class="text-sm sm:text-base md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl sm:max-w-3xl mx-auto font-normal mt-3 leading-relaxed">
       Effortlessly map your weekly classes, eliminate wasted campus gaps, and export directly to your calendar.
     </p>
 
-    <!-- Central Call To Action Button -->
-    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+    <!-- Central Call To Action Button (Full-width stacked on mobile) -->
+    <div class="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full sm:w-auto max-w-md sm:max-w-none mx-auto">
       <a
         href="/editor"
-        class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98]"
+        class="w-full sm:w-auto h-12 px-6 sm:px-8 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2"
       >
         <span>Launch Schedule Studio</span>
         <ArrowRight class="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
       </a>
       <a
         href="#templates-hub"
-        class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-800 dark:text-zinc-200 text-sm font-semibold transition"
+        class="w-full sm:w-auto h-12 px-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-800 dark:text-zinc-200 text-sm font-semibold transition inline-flex items-center justify-center gap-2"
       >
         <FileText class="w-4 h-4" />
         <span>View Free Schedule Templates</span>
@@ -193,8 +193,8 @@ const structuredSchema = {
     </div>
 
     <!-- Interactive Live Studio Teaser Card -->
-    <div class="pt-8 max-w-3xl mx-auto">
-      <div class="p-4 sm:p-6 rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-sm space-y-4 text-left">
+    <div class="pt-6 sm:pt-8 w-full max-w-3xl mx-auto">
+      <div class="p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-sm space-y-4 text-left">
         <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
@@ -202,37 +202,41 @@ const structuredSchema = {
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
             <span class="text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400 ml-2">ACADEMIC STUDIO &bull; 08:00 AM – 08:00 PM</span>
           </div>
-          <span class="text-xs font-mono text-zinc-600 dark:text-zinc-400 font-semibold">5-Day / 7-Day Grid Active</span>
+          <span class="hidden sm:inline text-xs font-mono text-zinc-600 dark:text-zinc-400 font-semibold">5-Day / 7-Day Grid Active</span>
         </div>
 
-        <div class="grid grid-cols-5 gap-2 text-center text-xs font-bold py-1 text-zinc-500">
-          <div>Mon</div>
-          <div>Tue</div>
-          <div>Wed</div>
-          <div>Thu</div>
-          <div>Fri</div>
-        </div>
+        <div class="overflow-x-auto w-full pb-1">
+          <div class="min-w-[460px] md:min-w-0">
+            <div class="grid grid-cols-5 gap-2 text-center text-xs font-bold py-1 text-zinc-500">
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+            </div>
 
-        <div class="grid grid-cols-5 gap-2 h-24">
-          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
-            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
-          </div>
-          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
-            <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
-          </div>
-          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
-            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
-          </div>
-          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
-            <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
-          </div>
-          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
-            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+            <div class="grid grid-cols-5 gap-2 h-24">
+              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
+                <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+              </div>
+              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
+                <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
+              </div>
+              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
+                <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+              </div>
+              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
+                <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
+              </div>
+              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
+                <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -245,7 +249,7 @@ const structuredSchema = {
     
     <!-- Bento Card 1: What is Class Schedule Maker? -->
     <section id="about-tool" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             OVERVIEW &bull; FREE CLASS SCHEDULE MAKER ONLINE
@@ -308,7 +312,7 @@ const structuredSchema = {
 
     <!-- Bento Card 2: The Science of Gap Minimization in College Class Schedules -->
     <section id="dead-time" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             ACADEMIC PRODUCTIVITY &bull; TIME BLOCKING SCIENCE
@@ -357,7 +361,7 @@ const structuredSchema = {
 
     <!-- Bento Card 3: University Schedule Guides: PCC & UF Class Schedule Planning -->
     <section id="university-guides" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             CAMPUS REGISTRATION &bull; PCC & UF SPECIALIZED GUIDES
@@ -426,7 +430,7 @@ const structuredSchema = {
 
     <!-- Bento Card 4: Step-by-Step Tutorial on Building Your Schedule -->
     <section id="step-by-step" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             TUTORIAL &bull; FAST 3-MINUTE SETUP
@@ -479,7 +483,7 @@ const structuredSchema = {
 
     <!-- Bento Card 5: Class Schedule Maker Template Hub: PDF, Excel, and Wallpapers -->
     <section id="templates-hub" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             DOWNLOADABLE TEMPLATES &bull; FREE FORMATS
@@ -560,7 +564,7 @@ const structuredSchema = {
 
     <!-- Bento Card 6: Tool Comparison Matrix Table -->
     <section id="comparison-table" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             FEATURE COMPARISON &bull; CLASS SCHEDULE MAKER ONLINE
@@ -573,8 +577,8 @@ const structuredSchema = {
           </p>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+        <div class="w-full overflow-x-auto pb-2">
+          <table class="w-full min-w-[620px] text-left text-xs sm:text-sm border-collapse">
             <thead>
               <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 font-mono text-[11px] uppercase">
                 <th class="py-3 px-4 font-bold">Key Capability</th>
@@ -635,7 +639,7 @@ const structuredSchema = {
 
     <!-- FAQ Accordions with JSON-LD Schema -->
     <section id="faq" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             QUESTIONS & ANSWERS &bull; ON-PAGE SEO FAQ
@@ -670,7 +674,7 @@ const structuredSchema = {
 
   <!-- Bottom Conversion Call To Action -->
   <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pb-20">
-    <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-xl">
+    <div class="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-xl">
       <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
         Build Your Weekly Class Schedule in Seconds
       </h3>
