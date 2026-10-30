@@ -11,29 +11,20 @@ import {
   RotateCcw, 
   Check, 
   MapPin, 
-  AlertCircle,
   CalendarDays,
-  ListPlus,
-  GraduationCap
+  X
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
 
 export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
 
-export interface TimeSlot {
-  day: DayOfWeek;
-  startTime: string; // e.g. "10:00 AM"
-  endTime: string;   // e.g. "11:15 AM"
-  room: string;
-}
-
 export interface Section {
   id: string;
   name: string;
-  days: DayOfWeek[]; // Multi-day support e.g. ['Mon', 'Wed', 'Fri']
-  startTime: string;
-  endTime: string;
+  days: DayOfWeek[];
+  startTime: string; // e.g. "10:00 AM"
+  endTime: string;   // e.g. "11:15 AM"
   room: string;
 }
 
@@ -47,48 +38,122 @@ export interface Course {
   selectedSectionId: string;
 }
 
-// Enterprise Muted Slate / Navy / Charcoal Palettes
-export const PALETTES = [
+// Apple / Google Calendar Refined Pastel Color Palettes
+export const COLOR_PALETTES = [
   {
-    name: 'Muted Navy',
-    card: 'bg-slate-100 text-slate-900 border-l-[#1e293b] border border-slate-200/90 dark:bg-[#1e293b]/50 dark:text-slate-100 dark:border-l-sky-400 dark:border-slate-800',
-    bar: 'bg-[#1e293b] dark:bg-sky-400',
-    badge: 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200'
+    id: 'blue',
+    name: 'Apple Sky',
+    dot: 'bg-sky-500',
+    cardBg: 'bg-sky-50/90 dark:bg-sky-950/60',
+    cardBorder: 'border-sky-300/80 dark:border-sky-700/80',
+    accentBar: 'bg-sky-500',
+    textCode: 'text-sky-950 dark:text-sky-100',
+    textTitle: 'text-sky-900/90 dark:text-sky-200',
+    textMeta: 'text-sky-700 dark:text-sky-300',
+    tagBg: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-200'
   },
   {
-    name: 'Slate Zinc',
-    card: 'bg-zinc-100 text-zinc-900 border-l-zinc-700 border border-zinc-200 dark:bg-zinc-800/80 dark:text-zinc-100 dark:border-l-zinc-300 dark:border-zinc-700',
-    bar: 'bg-zinc-700 dark:bg-zinc-300',
-    badge: 'bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200'
+    id: 'emerald',
+    name: 'Emerald Green',
+    dot: 'bg-emerald-500',
+    cardBg: 'bg-emerald-50/90 dark:bg-emerald-950/60',
+    cardBorder: 'border-emerald-300/80 dark:border-emerald-700/80',
+    accentBar: 'bg-emerald-500',
+    textCode: 'text-emerald-950 dark:text-emerald-100',
+    textTitle: 'text-emerald-900/90 dark:text-emerald-200',
+    textMeta: 'text-emerald-700 dark:text-emerald-300',
+    tagBg: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200'
   },
   {
-    name: 'Deep Charcoal',
-    card: 'bg-neutral-100 text-neutral-900 border-l-neutral-800 border border-neutral-200 dark:bg-neutral-900/90 dark:text-neutral-100 dark:border-l-neutral-400 dark:border-neutral-800',
-    bar: 'bg-neutral-800 dark:bg-neutral-400',
-    badge: 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
+    id: 'purple',
+    name: 'Lavender Purple',
+    dot: 'bg-purple-500',
+    cardBg: 'bg-purple-50/90 dark:bg-purple-950/60',
+    cardBorder: 'border-purple-300/80 dark:border-purple-700/80',
+    accentBar: 'bg-purple-500',
+    textCode: 'text-purple-950 dark:text-purple-100',
+    textTitle: 'text-purple-900/90 dark:text-purple-200',
+    textMeta: 'text-purple-700 dark:text-purple-300',
+    tagBg: 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200'
   },
   {
-    name: 'Muted Indigo',
-    card: 'bg-indigo-50/70 text-indigo-950 border-l-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/40 dark:text-indigo-100 dark:border-l-indigo-400 dark:border-indigo-900',
-    bar: 'bg-indigo-700 dark:bg-indigo-400',
-    badge: 'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200'
+    id: 'amber',
+    name: 'Sunset Amber',
+    dot: 'bg-amber-500',
+    cardBg: 'bg-amber-50/90 dark:bg-amber-950/60',
+    cardBorder: 'border-amber-300/80 dark:border-amber-700/80',
+    accentBar: 'bg-amber-500',
+    textCode: 'text-amber-950 dark:text-amber-100',
+    textTitle: 'text-amber-900/90 dark:text-amber-200',
+    textMeta: 'text-amber-700 dark:text-amber-300',
+    tagBg: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200'
+  },
+  {
+    id: 'rose',
+    name: 'Coral Rose',
+    dot: 'bg-rose-500',
+    cardBg: 'bg-rose-50/90 dark:bg-rose-950/60',
+    cardBorder: 'border-rose-300/80 dark:border-rose-700/80',
+    accentBar: 'bg-rose-500',
+    textCode: 'text-rose-950 dark:text-rose-100',
+    textTitle: 'text-rose-900/90 dark:text-rose-200',
+    textMeta: 'text-rose-700 dark:text-rose-300',
+    tagBg: 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200'
+  },
+  {
+    id: 'indigo',
+    name: 'Royal Indigo',
+    dot: 'bg-indigo-500',
+    cardBg: 'bg-indigo-50/90 dark:bg-indigo-950/60',
+    cardBorder: 'border-indigo-300/80 dark:border-indigo-700/80',
+    accentBar: 'bg-indigo-500',
+    textCode: 'text-indigo-950 dark:text-indigo-100',
+    textTitle: 'text-indigo-900/90 dark:text-indigo-200',
+    textMeta: 'text-indigo-700 dark:text-indigo-300',
+    tagBg: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200'
+  },
+  {
+    id: 'teal',
+    name: 'Sea Teal',
+    dot: 'bg-teal-500',
+    cardBg: 'bg-teal-50/90 dark:bg-teal-950/60',
+    cardBorder: 'border-teal-300/80 dark:border-teal-700/80',
+    accentBar: 'bg-teal-500',
+    textCode: 'text-teal-950 dark:text-teal-100',
+    textTitle: 'text-teal-900/90 dark:text-teal-200',
+    textMeta: 'text-teal-700 dark:text-teal-300',
+    tagBg: 'bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-200'
   }
 ];
 
 const DAYS: DayOfWeek[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const DAY_LABELS: Record<DayOfWeek, { short: string; pill: string; full: string }> = {
-  Mon: { short: 'Mon', pill: 'M', full: 'Monday' },
-  Tue: { short: 'Tue', pill: 'T', full: 'Tuesday' },
-  Wed: { short: 'Wed', pill: 'W', full: 'Wednesday' },
-  Thu: { short: 'Thu', pill: 'Th', full: 'Thursday' },
-  Fri: { short: 'Fri', pill: 'F', full: 'Friday' }
+const DAY_LABELS: Record<DayOfWeek, { short: string; full: string; pill: string }> = {
+  Mon: { short: 'Mon', full: 'Monday', pill: 'M' },
+  Tue: { short: 'Tue', full: 'Tuesday', pill: 'T' },
+  Wed: { short: 'Wed', full: 'Wednesday', pill: 'W' },
+  Thu: { short: 'Thu', full: 'Thursday', pill: 'Th' },
+  Fri: { short: 'Fri', full: 'Friday', pill: 'F' }
 };
 
-const START_HOUR = 8;  // 08:00 AM
-const END_HOUR = 20;   // 08:00 PM (12 Hours)
-const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60; // 720 mins
+const COMMON_START_TIMES = [
+  '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', 
+  '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', 
+  '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', 
+  '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM'
+];
 
-// Flexible Time Parser
+const COMMON_END_TIMES = [
+  '08:50 AM', '09:15 AM', '09:30 AM', '10:15 AM', '10:30 AM', 
+  '11:15 AM', '11:30 AM', '12:15 PM', '12:30 PM', '01:15 PM', 
+  '01:45 PM', '02:00 PM', '02:15 PM', '02:45 PM', '03:15 PM', 
+  '03:30 PM', '04:15 PM', '04:45 PM', '05:15 PM', '06:00 PM', '07:00 PM'
+];
+
+const CALENDAR_START_HOUR = 8;  // 8:00 AM
+const CALENDAR_END_HOUR = 20;   // 8:00 PM (12 hours)
+const HOUR_ROW_HEIGHT = 64;     // 64px per hour -> very comfortable readability
+
+// Parse time string e.g. "9:30 AM" or "09:30" or "9" or "2pm"
 export function parseFlexibleTime(input: string): number {
   if (!input) return 0;
   const clean = input.trim().toLowerCase();
@@ -119,7 +184,7 @@ export function parseFlexibleTime(input: string): number {
   return hours * 60 + minutes;
 }
 
-// 12-Hour display formatter
+// Format minutes into clean "10:00 AM"
 export function formatTime12(timeStr: string): string {
   if (!timeStr) return '';
   const totalMins = parseFlexibleTime(timeStr);
@@ -131,53 +196,53 @@ export function formatTime12(timeStr: string): string {
   return `${displayH}:${displayM} ${ampm}`;
 }
 
-// Default Demonstration Courses (MWF and TTh Multi-Day)
-const DEMO_COURSES: Course[] = [
+// Clean Default Courses for Demo
+const INITIAL_DEMO_COURSES: Course[] = [
   {
-    id: 'course-cs101',
+    id: 'demo-cs101',
     code: 'CS 101',
     title: 'Intro to Computer Science',
-    credits: 4,
+    credits: 3,
     colorIndex: 0,
-    selectedSectionId: 'sec-cs101-a',
+    selectedSectionId: 'sec-cs101-1',
     sections: [
       {
-        id: 'sec-cs101-a',
-        name: 'Section 01 (MWF Morning)',
+        id: 'sec-cs101-1',
+        name: 'Sec 01 (MWF)',
         days: ['Mon', 'Wed', 'Fri'],
         startTime: '10:00 AM',
         endTime: '11:15 AM',
-        room: 'Turing Hall 102'
+        room: 'Turing Hall 101'
       },
       {
-        id: 'sec-cs101-b',
-        name: 'Section 02 (TTh Afternoon)',
+        id: 'sec-cs101-2',
+        name: 'Sec 02 (TTh)',
         days: ['Tue', 'Thu'],
-        startTime: '01:30 PM',
-        endTime: '03:00 PM',
+        startTime: '01:00 PM',
+        endTime: '02:30 PM',
         room: 'Gates Hall 204'
       }
     ]
   },
   {
-    id: 'course-math21',
+    id: 'demo-math21',
     code: 'MATH 21',
-    title: 'Calculus & Geometry',
+    title: 'Calculus & Analytic Geometry',
     credits: 4,
     colorIndex: 1,
-    selectedSectionId: 'sec-math21-a',
+    selectedSectionId: 'sec-math21-1',
     sections: [
       {
-        id: 'sec-math21-a',
-        name: 'Section 01 (MWF Midday)',
+        id: 'sec-math21-1',
+        name: 'Sec 01 (MWF)',
         days: ['Mon', 'Wed', 'Fri'],
         startTime: '11:30 AM',
         endTime: '12:45 PM',
         room: 'Science Quad 304'
       },
       {
-        id: 'sec-math21-b',
-        name: 'Section 02 (TTh Morning)',
+        id: 'sec-math21-2',
+        name: 'Sec 02 (TTh)',
         days: ['Tue', 'Thu'],
         startTime: '09:00 AM',
         endTime: '10:30 AM',
@@ -186,20 +251,20 @@ const DEMO_COURSES: Course[] = [
     ]
   },
   {
-    id: 'course-phys41',
-    code: 'PHYS 41',
-    title: 'Mechanics & Kinetics',
-    credits: 4,
+    id: 'demo-eng102',
+    code: 'ENG 102',
+    title: 'Academic Writing & Research',
+    credits: 3,
     colorIndex: 2,
-    selectedSectionId: 'sec-phys41-a',
+    selectedSectionId: 'sec-eng102-1',
     sections: [
       {
-        id: 'sec-phys41-a',
-        name: 'Section 01 (TTh Midday)',
+        id: 'sec-eng102-1',
+        name: 'Sec 01 (TTh)',
         days: ['Tue', 'Thu'],
         startTime: '11:00 AM',
         endTime: '12:15 PM',
-        room: 'Physics Rm 201'
+        room: 'Humanities 202'
       }
     ]
   }
@@ -209,25 +274,27 @@ export default function SchedulerEngine() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [banner, setBanner] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [selectedDayFilter, setSelectedDayFilter] = useState<'ALL' | DayOfWeek>('ALL');
 
-  // Mobile Views: 'calendar' or 'courses'
-  const [mobileView, setMobileView] = useState<'calendar' | 'courses'>('calendar');
+  // Mobile Tab: 'calendar' or 'form'
+  const [mobileTab, setMobileTab] = useState<'calendar' | 'form'>('calendar');
 
-  // New Course Registration Form State with Multi-Day Pills
-  const [newCode, setNewCode] = useState('');
-  const [newTitle, setNewTitle] = useState('');
-  const [newCredits, setNewCredits] = useState(3);
+  // Course Form Inputs
+  const [code, setCode] = useState('');
+  const [title, setTitle] = useState('');
+  const [credits, setCredits] = useState(3);
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(['Mon', 'Wed', 'Fri']);
-  const [newStartTime, setNewStartTime] = useState('09:00 AM');
-  const [newEndTime, setNewEndTime] = useState('10:15 AM');
-  const [newRoom, setNewRoom] = useState('Lab 2');
+  const [startTime, setStartTime] = useState('09:00 AM');
+  const [endTime, setEndTime] = useState('10:15 AM');
+  const [room, setRoom] = useState('Room 101');
+  const [colorIndex, setColorIndex] = useState(0);
 
   const timetableRef = useRef<HTMLDivElement>(null);
 
-  // Initialize from LocalStorage or Load Demo Courses
+  // Initialize from LocalStorage or Demo Data
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('class_schedule_coursicle_v1');
+      const saved = localStorage.getItem('class_schedule_v2');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -236,20 +303,101 @@ export default function SchedulerEngine() {
         }
       }
     } catch (e) {}
-    setCourses(DEMO_COURSES);
+    setCourses(INITIAL_DEMO_COURSES);
   }, []);
 
-  // Sync to LocalStorage
+  // Save changes to LocalStorage
   useEffect(() => {
     if (courses.length > 0) {
       try {
-        localStorage.setItem('class_schedule_coursicle_v1', JSON.stringify(courses));
+        localStorage.setItem('class_schedule_v2', JSON.stringify(courses));
       } catch (e) {}
     }
   }, [courses]);
 
-  // Compute Placed Events with Coursicle-style Side-by-Side Clash Offsets
-  interface PlacedEvent {
+  // Toggle Day Pill
+  const toggleDay = (d: DayOfWeek) => {
+    if (selectedDays.includes(d)) {
+      if (selectedDays.length > 1) {
+        setSelectedDays(prev => prev.filter(day => day !== d));
+      }
+    } else {
+      setSelectedDays(prev => [...prev, d]);
+    }
+  };
+
+  // Preset Day Combos (MWF, TTh, Daily)
+  const setPresetDays = (type: 'MWF' | 'TTH' | 'ALL') => {
+    if (type === 'MWF') setSelectedDays(['Mon', 'Wed', 'Fri']);
+    if (type === 'TTH') setSelectedDays(['Tue', 'Thu']);
+    if (type === 'ALL') setSelectedDays(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+  };
+
+  // Add / Enroll Course
+  const handleAddCourse = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+
+    const courseId = `c_${Date.now()}`;
+    const secId = `sec_${Date.now()}`;
+
+    const newCourse: Course = {
+      id: courseId,
+      code: code.trim().toUpperCase(),
+      title: title.trim() || 'Class Lecture',
+      credits: Number(credits) || 3,
+      colorIndex: colorIndex,
+      selectedSectionId: secId,
+      sections: [
+        {
+          id: secId,
+          name: `Section 01`,
+          days: [...selectedDays],
+          startTime: startTime.trim(),
+          endTime: endTime.trim(),
+          room: room.trim() || 'Campus'
+        }
+      ]
+    };
+
+    setCourses(prev => [...prev, newCourse]);
+    setCode('');
+    setTitle('');
+    setColorIndex((colorIndex + 1) % COLOR_PALETTES.length);
+    setBanner(`✓ ${newCourse.code} added to your timetable.`);
+    setTimeout(() => setBanner(null), 3000);
+
+    // Switch to calendar on mobile after adding
+    if (window.innerWidth < 1024) {
+      setMobileTab('calendar');
+    }
+  };
+
+  // Delete Course
+  const handleDeleteCourse = (id: string) => {
+    setCourses(prev => prev.filter(c => c.id !== id));
+  };
+
+  // Reset to Demo
+  const handleReset = () => {
+    if (confirm('Reset timetable to default demo classes?')) {
+      setCourses(INITIAL_DEMO_COURSES);
+      localStorage.removeItem('class_schedule_v2');
+      setBanner('Timetable reset to sample classes.');
+      setTimeout(() => setBanner(null), 3000);
+    }
+  };
+
+  // Clear All
+  const handleClearAll = () => {
+    if (confirm('Clear all enrolled classes from your timetable?')) {
+      setCourses([]);
+      localStorage.removeItem('class_schedule_v2');
+    }
+  };
+
+  // Calculate Events for Calendar Grid
+  interface GridEvent {
     id: string;
     courseId: string;
     code: string;
@@ -262,15 +410,15 @@ export default function SchedulerEngine() {
     endTime: string;
     startMins: number;
     endMins: number;
-    topPercent: number;
-    heightPercent: number;
+    topPx: number;
+    heightPx: number;
     hasClash: boolean;
     lane: number;
     totalLanes: number;
   }
 
   const placedEventsByDay = useMemo(() => {
-    const dayMap: Record<DayOfWeek, PlacedEvent[]> = {
+    const dayMap: Record<DayOfWeek, GridEvent[]> = {
       Mon: [],
       Tue: [],
       Wed: [],
@@ -278,7 +426,9 @@ export default function SchedulerEngine() {
       Fri: []
     };
 
-    // Flatten all slots from active sections
+    const calendarStartMins = CALENDAR_START_HOUR * 60; // 480 (8 AM)
+    const calendarEndMins = CALENDAR_END_HOUR * 60;     // 1200 (8 PM)
+
     courses.forEach(course => {
       const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
       if (!activeSec) return;
@@ -286,15 +436,15 @@ export default function SchedulerEngine() {
       activeSec.days.forEach(day => {
         const startM = parseFlexibleTime(activeSec.startTime);
         const endM = parseFlexibleTime(activeSec.endTime);
-        const dayStartM = START_HOUR * 60; // 480 (8:00 AM)
-        const dayEndM = END_HOUR * 60;     // 1200 (8:00 PM)
 
-        const clampedStart = Math.max(dayStartM, startM);
-        const clampedEnd = Math.min(dayEndM, endM);
+        const clampedStart = Math.max(calendarStartMins, startM);
+        const clampedEnd = Math.min(calendarEndMins, endM);
 
         if (clampedEnd > clampedStart) {
-          const topPercent = ((clampedStart - dayStartM) / TOTAL_MINUTES) * 100;
-          const heightPercent = ((clampedEnd - clampedStart) / TOTAL_MINUTES) * 100;
+          // Pixel Calculation: (minutes / 60) * HOUR_ROW_HEIGHT
+          const topPx = ((clampedStart - calendarStartMins) / 60) * HOUR_ROW_HEIGHT;
+          const durationMins = clampedEnd - clampedStart;
+          const heightPx = Math.max((durationMins / 60) * HOUR_ROW_HEIGHT, 32);
 
           dayMap[day].push({
             id: `${course.id}-${day}-${activeSec.startTime}`,
@@ -302,15 +452,15 @@ export default function SchedulerEngine() {
             code: course.code,
             title: course.title,
             credits: course.credits,
-            room: activeSec.room || 'Main Hall',
+            room: activeSec.room || 'Campus',
             colorIndex: course.colorIndex,
             day,
             startTime: activeSec.startTime,
             endTime: activeSec.endTime,
             startMins: startM,
             endMins: endM,
-            topPercent,
-            heightPercent,
+            topPx,
+            heightPx,
             hasClash: false,
             lane: 0,
             totalLanes: 1
@@ -319,10 +469,10 @@ export default function SchedulerEngine() {
       });
     });
 
-    // Detect Overlaps and Assign Side-by-Side Lanes per Day (Coursicle mechanism)
+    // Detect Overlaps per Day (Coursicle / Google Calendar Side-by-Side Lanes)
     DAYS.forEach(day => {
       const events = dayMap[day].sort((a, b) => a.startMins - b.startMins);
-      
+
       for (let i = 0; i < events.length; i++) {
         const colliding: number[] = [i];
         for (let j = 0; j < events.length; j++) {
@@ -347,99 +497,36 @@ export default function SchedulerEngine() {
     return dayMap;
   }, [courses]);
 
-  // Compute Live Metrics
+  // Calculate Metrics: Credits, Gap Hours, Conflicts
   const metrics = useMemo(() => {
     const totalCredits = courses.reduce((sum, c) => sum + (c.credits || 0), 0);
     let totalGapMinutes = 0;
-    let longestGapMinutes = 0;
-    let longestGapDay: DayOfWeek | null = null;
-    let overlaps = 0;
+    let conflicts = 0;
 
     DAYS.forEach(day => {
       const daySlots = (placedEventsByDay[day] || []).sort((a, b) => a.startMins - b.startMins);
 
       for (let i = 0; i < daySlots.length; i++) {
-        if (daySlots[i].hasClash) {
-          overlaps++;
-        }
+        if (daySlots[i].hasClash) conflicts++;
 
         if (i < daySlots.length - 1) {
           const gap = daySlots[i + 1].startMins - daySlots[i].endMins;
-          if (gap > 0) {
+          if (gap > 0 && gap < 360) { // gaps under 6 hours
             totalGapMinutes += gap;
-            if (gap > longestGapMinutes) {
-              longestGapMinutes = gap;
-              longestGapDay = day;
-            }
           }
         }
       }
     });
 
-    const gapHours = (totalGapMinutes / 60).toFixed(1);
-    const longestGapHours = (longestGapMinutes / 60).toFixed(1);
-
     return {
       totalCredits,
-      gapHours,
-      longestGapMinutes,
-      longestGapHours,
-      longestGapDay,
-      overlaps: Math.floor(overlaps / 2)
+      coursesCount: courses.length,
+      gapHours: (totalGapMinutes / 60).toFixed(1),
+      conflicts: Math.floor(conflicts / 2)
     };
   }, [courses, placedEventsByDay]);
 
-  // Toggle Day in Multi-Day Pill Selector [ M ] [ T ] [ W ] [ Th ] [ F ]
-  const toggleDay = (d: DayOfWeek) => {
-    if (selectedDays.includes(d)) {
-      if (selectedDays.length > 1) {
-        setSelectedDays(prev => prev.filter(day => day !== d));
-      }
-    } else {
-      setSelectedDays(prev => [...prev, d]);
-    }
-  };
-
-  // Register New Course from Form
-  const handleRegisterCourse = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCode.trim()) return;
-
-    const courseId = `c_${Date.now()}`;
-    const secId = `sec_${Date.now()}`;
-    const nextColor = courses.length % PALETTES.length;
-
-    const newCourseObj: Course = {
-      id: courseId,
-      code: newCode.trim().toUpperCase(),
-      title: newTitle.trim() || 'Academic Course',
-      credits: Number(newCredits) || 3,
-      colorIndex: nextColor,
-      selectedSectionId: secId,
-      sections: [
-        {
-          id: secId,
-          name: `Section 01 (${selectedDays.map(d => DAY_LABELS[d].pill).join('')})`,
-          days: [...selectedDays],
-          startTime: newStartTime,
-          endTime: newEndTime,
-          room: newRoom.trim() || 'Room 101'
-        }
-      ]
-    };
-
-    setCourses(prev => [...prev, newCourseObj]);
-    setNewCode('');
-    setNewTitle('');
-    setBanner(`Registered ${newCourseObj.code} across ${selectedDays.join(', ')}.`);
-    setTimeout(() => setBanner(null), 4000);
-  };
-
-  const handleDeleteCourse = (id: string) => {
-    setCourses(prev => prev.filter(c => c.id !== id));
-  };
-
-  // One-Click Gap Optimizer
+  // One-Click Permutation Gap Optimizer
   const handleOptimizeGaps = () => {
     if (courses.length === 0) return;
 
@@ -461,15 +548,10 @@ export default function SchedulerEngine() {
           const s = parseFlexibleTime(item.start);
           const e = parseFlexibleTime(item.end);
 
-          for (const existing of allSlots) {
-            if (existing.day === day) {
-              if (Math.max(existing.s, s) < Math.min(existing.e, e)) {
-                clash = true;
-                break;
-              }
-            }
+          if (allSlots.some(x => x.day === day && Math.max(x.s, s) < Math.min(x.e, e))) {
+            clash = true;
+            break;
           }
-          if (clash) break;
           allSlots.push({ day, s, e });
         }
         if (clash) break;
@@ -500,42 +582,22 @@ export default function SchedulerEngine() {
         })
       );
       try {
-        confetti({ particleCount: 75, spread: 60, origin: { y: 0.6 } });
+        confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
       } catch (e) {}
-      setBanner(`Optimized! Applied clash-free sections with ${(minGaps / 60).toFixed(1)}h idle gap.`);
-      setTimeout(() => setBanner(null), 5000);
+      setBanner(`✓ Auto-optimized schedule! Gap reduced to ${(minGaps / 60).toFixed(1)} hrs.`);
+      setTimeout(() => setBanner(null), 4000);
     } else {
       setBanner('No conflict-free combination found across active section timings.');
-      setTimeout(() => setBanner(null), 5000);
+      setTimeout(() => setBanner(null), 4000);
     }
   };
 
-  // Export PNG Image
-  const handleExportPNG = async () => {
-    if (!timetableRef.current) return;
-    setIsExporting(true);
-    try {
-      const dataUrl = await toPng(timetableRef.current, {
-        backgroundColor: '#ffffff',
-        pixelRatio: 2
-      });
-      const a = document.createElement('a');
-      a.download = 'class-schedule.png';
-      a.href = dataUrl;
-      a.click();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  // Export .ICS
+  // Export .ICS to Apple / Google Calendar
   const handleExportICS = () => {
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//ClassSchedule//CoursicleEngine//EN',
+      'PRODID:-//ClassSchedule//ClassTimetable//EN',
       'CALSCALE:GREGORIAN'
     ];
     const dayMap: Record<DayOfWeek, string> = { Mon: 'MO', Tue: 'TU', Wed: 'WE', Thu: 'TH', Fri: 'FR' };
@@ -568,11 +630,11 @@ export default function SchedulerEngine() {
         lines.push(`LOCATION:${sec.room}`);
         lines.push(`DTSTART:${y}${m}${d}T${sh}${sm}00`);
         lines.push(`DTEND:${y}${m}${d}T${eh}${em}00`);
-        lines.push(`RRULE:FREQ=WEEKLY;BYDAY=${dayMap[day]};COUNT=15`);
+        lines.push(`RRULE:FREQ=WEEKLY;BYDAY=${dayMap[day]};COUNT=16`);
         lines.push('BEGIN:VALARM');
         lines.push('TRIGGER:-PT15M');
         lines.push('ACTION:DISPLAY');
-        lines.push(`DESCRIPTION:Class Reminder: ${c.code}`);
+        lines.push(`DESCRIPTION:Upcoming Class: ${c.code}`);
         lines.push('END:VALARM');
         lines.push('END:VEVENT');
       });
@@ -583,295 +645,356 @@ export default function SchedulerEngine() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'class-schedule.ics';
+    a.download = 'my-class-schedule.ics';
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const handleReset = () => {
-    if (confirm('Reset to standard academic demo courses?')) {
-      setCourses(DEMO_COURSES);
-      localStorage.removeItem('class_schedule_coursicle_v1');
+  // Export High-Res PNG Image
+  const handleExportPNG = async () => {
+    if (!timetableRef.current) return;
+    setIsExporting(true);
+    try {
+      const dataUrl = await toPng(timetableRef.current, {
+        backgroundColor: '#ffffff',
+        pixelRatio: 2
+      });
+      const a = document.createElement('a');
+      a.download = 'my-class-schedule.png';
+      a.href = dataUrl;
+      a.click();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsExporting(false);
     }
   };
 
+  // Hours list for the grid
+  const hoursList = useMemo(() => {
+    const list: { hour: number; label: string }[] = [];
+    for (let h = CALENDAR_START_HOUR; h <= CALENDAR_END_HOUR; h++) {
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const displayH = h % 12 === 0 ? 12 : h % 12;
+      list.push({ hour: h, label: `${displayH} ${ampm}` });
+    }
+    return list;
+  }, []);
+
+  const totalGridHeight = (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * HOUR_ROW_HEIGHT;
+
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-4 font-sans">
+      
       {/* Toast Alert Banner */}
       {banner && (
-        <div className="p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-mono shadow-sm">
+        <div className="p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-medium shadow-md animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <Sparkles className="w-4 h-4 text-amber-400" />
             <span>{banner}</span>
           </div>
           <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer">
-            [Dismiss]
+            Dismiss
           </button>
         </div>
       )}
 
-      {/* Mobile Mode Switcher: Timetable Grid vs. Add Courses */}
-      <div className="flex lg:hidden items-center p-1 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+      {/* Mobile Top Navigation Tabs */}
+      <div className="flex lg:hidden items-center p-1 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
         <button
           type="button"
-          onClick={() => setMobileView('calendar')}
+          onClick={() => setMobileTab('calendar')}
           className={`flex-1 py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
-            mobileView === 'calendar'
+            mobileTab === 'calendar'
               ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-xs'
               : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
           }`}
         >
-          <CalendarDays className="w-3.5 h-3.5" />
+          <Calendar className="w-3.5 h-3.5" />
           <span>Weekly Timetable</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setMobileView('courses')}
+          onClick={() => setMobileTab('form')}
           className={`flex-1 py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
-            mobileView === 'courses'
+            mobileTab === 'form'
               ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-xs'
               : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
           }`}
         >
-          <ListPlus className="w-3.5 h-3.5" />
-          <span>Course Registration ({courses.length})</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Add Classes ({courses.length})</span>
         </button>
       </div>
 
-      {/* Main 12-Column Unified Grid */}
+      {/* Main Workbench Layout: 12 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
-        {/* Left Column: Academic Portal / School ERP Registration Card (Col 1-4) */}
-        <div className={`space-y-5 lg:col-span-4 ${mobileView === 'courses' ? 'block' : 'hidden lg:block'}`}>
+        {/* Left Sidebar: Course Entry & Management (Col 1-4) */}
+        <div className={`space-y-4 lg:col-span-4 ${mobileTab === 'form' ? 'block' : 'hidden lg:block'}`}>
           
-          {/* Outer Card: High-End School ERP Registration Card */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm p-6 mb-6">
+          {/* Add Class Card */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs p-5 space-y-4">
             
-            {/* Section Header */}
-            <div className="mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight flex items-center gap-2">
-                  <GraduationCap className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                  Course Registration
+                <h2 className="text-base font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2">
+                  <span>Add Class</span>
                 </h2>
-                <p className="text-xs text-zinc-500 font-normal mt-0.5">
-                  Academic Portal &bull; Course enrollment & session allocation
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Fill in course details to slot into timetable
                 </p>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
-                ERP MODULE
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                {courses.length} enrolled
               </span>
             </div>
 
-            <form onSubmit={handleRegisterCourse} className="space-y-4">
+            <form onSubmit={handleAddCourse} className="space-y-3.5">
               
-              {/* Form Fields: Strict 2-Column Structured Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Course Code */}
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+              {/* Course Code & Credits */}
+              <div className="grid grid-cols-3 gap-2.5">
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Course Code <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
-                    value={newCode}
-                    onChange={e => setNewCode(e.target.value)}
-                    placeholder="e.g. CS101"
+                    value={code}
+                    onChange={e => setCode(e.target.value)}
+                    placeholder="e.g. CS 101"
                     required
-                    className="w-full h-10 px-3 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition"
+                    className="w-full h-9 px-3 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition"
                   />
                 </div>
 
-                {/* Credits */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                    Credits <span className="text-rose-500">*</span>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    Credits
                   </label>
                   <select
-                    value={newCredits}
-                    onChange={e => setNewCredits(Number(e.target.value))}
-                    className="w-full h-10 px-3 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition cursor-pointer"
+                    value={credits}
+                    onChange={e => setCredits(Number(e.target.value))}
+                    className="w-full h-9 px-2 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 cursor-pointer"
                   >
                     {[1, 2, 3, 4, 5, 6].map(cr => (
-                      <option key={cr} value={cr}>
-                        {cr} {cr === 1 ? 'Credit' : 'Credits'}
-                      </option>
+                      <option key={cr} value={cr}>{cr} cr</option>
                     ))}
                   </select>
                 </div>
+              </div>
 
-                {/* Course Title: Full Width md:col-span-2 */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                    Course Title
+              {/* Course Title */}
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Course Title <span className="text-zinc-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder="e.g. Intro to Computer Science"
+                  className="w-full h-9 px-3 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                />
+              </div>
+
+              {/* Days Selection */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                    Days of Week <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={newTitle}
-                    onChange={e => setNewTitle(e.target.value)}
-                    placeholder="e.g. Introduction to Database Systems"
-                    className="w-full h-10 px-3 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-white transition"
-                  />
+                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                    <button
+                      type="button"
+                      onClick={() => setPresetDays('MWF')}
+                      className="hover:text-zinc-900 dark:hover:text-white underline cursor-pointer"
+                    >
+                      MWF
+                    </button>
+                    <span>&bull;</span>
+                    <button
+                      type="button"
+                      onClick={() => setPresetDays('TTH')}
+                      className="hover:text-zinc-900 dark:hover:text-white underline cursor-pointer"
+                    >
+                      TTh
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-5 gap-1.5">
+                  {DAYS.map(day => {
+                    const isSelected = selectedDays.includes(day);
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => toggleDay(day)}
+                        className={`h-9 rounded-lg text-xs font-semibold transition border cursor-pointer flex flex-col items-center justify-center ${
+                          isSelected
+                            ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white shadow-2xs'
+                            : 'bg-white border-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                        }`}
+                      >
+                        <span>{DAY_LABELS[day].short}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Section & Timing Block (ERP Style Nested Box) */}
-              <div className="bg-zinc-50/70 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 mt-2 space-y-3.5">
-                
-                {/* Row 1 - Day Checkbox Bar */}
+              {/* Class Timings: Start & End */}
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-                    Class Days (Select all that apply) <span className="text-rose-500">*</span>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    Start Time <span className="text-rose-500">*</span>
                   </label>
-                  <div className="flex items-center gap-1.5">
-                    {DAYS.map(d => {
-                      const isSelected = selectedDays.includes(d);
-                      return (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => toggleDay(d)}
-                          className={`flex-1 h-9 rounded-lg font-mono text-xs font-semibold transition cursor-pointer border ${
-                            isSelected
-                              ? 'bg-zinc-900 text-white font-semibold border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white shadow-2xs'
-                              : 'bg-white border border-zinc-200 text-zinc-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-                          }`}
-                          title={DAY_LABELS[d].full}
-                        >
-                          {DAY_LABELS[d].pill}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="text-[10px] text-zinc-400 font-mono mt-1">
-                    Selected: {selectedDays.map(d => DAY_LABELS[d].short).join(', ')}
-                  </p>
+                  <input
+                    type="text"
+                    value={startTime}
+                    onChange={e => setStartTime(e.target.value)}
+                    placeholder="09:00 AM"
+                    list="start-times-list"
+                    className="w-full h-9 px-3 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                  />
+                  <datalist id="start-times-list">
+                    {COMMON_START_TIMES.map(t => (
+                      <option key={t} value={t} />
+                    ))}
+                  </datalist>
                 </div>
 
-                {/* Row 2 - Times & Venue (3-Column Grid) */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-                  
-                  {/* Start Time */}
-                  <div>
-                    <label className="block text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
-                      Start Time <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={newStartTime}
-                      onChange={e => setNewStartTime(e.target.value)}
-                      placeholder="e.g. 09:00 AM"
-                      className="w-full h-9 px-2.5 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-1 focus:ring-zinc-950"
-                    />
-                  </div>
-
-                  {/* End Time */}
-                  <div>
-                    <label className="block text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
-                      End Time <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={newEndTime}
-                      onChange={e => setNewEndTime(e.target.value)}
-                      placeholder="e.g. 10:30 AM"
-                      className="w-full h-9 px-2.5 text-xs font-mono rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-1 focus:ring-zinc-950"
-                    />
-                  </div>
-
-                  {/* Room / Hall */}
-                  <div>
-                    <label className="block text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
-                      Room / Hall
-                    </label>
-                    <input
-                      type="text"
-                      value={newRoom}
-                      onChange={e => setNewRoom(e.target.value)}
-                      placeholder="e.g. Lab 2"
-                      className="w-full h-9 px-2.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-1 focus:ring-zinc-950"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    End Time <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={endTime}
+                    onChange={e => setEndTime(e.target.value)}
+                    placeholder="10:15 AM"
+                    list="end-times-list"
+                    className="w-full h-9 px-3 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                  />
+                  <datalist id="end-times-list">
+                    {COMMON_END_TIMES.map(t => (
+                      <option key={t} value={t} />
+                    ))}
+                  </datalist>
                 </div>
+              </div>
 
+              {/* Room / Location */}
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Room / Location <span className="text-zinc-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={room}
+                  onChange={e => setRoom(e.target.value)}
+                  placeholder="e.g. Turing Hall 101"
+                  className="w-full h-9 px-3 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                />
+              </div>
+
+              {/* Color Swatch Selector */}
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Card Color
+                </label>
+                <div className="flex items-center gap-2">
+                  {COLOR_PALETTES.map((pal, idx) => (
+                    <button
+                      key={pal.id}
+                      type="button"
+                      onClick={() => setColorIndex(idx)}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${pal.dot} ${
+                        colorIndex === idx
+                          ? 'ring-2 ring-offset-2 ring-zinc-900 dark:ring-white scale-110'
+                          : 'opacity-70 hover:opacity-100 hover:scale-105'
+                      }`}
+                      title={pal.name}
+                    >
+                      {colorIndex === idx && <Check className="w-3.5 h-3.5 text-white" />}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full h-11 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs active:scale-[0.99]"
+                className="w-full h-10 mt-1 bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs active:scale-[0.99]"
               >
                 <Plus className="w-4 h-4" />
-                <span>Enroll Course in Timetable</span>
+                <span>Add Class to Timetable</span>
               </button>
             </form>
           </div>
 
-          {/* Enrolled Courses Summary: Clean Data-Table / Card View */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm p-5 space-y-3">
-            
+          {/* Enrolled Classes List */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs p-5 space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
-                Enrolled Courses Summary ({courses.length})
+              <span className="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
+                My Classes ({courses.length})
               </span>
-              <span className="text-[11px] font-mono text-zinc-500 font-semibold">
-                {metrics.totalCredits} Credits Total
-              </span>
+              {courses.length > 0 && (
+                <button
+                  onClick={handleClearAll}
+                  className="text-xs text-zinc-400 hover:text-rose-600 transition cursor-pointer"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
 
             {courses.length === 0 ? (
-              <div className="p-6 text-center text-xs text-zinc-400">
-                No courses enrolled yet. Use the registration card above to add your first subject.
+              <div className="py-6 text-center text-xs text-zinc-400">
+                No classes enrolled yet. Use the form above to add your schedule.
               </div>
             ) : (
-              <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80 max-h-[300px] overflow-y-auto">
+              <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
                 {courses.map(course => {
-                  const palette = PALETTES[course.colorIndex % PALETTES.length];
-                  const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
+                  const palette = COLOR_PALETTES[course.colorIndex % COLOR_PALETTES.length];
+                  const sec = course.sections.find(s => s.id === course.selectedSectionId);
                   return (
                     <div
                       key={course.id}
-                      className="py-3 px-1.5 flex items-center justify-between text-xs hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition rounded-lg"
+                      className="p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-850/50 flex items-center justify-between gap-2 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/60 transition"
                     >
-                      <div className="space-y-1 pr-2">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-2 h-2 rounded-xs ${palette.bar}`}></span>
-                          <span className="font-mono font-bold text-zinc-900 dark:text-white">
-                            {course.code}
-                          </span>
-                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-                            {course.credits} cr
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-zinc-600 dark:text-zinc-400 truncate max-w-[210px]">
-                          {course.title}
-                        </div>
-                        
-                        {activeSec && (
-                          <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                            <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                              {activeSec.days.join(', ')}
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className={`w-3 h-3 rounded-full shrink-0 ${palette.dot}`} />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-xs text-zinc-900 dark:text-white">
+                              {course.code}
                             </span>
-                            <span>&bull;</span>
-                            <span>{formatTime12(activeSec.startTime)} - {formatTime12(activeSec.endTime)}</span>
-                            {activeSec.room && (
-                              <>
-                                <span>&bull;</span>
-                                <span className="truncate max-w-[80px]">{activeSec.room}</span>
-                              </>
-                            )}
+                            <span className="text-[10px] text-zinc-500 font-medium">
+                              ({course.credits} cr)
+                            </span>
                           </div>
-                        )}
+                          <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
+                            {course.title}
+                          </div>
+                          {sec && (
+                            <div className="text-[10px] text-zinc-600 dark:text-zinc-400 font-medium flex items-center gap-1 mt-0.5">
+                              <span>{sec.days.join(', ')}</span>
+                              <span>&bull;</span>
+                              <span>{formatTime12(sec.startTime)} - {formatTime12(sec.endTime)}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <button
                         onClick={() => handleDeleteCourse(course.id)}
-                        className="text-zinc-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
-                        title="Delete course"
+                        className="text-zinc-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer"
+                        title="Delete class"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   );
@@ -882,205 +1005,261 @@ export default function SchedulerEngine() {
 
         </div>
 
-        {/* Right Column: Full 5-Column Weekly Matrix (Col 5-12) */}
-        <div className={`space-y-3 lg:col-span-8 ${mobileView === 'calendar' ? 'block' : 'hidden lg:block'}`}>
+        {/* Right Timetable Matrix: Real Apple/Google Calendar Layout (Col 5-12) */}
+        <div className={`space-y-3 lg:col-span-8 ${mobileTab === 'calendar' ? 'block' : 'hidden lg:block'}`}>
           
-          {/* Action Toolbar */}
-          <div className="p-3.5 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800/80 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+          {/* Calendar Toolbar */}
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs flex flex-wrap items-center justify-between gap-3">
             
-            {/* Live Metrics */}
-            <div className="flex items-center gap-2.5 text-xs font-mono">
-              <div className="px-2.5 py-1 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 font-semibold">
-                CREDITS: {metrics.totalCredits}
+            {/* Live Stats Chips */}
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <div className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-zinc-500" />
+                <span>{metrics.totalCredits} Credits</span>
               </div>
 
-              <div className="px-2.5 py-1 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700">
-                GAPS: <span className="font-bold">{metrics.gapHours}h</span>
+              <div className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Gaps: {metrics.gapHours}h</span>
               </div>
 
-              <div className="inline-flex px-2.5 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs">
-                {metrics.overlaps === 0 ? (
-                  <span className="text-emerald-700 dark:text-emerald-400 font-medium">0 Conflicts</span>
+              <div className="inline-flex px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-xs items-center gap-1.5 font-medium">
+                {metrics.conflicts === 0 ? (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span className="text-emerald-700 dark:text-emerald-400">Conflict-Free</span>
+                  </>
                 ) : (
-                  <span className="text-rose-600 dark:text-rose-400 font-bold">{metrics.overlaps} Overlap(s)</span>
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    <span className="text-rose-600 dark:text-rose-400 font-bold">{metrics.conflicts} Conflict(s)</span>
+                  </>
                 )}
               </div>
             </div>
 
-            {/* Direct Tool Actions */}
+            {/* Quick Action Buttons */}
             <div className="flex items-center gap-2">
               <button
                 onClick={handleOptimizeGaps}
-                className="h-8 px-3 rounded-md bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-mono font-medium flex items-center gap-1.5 shadow-2xs transition active:scale-98 cursor-pointer"
+                className="h-8.5 px-3 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition active:scale-98 cursor-pointer"
+                title="Automatically choose sections with minimum campus waiting time"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 dark:text-zinc-600" />
-                <span>Optimize Gaps</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 dark:text-amber-500" />
+                <span>Auto-Optimize</span>
               </button>
 
               <button
                 onClick={handleExportICS}
-                className="h-8 px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer"
-                title="Export .ICS to Google / Apple Calendar"
+                className="h-8.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+                title="Export .ICS for Apple Calendar, Google Calendar, and Outlook"
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>Export ICS</span>
+                <span className="hidden sm:inline">Export .ICS</span>
               </button>
 
               <button
                 onClick={handleExportPNG}
                 disabled={isExporting}
-                className="h-8 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono transition cursor-pointer"
-                title="Download PNG image"
+                className="h-8.5 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs transition cursor-pointer"
+                title="Download High-Res PNG wallpaper"
               >
                 <Download className="w-3.5 h-3.5" />
               </button>
 
               <button
                 onClick={() => window.print()}
-                className="h-8 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-mono transition cursor-pointer"
-                title="Print schedule"
+                className="h-8.5 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs transition cursor-pointer"
+                title="Print timetable"
               >
                 <Printer className="w-3.5 h-3.5" />
               </button>
 
               <button
                 onClick={handleReset}
-                className="h-8 w-8 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center justify-center transition cursor-pointer"
-                title="Reset demonstration schedule"
+                className="h-8.5 w-8.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:white flex items-center justify-center transition cursor-pointer"
+                title="Reset to sample schedule"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          {/* Full 5-Column Weekly Timetable Matrix (Monday to Friday Concurrently) */}
+          {/* Real Calendar Grid Container */}
           <div
             ref={timetableRef}
-            className="p-4 sm:p-5 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800/80 shadow-2xs timetable-print-target overflow-hidden"
+            className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm timetable-print-target overflow-hidden"
           >
-            <div className="relative overflow-x-auto">
-              <div className="min-w-[660px]">
-                
-                {/* 5-Column Headers: Monday through Friday concurrently */}
-                <div className="grid grid-cols-11 pb-2.5 mb-1.5 border-b border-zinc-200 dark:border-zinc-800">
-                  <div className="col-span-1 text-[11px] font-mono font-bold text-zinc-400 text-center uppercase">
-                    TIME
-                  </div>
-                  {DAYS.map(day => (
-                    <div
-                      key={day}
-                      className="col-span-2 text-center text-sm font-bold tracking-tight text-zinc-900 dark:text-white"
-                    >
-                      {DAY_LABELS[day].full}
-                    </div>
-                  ))}
-                </div>
-
-                {/* 12-Hour Grid Body (08:00 AM – 08:00 PM = 720px Height) */}
-                <div className="relative h-[720px] grid grid-cols-11 select-none">
-                  
-                  {/* Left Column: 08:00 AM to 08:00 PM */}
-                  <div className="col-span-1 relative border-r border-zinc-100 dark:border-zinc-800/80">
-                    {Array.from({ length: END_HOUR - START_HOUR + 1 }).map((_, idx) => {
-                      const hour = START_HOUR + idx;
-                      const topPercent = (idx / (END_HOUR - START_HOUR)) * 100;
-                      const displayH = hour % 12 === 0 ? 12 : hour % 12;
-                      const ampm = hour >= 12 ? 'PM' : 'AM';
-                      return (
-                        <div
-                          key={hour}
-                          style={{ top: `${topPercent}%` }}
-                          className="absolute -translate-y-2 left-0 right-2 text-right text-xs font-mono font-medium text-zinc-400 dark:text-zinc-500"
-                        >
-                          {displayH}:00 {ampm}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* 5 Column Weekly Container: Monday, Tuesday, Wednesday, Thursday, Friday */}
-                  <div className="col-span-10 grid grid-cols-5 relative h-full">
-                    
-                    {/* Horizontal Guideline Dividers crossing all 5 columns */}
-                    {Array.from({ length: END_HOUR - START_HOUR + 1 }).map((_, idx) => {
-                      const topPercent = (idx / (END_HOUR - START_HOUR)) * 100;
-                      return (
-                        <div
-                          key={idx}
-                          style={{ top: `${topPercent}%` }}
-                          className="absolute left-0 right-0 border-t border-zinc-100 dark:border-zinc-800/60 pointer-events-none"
-                        />
-                      );
-                    })}
-
-                    {/* Monday to Friday Columns */}
-                    {DAYS.map(day => {
-                      const dayEvents = placedEventsByDay[day] || [];
-                      return (
-                        <div
-                          key={day}
-                          className="relative col-span-1 border-r border-zinc-100 dark:border-zinc-800/60 last:border-r-0 h-full"
-                        >
-                          {dayEvents.map(event => {
-                            const palette = PALETTES[event.colorIndex % PALETTES.length];
-
-                            // Coursicle Side-by-Side Offset Calculation
-                            const isClashed = event.hasClash;
-                            const leftPos = isClashed
-                              ? event.lane === 0 ? '1%' : '50%'
-                              : '2px';
-                            const blockWidth = isClashed ? '48%' : 'calc(100% - 4px)';
-
-                            return (
-                              <div
-                                key={event.id}
-                                style={{
-                                  top: `${event.topPercent}%`,
-                                  height: `${event.heightPercent}%`,
-                                  left: leftPos,
-                                  width: blockWidth
-                                }}
-                                className={`absolute p-2 rounded-md border-l-4 transition-all shadow-xs hover:shadow-md hover:scale-[1.02] hover:z-30 overflow-hidden flex flex-col justify-between ${palette.card} ${
-                                  isClashed ? 'border-red-500 ring-1 ring-red-400/50' : ''
-                                }`}
-                                title={`${event.code} - ${event.title} (${event.room}) ${isClashed ? '[Conflict Detected]' : ''}`}
-                              >
-                                <div>
-                                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                                    <span className="font-mono font-bold text-xs tracking-tight truncate leading-tight">
-                                      {event.code}
-                                    </span>
-                                    <span className="text-[10px] font-mono opacity-80 font-semibold">
-                                      {event.credits}cr
-                                    </span>
-                                  </div>
-                                  <div className="text-xs truncate font-medium text-zinc-800 dark:text-zinc-100">
-                                    {event.title}
-                                  </div>
-                                  <div className="text-[11px] truncate opacity-75 flex items-center gap-1 mt-0.5">
-                                    <MapPin className="w-2.5 h-2.5 shrink-0" />
-                                    <span>{event.room}</span>
-                                  </div>
-                                </div>
-
-                                <div className="text-[10px] font-mono font-semibold pt-1 flex items-center justify-between border-t border-black/5 dark:border-white/5 opacity-85">
-                                  <span>{formatTime12(event.startTime)}</span>
-                                  <span>{formatTime12(event.endTime)}</span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+            {/* Calendar Canvas Header */}
+            <div className="px-5 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/70 dark:bg-zinc-850/60">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                  Weekly Class Timetable
+                </span>
+                <span className="text-xs text-zinc-400 font-normal hidden md:inline">
+                  &bull; Monday to Friday (08:00 AM – 08:00 PM)
+                </span>
+              </div>
+              <div className="text-xs text-zinc-500 font-medium">
+                {courses.length} Classes Enrolled
               </div>
             </div>
+
+            {/* Timetable Matrix with Clean Compact Time Axis */}
+            <div className="overflow-x-auto">
+              <div className="min-w-[640px]">
+                
+                {/* Day Header Columns */}
+                <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-850/40">
+                  {/* Left Time Axis Spacing (60px fixed width) */}
+                  <div className="w-[60px] shrink-0 border-r border-zinc-200/80 dark:border-zinc-800 py-3 text-center">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
+                      TIME
+                    </span>
+                  </div>
+
+                  {/* Day Columns */}
+                  <div className="flex-1 grid grid-cols-5">
+                    {DAYS.map(day => (
+                      <div
+                        key={day}
+                        className="py-2.5 text-center border-r border-zinc-200/80 dark:border-zinc-800 last:border-r-0"
+                      >
+                        <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                          {DAY_LABELS[day].full}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Calendar Body: Hours Grid & Event Overlay */}
+                <div className="relative flex" style={{ height: `${totalGridHeight}px` }}>
+                  
+                  {/* Left Time Column (60px width) */}
+                  <div className="w-[60px] shrink-0 relative border-r border-zinc-200/80 dark:border-zinc-800 select-none bg-white dark:bg-zinc-900">
+                    {hoursList.slice(0, -1).map(item => (
+                      <div
+                        key={item.hour}
+                        style={{ height: `${HOUR_ROW_HEIGHT}px` }}
+                        className="border-b border-zinc-100 dark:border-zinc-850 flex items-start justify-end pr-2 pt-1 text-[11px] font-medium text-zinc-400 dark:text-zinc-500"
+                      >
+                        {item.label}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 5 Day Columns Area */}
+                  <div className="flex-1 relative h-full">
+                    
+                    {/* Background Hour Lines (Solid on hour, faint on half-hour) */}
+                    <div className="absolute inset-0 pointer-events-none select-none">
+                      {hoursList.slice(0, -1).map(item => (
+                        <div
+                          key={item.hour}
+                          style={{ height: `${HOUR_ROW_HEIGHT}px` }}
+                          className="border-b border-zinc-100 dark:border-zinc-800/80 relative"
+                        >
+                          {/* Half-hour marker line */}
+                          <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-zinc-100/60 dark:border-zinc-850/40" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* 5 Vertical Columns */}
+                    <div className="grid grid-cols-5 h-full relative">
+                      {DAYS.map(day => {
+                        const events = placedEventsByDay[day] || [];
+                        return (
+                          <div
+                            key={day}
+                            className="relative h-full border-r border-zinc-200/80 dark:border-zinc-800 last:border-r-0"
+                          >
+                            {events.map(event => {
+                              const palette = COLOR_PALETTES[event.colorIndex % COLOR_PALETTES.length];
+
+                              // Side-by-Side Collision Positioning (Google Calendar / Coursicle style)
+                              const isClashed = event.hasClash;
+                              const leftPos = isClashed
+                                ? event.lane === 0 ? '2px' : '50%'
+                                : '3px';
+                              const blockWidth = isClashed ? 'calc(50% - 4px)' : 'calc(100% - 6px)';
+
+                              return (
+                                <div
+                                  key={event.id}
+                                  style={{
+                                    top: `${event.topPx}px`,
+                                    height: `${event.heightPx}px`,
+                                    left: leftPos,
+                                    width: blockWidth
+                                  }}
+                                  className={`absolute rounded-lg border p-2 transition-all shadow-xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-default select-none ${palette.cardBg} ${palette.cardBorder} border-l-[3.5px] ${palette.cardBorder} ${
+                                    isClashed ? 'ring-1 ring-rose-500 border-rose-500' : ''
+                                  }`}
+                                  title={`${event.code} - ${event.title}\n${event.startTime} - ${event.endTime}\n${event.room}`}
+                                >
+                                  {/* Top Row: Code + Close Button */}
+                                  <div className="leading-tight">
+                                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                                      <span className={`font-bold text-xs tracking-tight truncate ${palette.textCode}`}>
+                                        {event.code}
+                                      </span>
+                                      
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteCourse(event.courseId);
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 hover:text-rose-600 transition p-0.5 rounded cursor-pointer"
+                                        title="Delete class"
+                                      >
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                    </div>
+
+                                    {/* Title */}
+                                    <div className={`text-[11px] font-semibold truncate ${palette.textTitle}`}>
+                                      {event.title}
+                                    </div>
+
+                                    {/* Room */}
+                                    {event.room && (
+                                      <div className={`text-[10px] font-medium truncate flex items-center gap-1 mt-0.5 opacity-80 ${palette.textMeta}`}>
+                                        <MapPin className="w-2.5 h-2.5 shrink-0" />
+                                        <span>{event.room}</span>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Bottom Time Stamp */}
+                                  <div className={`text-[10px] font-medium pt-1 flex items-center justify-between border-t border-black/5 dark:border-white/10 ${palette.textMeta}`}>
+                                    <span>{formatTime12(event.startTime)}</span>
+                                    <span>{formatTime12(event.endTime)}</span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
           </div>
 
         </div>
+
       </div>
+
     </div>
   );
 }
