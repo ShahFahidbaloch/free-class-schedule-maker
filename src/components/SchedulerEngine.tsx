@@ -469,29 +469,64 @@ export default function SchedulerEngine() {
       });
     });
 
-    // Detect Overlaps per Day (Coursicle / Google Calendar Side-by-Side Lanes)
+    // Detect Overlaps per Day (Cluster & Greedy Lane Graph Coloring Algorithm)
     DAYS.forEach(day => {
-      const events = dayMap[day].sort((a, b) => a.startMins - b.startMins);
+      const events = dayMap[day];
+      if (events.length === 0) return;
 
-      for (let i = 0; i < events.length; i++) {
-        const colliding: number[] = [i];
-        for (let j = 0; j < events.length; j++) {
-          if (i !== j) {
-            const overlap = Math.max(events[i].startMins, events[j].startMins) < Math.min(events[i].endMins, events[j].endMins);
-            if (overlap) {
-              colliding.push(j);
+      // 1. Sort by startMins asc, then longer duration first
+      events.sort((a, b) => a.startMins - b.startMins || (b.endMins - b.startMins) - (a.endMins - a.startMins));
+
+      // 2. Group into connected clusters of overlapping events
+      const clusters: GridEvent[][] = [];
+      let currentCluster: GridEvent[] = [];
+      let clusterEnd = -1;
+
+      events.forEach(ev => {
+        if (currentCluster.length === 0) {
+          currentCluster.push(ev);
+          clusterEnd = ev.endMins;
+        } else if (ev.startMins < clusterEnd) {
+          // Overlaps with current cluster
+          currentCluster.push(ev);
+          clusterEnd = Math.max(clusterEnd, ev.endMins);
+        } else {
+          // Start new cluster
+          clusters.push(currentCluster);
+          currentCluster = [ev];
+          clusterEnd = ev.endMins;
+        }
+      });
+      if (currentCluster.length > 0) {
+        clusters.push(currentCluster);
+      }
+
+      // 3. For each cluster, greedily assign lanes
+      clusters.forEach(cluster => {
+        const laneEnds: number[] = [];
+
+        cluster.forEach(ev => {
+          let placedLane = -1;
+          for (let l = 0; l < laneEnds.length; l++) {
+            if (laneEnds[l] <= ev.startMins) {
+              placedLane = l;
+              laneEnds[l] = ev.endMins;
+              break;
             }
           }
-        }
+          if (placedLane === -1) {
+            placedLane = laneEnds.length;
+            laneEnds.push(ev.endMins);
+          }
+          ev.lane = placedLane;
+        });
 
-        if (colliding.length > 1) {
-          events[i].hasClash = true;
-          colliding.sort();
-          const laneIdx = colliding.indexOf(i);
-          events[i].lane = laneIdx;
-          events[i].totalLanes = Math.min(colliding.length, 2);
-        }
-      }
+        const totalLanes = laneEnds.length;
+        cluster.forEach(ev => {
+          ev.totalLanes = totalLanes;
+          ev.hasClash = totalLanes > 1;
+        });
+      });
     });
 
     return dayMap;
@@ -1179,12 +1214,17 @@ export default function SchedulerEngine() {
                             {events.map(event => {
                               const palette = COLOR_PALETTES[event.colorIndex % COLOR_PALETTES.length];
 
-                              // Side-by-Side Collision Positioning (Google Calendar / Coursicle style)
+                              // Side-by-Side Collision Positioning (Google Calendar / FullCalendar cluster lanes)
                               const isClashed = event.hasClash;
-                              const leftPos = isClashed
-                                ? event.lane === 0 ? '2px' : '50%'
-                                : '3px';
-                              const blockWidth = isClashed ? 'calc(50% - 4px)' : 'calc(100% - 6px)';
+                              const totalCols = event.totalLanes || 1;
+                              const colWidthPercent = 100 / totalCols;
+
+                              const leftPos = totalCols === 1
+                                ? '3px'
+                                : `calc(${event.lane * colWidthPercent}% + 2px)`;
+                              const blockWidth = totalCols === 1
+                                ? 'calc(100% - 6px)'
+                                : `calc(${colWidthPercent}% - 4px)`;
 
                               return (
                                 <div
