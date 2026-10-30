@@ -204,6 +204,16 @@ export function formatClassTimeRange(startTime: string, endTime: string, isNarro
   return `${startFmt} – ${endFmt}`;
 }
 
+export function minutesToTime12(totalMinutes: number): string {
+  const clamped = Math.max(0, Math.min(24 * 60 - 1, totalMinutes));
+  const h = Math.floor(clamped / 60);
+  const m = clamped % 60;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const displayH = h % 12 === 0 ? 12 : h % 12;
+  const displayM = m < 10 ? `0${m}` : m;
+  return `${displayH}:${displayM} ${ampm}`;
+}
+
 const DEFAULT_SAMPLE_COURSES: Course[] = [
   {
     id: 'course-cs301',
@@ -299,6 +309,17 @@ export default function AcademicStudioApp() {
   // Task Input State
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
+  // Drag and Drop & Validation State
+  const [draggedEvent, setDraggedEvent] = useState<{
+    courseId: string;
+    sectionId: string;
+    sourceDay: DayOfWeek;
+    durationMins: number;
+    code: string;
+  } | null>(null);
+  const [dragOverDay, setDragOverDay] = useState<DayOfWeek | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
   const timetableRef = useRef<HTMLDivElement>(null);
 
   // Load from LocalStorage
@@ -389,13 +410,75 @@ export default function AcademicStudioApp() {
       setFormEndTime(`${displayH}:${displayM} ${ampm}`);
     }
     setSelectedEventForEdit(null);
+    setFormError(null);
     setIsClassModalOpen(true);
+  };
+
+  // Drag and drop reschedule handler
+  const handleDropOnDay = (e: React.DragEvent<HTMLDivElement>, targetDay: DayOfWeek) => {
+    e.preventDefault();
+    setDragOverDay(null);
+    if (!draggedEvent) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const dropY = e.clientY - rect.top;
+    const hoursFrom8 = dropY / HOUR_ROW_HEIGHT;
+    const totalDropMins = 8 * 60 + Math.floor(hoursFrom8 * 60);
+    const snapStartMins = Math.floor(totalDropMins / 15) * 15;
+    const validStartMins = Math.max(8 * 60, Math.min(20 * 60 - 30, snapStartMins));
+    const duration = draggedEvent.durationMins || 60;
+    const validEndMins = Math.min(20 * 60, validStartMins + duration);
+
+    const newStartStr = minutesToTime12(validStartMins);
+    const newEndStr = minutesToTime12(validEndMins);
+
+    setCourses(prev => prev.map(c => {
+      if (c.id !== draggedEvent.courseId) return c;
+      return {
+        ...c,
+        sections: c.sections.map(s => {
+          if (s.id !== draggedEvent.sectionId) return s;
+          let updatedDays = [...s.days];
+          if (draggedEvent.sourceDay !== targetDay) {
+            updatedDays = updatedDays.filter(d => d !== draggedEvent.sourceDay);
+            if (!updatedDays.includes(targetDay)) {
+              updatedDays.push(targetDay);
+            }
+          }
+          return {
+            ...s,
+            days: updatedDays,
+            startTime: newStartStr,
+            endTime: newEndStr
+          };
+        })
+      };
+    }));
+
+    setBanner(`Rescheduled ${draggedEvent.code} to ${DAY_LABELS[targetDay].full} at ${newStartStr} – ${newEndStr}`);
+    setDraggedEvent(null);
   };
 
   // Save Course (Create or Update)
   const handleSaveCourse = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formCode.trim()) return;
+    setFormError(null);
+
+    const cleanCode = formCode.trim().toUpperCase();
+    if (!cleanCode) {
+      setFormError('Please enter a course code (e.g. CS101).');
+      return;
+    }
+    if (formDays.length === 0) {
+      setFormError('Please select at least one day for this class.');
+      return;
+    }
+    const startM = parseFlexibleTime(formStartTime);
+    const endM = parseFlexibleTime(formEndTime);
+    if (endM <= startM) {
+      setFormError('End time must be later than start time.');
+      return;
+    }
 
     if (selectedEventForEdit) {
       // Update existing course
@@ -1142,9 +1225,21 @@ export default function AcademicStudioApp() {
                     <div className="grid h-full relative" style={{ gridTemplateColumns: `repeat(${activeDaysList.length}, minmax(0, 1fr))` }}>
                       {activeDaysList.map(day => {
                         const events = placedEventsByDay[day] || [];
+                        const isDayDragTarget = dragOverDay === day;
                         return (
                           <div
                             key={day}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.dropEffect = 'move';
+                              if (dragOverDay !== day) setDragOverDay(day);
+                            }}
+                            onDragLeave={(e) => {
+                              if (e.currentTarget === e.target) {
+                                setDragOverDay(null);
+                              }
+                            }}
+                            onDrop={(e) => handleDropOnDay(e, day)}
                             onClick={(e) => {
                               // Click empty space on column to add class
                               if (e.target === e.currentTarget) {
@@ -1161,8 +1256,10 @@ export default function AcademicStudioApp() {
                                 handleOpenNewClassModal(day, `${displayH}:${displayM} ${ampm}`);
                               }
                             }}
-                            className="relative h-full border-r border-zinc-200 dark:border-zinc-800 last:border-r-0 cursor-pointer"
-                            title={`Click on ${DAY_LABELS[day].full} to add a class at this time`}
+                            className={`relative h-full border-r border-zinc-200 dark:border-zinc-800 last:border-r-0 cursor-pointer transition-colors ${
+                              isDayDragTarget ? 'bg-zinc-200/60 dark:bg-zinc-800/60 ring-2 ring-inset ring-zinc-500' : ''
+                            }`}
+                            title={`Click on ${DAY_LABELS[day].full} to add a class or drag an existing class here`}
                           >
                             {events.map(event => {
                               const pal = APPLE_TAG_PALETTES[event.colorIndex % APPLE_TAG_PALETTES.length];
@@ -1180,6 +1277,24 @@ export default function AcademicStudioApp() {
                               return (
                                 <div
                                   key={event.id}
+                                  draggable={true}
+                                  onDragStart={(e) => {
+                                    e.stopPropagation();
+                                    const dur = (event.endMins - event.startMins) || 60;
+                                    setDraggedEvent({
+                                      courseId: event.courseId,
+                                      sectionId: event.rawSection.id,
+                                      sourceDay: day,
+                                      durationMins: dur,
+                                      code: event.code
+                                    });
+                                    e.dataTransfer.setData('text/plain', event.courseId);
+                                    e.dataTransfer.effectAllowed = 'move';
+                                  }}
+                                  onDragEnd={() => {
+                                    setDraggedEvent(null);
+                                    setDragOverDay(null);
+                                  }}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     // Open Edit / Duplicate Modal
@@ -1192,6 +1307,7 @@ export default function AcademicStudioApp() {
                                     setFormEndTime(event.rawSection.endTime);
                                     setFormRoom(event.rawSection.room || '');
                                     setFormColorIndex(event.rawCourse.colorIndex);
+                                    setFormError(null);
                                     setIsClassModalOpen(true);
                                   }}
                                   style={{
@@ -1200,10 +1316,10 @@ export default function AcademicStudioApp() {
                                     left: leftPos,
                                     width: blockWidth
                                   }}
-                                  className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-pointer select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
+                                  className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
                                     isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
                                   }`}
-                                  title={`${event.code} - ${event.title}\nClick to edit or duplicate`}
+                                  title={`${event.code} - ${event.title}\nDrag to reschedule or click to edit`}
                                 >
                                   <div className="leading-tight">
                                     <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -1289,6 +1405,13 @@ export default function AcademicStudioApp() {
 
             <form onSubmit={handleSaveCourse} className="space-y-4">
               
+              {formError && (
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+                  <span>⚠️</span>
+                  <span>{formError}</span>
+                </div>
+              )}
+
               {/* Course Code & Title */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">

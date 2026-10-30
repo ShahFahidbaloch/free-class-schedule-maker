@@ -495,3 +495,4 @@ export const LOCALIZED_PAGES: Record<string, LocalizedContent> = {
     footerCtaBtn: "Accedi allo Studio Gratuito →"
   }
 };
+
