@@ -291,6 +291,19 @@ export default function AcademicStudioApp() {
   const [locale, setLocale] = useState<SupportedLocale>('en');
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isStudioMenuOpen, setIsStudioMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close language dropdown on outside click
+  useEffect(() => {
+    if (!isLangMenuOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isLangMenuOpen]);
 
   useEffect(() => {
     try {
@@ -1142,7 +1155,18 @@ export default function AcademicStudioApp() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#FBFBFD] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 overflow-x-hidden">
+    <div className="min-h-screen flex bg-[#FBFBFD] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 overflow-x-hidden relative">
+      
+      {/* Full-screen click-away overlay for Language Dropdown to prevent clicks from bleeding into calendar cells */}
+      {isLangMenuOpen && (
+        <div
+          className="fixed inset-0 z-35 bg-transparent cursor-default select-none"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsLangMenuOpen(false);
+          }}
+        />
+      )}
       
       {/* 1. Left Micro-Sidebar (Desktop Only: hidden on mobile) */}
       <aside className="hidden md:flex w-16 sm:w-20 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] flex-col items-center justify-between py-5 select-none z-30 transition-colors">
@@ -1322,7 +1346,7 @@ export default function AcademicStudioApp() {
             </button>
 
             {/* Language Selector Dropdown (Desktop Only) */}
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block" ref={langMenuRef}>
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                 className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
@@ -1333,37 +1357,28 @@ export default function AcademicStudioApp() {
               </button>
 
               {isLangMenuOpen && (
-                <>
-                  {/* Backdrop click dismiss */}
-                  <div 
-                    className="fixed inset-0 z-40 cursor-default" 
-                    onClick={() => setIsLangMenuOpen(false)} 
-                  />
-                  
-                  {/* Dropdown Menu Layer */}
-                  <div className="absolute right-0 mt-1.5 w-48 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-2xl p-1.5 z-50 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 duration-100">
-                    {Object.values(LOCALES).map((loc) => (
-                      <button
-                        key={loc.code}
-                        onClick={() => {
-                          changeLocale(loc.code);
-                          setIsLangMenuOpen(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                          locale === loc.code
-                            ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white'
-                            : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white'
-                        }`}
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <span className="text-sm">{loc.flag}</span>
-                          <span className="font-medium">{loc.nativeName}</span>
-                        </span>
-                        {locale === loc.code && <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-white" />}
-                      </button>
-                    ))}
-                  </div>
-                </>
+                <div className="absolute right-0 mt-1.5 w-48 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-2xl p-1.5 z-50 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 duration-100">
+                  {Object.values(LOCALES).map((loc) => (
+                    <button
+                      key={loc.code}
+                      onClick={() => {
+                        changeLocale(loc.code);
+                        setIsLangMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                        locale === loc.code
+                          ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white'
+                          : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <span className="text-sm">{loc.flag}</span>
+                        <span className="font-medium">{loc.nativeName}</span>
+                      </span>
+                      {locale === loc.code && <Check className="w-3.5 h-3.5 text-zinc-900 dark:text-white" />}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
