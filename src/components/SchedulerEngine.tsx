@@ -12,7 +12,8 @@ import {
   Check, 
   MapPin, 
   CalendarDays,
-  X
+  X,
+  AlertTriangle
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
@@ -38,91 +39,84 @@ export interface Course {
   selectedSectionId: string;
 }
 
-// Apple / Google Calendar Refined Pastel Color Palettes
+// High-Contrast, Crystal-Clear Palettes (Super readable in both Light & Dark modes)
 export const COLOR_PALETTES = [
   {
     id: 'blue',
-    name: 'Apple Sky',
+    name: 'Sky Blue',
     dot: 'bg-sky-500',
-    cardBg: 'bg-sky-50/90 dark:bg-sky-950/60',
-    cardBorder: 'border-sky-300/80 dark:border-sky-700/80',
-    accentBar: 'bg-sky-500',
-    textCode: 'text-sky-950 dark:text-sky-100',
-    textTitle: 'text-sky-900/90 dark:text-sky-200',
-    textMeta: 'text-sky-700 dark:text-sky-300',
-    tagBg: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-200'
+    cardBg: 'bg-sky-50/95 dark:bg-[#0c1f36]',
+    cardBorder: 'border-sky-300 dark:border-sky-500',
+    leftBar: 'border-l-sky-500',
+    textCode: 'text-sky-950 dark:text-white',
+    textTitle: 'text-sky-900/90 dark:text-sky-100',
+    textMeta: 'text-sky-800 dark:text-sky-200'
   },
   {
     id: 'emerald',
     name: 'Emerald Green',
     dot: 'bg-emerald-500',
-    cardBg: 'bg-emerald-50/90 dark:bg-emerald-950/60',
-    cardBorder: 'border-emerald-300/80 dark:border-emerald-700/80',
-    accentBar: 'bg-emerald-500',
-    textCode: 'text-emerald-950 dark:text-emerald-100',
-    textTitle: 'text-emerald-900/90 dark:text-emerald-200',
-    textMeta: 'text-emerald-700 dark:text-emerald-300',
-    tagBg: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200'
+    cardBg: 'bg-emerald-50/95 dark:bg-[#09261a]',
+    cardBorder: 'border-emerald-300 dark:border-emerald-500',
+    leftBar: 'border-l-emerald-500',
+    textCode: 'text-emerald-950 dark:text-white',
+    textTitle: 'text-emerald-900/90 dark:text-emerald-100',
+    textMeta: 'text-emerald-800 dark:text-emerald-200'
   },
   {
     id: 'purple',
     name: 'Lavender Purple',
     dot: 'bg-purple-500',
-    cardBg: 'bg-purple-50/90 dark:bg-purple-950/60',
-    cardBorder: 'border-purple-300/80 dark:border-purple-700/80',
-    accentBar: 'bg-purple-500',
-    textCode: 'text-purple-950 dark:text-purple-100',
-    textTitle: 'text-purple-900/90 dark:text-purple-200',
-    textMeta: 'text-purple-700 dark:text-purple-300',
-    tagBg: 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200'
+    cardBg: 'bg-purple-50/95 dark:bg-[#25143a]',
+    cardBorder: 'border-purple-300 dark:border-purple-400',
+    leftBar: 'border-l-purple-500',
+    textCode: 'text-purple-950 dark:text-white',
+    textTitle: 'text-purple-900/90 dark:text-purple-100',
+    textMeta: 'text-purple-800 dark:text-purple-200'
   },
   {
     id: 'amber',
-    name: 'Sunset Amber',
+    name: 'Warm Amber',
     dot: 'bg-amber-500',
-    cardBg: 'bg-amber-50/90 dark:bg-amber-950/60',
-    cardBorder: 'border-amber-300/80 dark:border-amber-700/80',
-    accentBar: 'bg-amber-500',
-    textCode: 'text-amber-950 dark:text-amber-100',
-    textTitle: 'text-amber-900/90 dark:text-amber-200',
-    textMeta: 'text-amber-700 dark:text-amber-300',
-    tagBg: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200'
+    cardBg: 'bg-amber-50/95 dark:bg-[#2b1b0b]',
+    cardBorder: 'border-amber-300 dark:border-amber-400',
+    leftBar: 'border-l-amber-500',
+    textCode: 'text-amber-950 dark:text-white',
+    textTitle: 'text-amber-900/90 dark:text-amber-100',
+    textMeta: 'text-amber-800 dark:text-amber-200'
   },
   {
     id: 'rose',
     name: 'Coral Rose',
     dot: 'bg-rose-500',
-    cardBg: 'bg-rose-50/90 dark:bg-rose-950/60',
-    cardBorder: 'border-rose-300/80 dark:border-rose-700/80',
-    accentBar: 'bg-rose-500',
-    textCode: 'text-rose-950 dark:text-rose-100',
-    textTitle: 'text-rose-900/90 dark:text-rose-200',
-    textMeta: 'text-rose-700 dark:text-rose-300',
-    tagBg: 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200'
+    cardBg: 'bg-rose-50/95 dark:bg-[#301019]',
+    cardBorder: 'border-rose-300 dark:border-rose-400',
+    leftBar: 'border-l-rose-500',
+    textCode: 'text-rose-950 dark:text-white',
+    textTitle: 'text-rose-900/90 dark:text-rose-100',
+    textMeta: 'text-rose-800 dark:text-rose-200'
   },
   {
     id: 'indigo',
     name: 'Royal Indigo',
     dot: 'bg-indigo-500',
-    cardBg: 'bg-indigo-50/90 dark:bg-indigo-950/60',
-    cardBorder: 'border-indigo-300/80 dark:border-indigo-700/80',
-    accentBar: 'bg-indigo-500',
-    textCode: 'text-indigo-950 dark:text-indigo-100',
-    textTitle: 'text-indigo-900/90 dark:text-indigo-200',
-    textMeta: 'text-indigo-700 dark:text-indigo-300',
-    tagBg: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200'
+    cardBg: 'bg-indigo-50/95 dark:bg-[#141738]',
+    cardBorder: 'border-indigo-300 dark:border-indigo-400',
+    leftBar: 'border-l-indigo-500',
+    textCode: 'text-indigo-950 dark:text-white',
+    textTitle: 'text-indigo-900/90 dark:text-indigo-100',
+    textMeta: 'text-indigo-800 dark:text-indigo-200'
   },
   {
     id: 'teal',
     name: 'Sea Teal',
     dot: 'bg-teal-500',
-    cardBg: 'bg-teal-50/90 dark:bg-teal-950/60',
-    cardBorder: 'border-teal-300/80 dark:border-teal-700/80',
-    accentBar: 'bg-teal-500',
-    textCode: 'text-teal-950 dark:text-teal-100',
-    textTitle: 'text-teal-900/90 dark:text-teal-200',
-    textMeta: 'text-teal-700 dark:text-teal-300',
-    tagBg: 'bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-200'
+    cardBg: 'bg-teal-50/95 dark:bg-[#0a2324]',
+    cardBorder: 'border-teal-300 dark:border-teal-400',
+    leftBar: 'border-l-teal-500',
+    textCode: 'text-teal-950 dark:text-white',
+    textTitle: 'text-teal-900/90 dark:text-teal-100',
+    textMeta: 'text-teal-800 dark:text-teal-200'
   }
 ];
 
@@ -151,7 +145,7 @@ const COMMON_END_TIMES = [
 
 const CALENDAR_START_HOUR = 8;  // 8:00 AM
 const CALENDAR_END_HOUR = 20;   // 8:00 PM (12 hours)
-const HOUR_ROW_HEIGHT = 64;     // 64px per hour -> very comfortable readability
+const HOUR_ROW_HEIGHT = 76;     // 76px per hour -> very spacious, easy to read even for kids!
 
 // Parse time string e.g. "9:30 AM" or "09:30" or "9" or "2pm"
 export function parseFlexibleTime(input: string): number {
@@ -196,7 +190,25 @@ export function formatTime12(timeStr: string): string {
   return `${displayH}:${displayM} ${ampm}`;
 }
 
-// Clean Default Courses for Demo
+// Clean Single-Line Range Formatter (Prevents awkward wrapping)
+export function formatClassTimeRange(startTime: string, endTime: string, isNarrow: boolean = false): string {
+  const startFmt = formatTime12(startTime);
+  const endFmt = formatTime12(endTime);
+  if (!startFmt && !endFmt) return '';
+  if (!startFmt) return endFmt;
+  if (!endFmt) return startFmt;
+
+  if (isNarrow) {
+    const sParts = startFmt.split(' ');
+    const eParts = endFmt.split(' ');
+    if (sParts[1] === eParts[1]) {
+      return `${sParts[0]} – ${endFmt}`;
+    }
+  }
+  return `${startFmt} – ${endFmt}`;
+}
+
+// Sample Default Courses
 const INITIAL_DEMO_COURSES: Course[] = [
   {
     id: 'demo-cs101',
@@ -279,7 +291,7 @@ export default function SchedulerEngine() {
   // Mobile Tab: 'calendar' or 'form'
   const [mobileTab, setMobileTab] = useState<'calendar' | 'form'>('calendar');
 
-  // Course Form Inputs
+  // Form Inputs
   const [code, setCode] = useState('');
   const [title, setTitle] = useState('');
   const [credits, setCredits] = useState(3);
@@ -294,7 +306,7 @@ export default function SchedulerEngine() {
   // Initialize from LocalStorage or Demo Data
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('class_schedule_v2');
+      const saved = localStorage.getItem('class_schedule_v3');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -310,7 +322,7 @@ export default function SchedulerEngine() {
   useEffect(() => {
     if (courses.length > 0) {
       try {
-        localStorage.setItem('class_schedule_v2', JSON.stringify(courses));
+        localStorage.setItem('class_schedule_v3', JSON.stringify(courses));
       } catch (e) {}
     }
   }, [courses]);
@@ -333,7 +345,7 @@ export default function SchedulerEngine() {
     if (type === 'ALL') setSelectedDays(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
   };
 
-  // Add / Enroll Course
+  // Add Course
   const handleAddCourse = (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim()) return;
@@ -364,10 +376,9 @@ export default function SchedulerEngine() {
     setCode('');
     setTitle('');
     setColorIndex((colorIndex + 1) % COLOR_PALETTES.length);
-    setBanner(`✓ ${newCourse.code} added to your timetable.`);
+    setBanner(`✓ ${newCourse.code} added to your schedule.`);
     setTimeout(() => setBanner(null), 3000);
 
-    // Switch to calendar on mobile after adding
     if (window.innerWidth < 1024) {
       setMobileTab('calendar');
     }
@@ -380,23 +391,23 @@ export default function SchedulerEngine() {
 
   // Reset to Demo
   const handleReset = () => {
-    if (confirm('Reset timetable to default demo classes?')) {
+    if (confirm('Reset timetable to sample demonstration classes?')) {
       setCourses(INITIAL_DEMO_COURSES);
-      localStorage.removeItem('class_schedule_v2');
-      setBanner('Timetable reset to sample classes.');
+      localStorage.removeItem('class_schedule_v3');
+      setBanner('Schedule reset to sample classes.');
       setTimeout(() => setBanner(null), 3000);
     }
   };
 
   // Clear All
   const handleClearAll = () => {
-    if (confirm('Clear all enrolled classes from your timetable?')) {
+    if (confirm('Remove all classes from your timetable?')) {
       setCourses([]);
-      localStorage.removeItem('class_schedule_v2');
+      localStorage.removeItem('class_schedule_v3');
     }
   };
 
-  // Calculate Events for Calendar Grid
+  // Grid Event Structure
   interface GridEvent {
     id: string;
     courseId: string;
@@ -441,10 +452,9 @@ export default function SchedulerEngine() {
         const clampedEnd = Math.min(calendarEndMins, endM);
 
         if (clampedEnd > clampedStart) {
-          // Pixel Calculation: (minutes / 60) * HOUR_ROW_HEIGHT
           const topPx = ((clampedStart - calendarStartMins) / 60) * HOUR_ROW_HEIGHT;
           const durationMins = clampedEnd - clampedStart;
-          const heightPx = Math.max((durationMins / 60) * HOUR_ROW_HEIGHT, 32);
+          const heightPx = Math.max((durationMins / 60) * HOUR_ROW_HEIGHT, 42); // minimum 42px height for readability
 
           dayMap[day].push({
             id: `${course.id}-${day}-${activeSec.startTime}`,
@@ -469,15 +479,13 @@ export default function SchedulerEngine() {
       });
     });
 
-    // Detect Overlaps per Day (Cluster & Greedy Lane Graph Coloring Algorithm)
+    // Conflict Cluster & Graph Coloring Lane Placement
     DAYS.forEach(day => {
       const events = dayMap[day];
       if (events.length === 0) return;
 
-      // 1. Sort by startMins asc, then longer duration first
       events.sort((a, b) => a.startMins - b.startMins || (b.endMins - b.startMins) - (a.endMins - a.startMins));
 
-      // 2. Group into connected clusters of overlapping events
       const clusters: GridEvent[][] = [];
       let currentCluster: GridEvent[] = [];
       let clusterEnd = -1;
@@ -487,11 +495,9 @@ export default function SchedulerEngine() {
           currentCluster.push(ev);
           clusterEnd = ev.endMins;
         } else if (ev.startMins < clusterEnd) {
-          // Overlaps with current cluster
           currentCluster.push(ev);
           clusterEnd = Math.max(clusterEnd, ev.endMins);
         } else {
-          // Start new cluster
           clusters.push(currentCluster);
           currentCluster = [ev];
           clusterEnd = ev.endMins;
@@ -501,7 +507,6 @@ export default function SchedulerEngine() {
         clusters.push(currentCluster);
       }
 
-      // 3. For each cluster, greedily assign lanes
       clusters.forEach(cluster => {
         const laneEnds: number[] = [];
 
@@ -532,7 +537,7 @@ export default function SchedulerEngine() {
     return dayMap;
   }, [courses]);
 
-  // Calculate Metrics: Credits, Gap Hours, Conflicts
+  // Compute Metrics
   const metrics = useMemo(() => {
     const totalCredits = courses.reduce((sum, c) => sum + (c.credits || 0), 0);
     let totalGapMinutes = 0;
@@ -546,7 +551,7 @@ export default function SchedulerEngine() {
 
         if (i < daySlots.length - 1) {
           const gap = daySlots[i + 1].startMins - daySlots[i].endMins;
-          if (gap > 0 && gap < 360) { // gaps under 6 hours
+          if (gap > 0 && gap < 360) {
             totalGapMinutes += gap;
           }
         }
@@ -561,7 +566,7 @@ export default function SchedulerEngine() {
     };
   }, [courses, placedEventsByDay]);
 
-  // One-Click Permutation Gap Optimizer
+  // Gap Optimizer Permutation Engine
   const handleOptimizeGaps = () => {
     if (courses.length === 0) return;
 
@@ -617,9 +622,9 @@ export default function SchedulerEngine() {
         })
       );
       try {
-        confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
+        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
       } catch (e) {}
-      setBanner(`✓ Auto-optimized schedule! Gap reduced to ${(minGaps / 60).toFixed(1)} hrs.`);
+      setBanner(`✓ Optimized! Lowest gap found: ${(minGaps / 60).toFixed(1)} hrs.`);
       setTimeout(() => setBanner(null), 4000);
     } else {
       setBanner('No conflict-free combination found across active section timings.');
@@ -627,7 +632,7 @@ export default function SchedulerEngine() {
     }
   };
 
-  // Export .ICS to Apple / Google Calendar
+  // Export .ICS
   const handleExportICS = () => {
     const lines = [
       'BEGIN:VCALENDAR',
@@ -685,13 +690,14 @@ export default function SchedulerEngine() {
     URL.revokeObjectURL(url);
   };
 
-  // Export High-Res PNG Image
+  // Export PNG Image
   const handleExportPNG = async () => {
     if (!timetableRef.current) return;
     setIsExporting(true);
     try {
+      const isDark = document.documentElement.classList.contains('dark');
       const dataUrl = await toPng(timetableRef.current, {
-        backgroundColor: '#ffffff',
+        backgroundColor: isDark ? '#18181b' : '#ffffff',
         pixelRatio: 2
       });
       const a = document.createElement('a');
@@ -705,7 +711,7 @@ export default function SchedulerEngine() {
     }
   };
 
-  // Hours list for the grid
+  // Hours list
   const hoursList = useMemo(() => {
     const list: { hour: number; label: string }[] = [];
     for (let h = CALENDAR_START_HOUR; h <= CALENDAR_END_HOUR; h++) {
@@ -719,46 +725,46 @@ export default function SchedulerEngine() {
   const totalGridHeight = (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * HOUR_ROW_HEIGHT;
 
   return (
-    <div className="w-full space-y-4 font-sans">
+    <div className="w-full space-y-4 font-sans text-zinc-900 dark:text-zinc-100">
       
       {/* Toast Alert Banner */}
       {banner && (
-        <div className="p-3 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-xs font-medium shadow-md animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-between text-sm font-semibold shadow-lg animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2.5">
             <Sparkles className="w-4 h-4 text-amber-400" />
             <span>{banner}</span>
           </div>
-          <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer">
-            Dismiss
+          <button onClick={() => setBanner(null)} className="text-xs opacity-75 hover:opacity-100 cursor-pointer font-bold px-2 py-1">
+            ✕ Dismiss
           </button>
         </div>
       )}
 
       {/* Mobile Top Navigation Tabs */}
-      <div className="flex lg:hidden items-center p-1 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+      <div className="flex lg:hidden items-center p-1.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs">
         <button
           type="button"
           onClick={() => setMobileTab('calendar')}
-          className={`flex-1 py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
+          className={`flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-2 transition ${
             mobileTab === 'calendar'
               ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-xs'
-              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-900'
           }`}
         >
-          <Calendar className="w-3.5 h-3.5" />
+          <Calendar className="w-4 h-4" />
           <span>Weekly Timetable</span>
         </button>
 
         <button
           type="button"
           onClick={() => setMobileTab('form')}
-          className={`flex-1 py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${
+          className={`flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-2 transition ${
             mobileTab === 'form'
               ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-xs'
-              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+              : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-900'
           }`}
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-4 h-4" />
           <span>Add Classes ({courses.length})</span>
         </button>
       </div>
@@ -766,32 +772,32 @@ export default function SchedulerEngine() {
       {/* Main Workbench Layout: 12 Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
-        {/* Left Sidebar: Course Entry & Management (Col 1-4) */}
+        {/* Left Sidebar: Add Class Form (Col 1-4) */}
         <div className={`space-y-4 lg:col-span-4 ${mobileTab === 'form' ? 'block' : 'hidden lg:block'}`}>
           
           {/* Add Class Card */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs p-5 space-y-4">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm p-5 sm:p-6 space-y-4">
             
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <h2 className="text-base font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2">
+                <h2 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight flex items-center gap-2">
                   <span>Add Class</span>
                 </h2>
-                <p className="text-xs text-zinc-500 mt-0.5">
-                  Fill in course details to slot into timetable
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  Enter course details to place into your schedule
                 </p>
               </div>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
                 {courses.length} enrolled
               </span>
             </div>
 
-            <form onSubmit={handleAddCourse} className="space-y-3.5">
+            <form onSubmit={handleAddCourse} className="space-y-4">
               
               {/* Course Code & Credits */}
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">
                     Course Code <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -800,18 +806,18 @@ export default function SchedulerEngine() {
                     onChange={e => setCode(e.target.value)}
                     placeholder="e.g. CS 101"
                     required
-                    className="w-full h-9 px-3 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition"
+                    className="w-full h-11 px-3.5 text-sm font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">
                     Credits
                   </label>
                   <select
                     value={credits}
                     onChange={e => setCredits(Number(e.target.value))}
-                    className="w-full h-9 px-2 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 cursor-pointer"
+                    className="w-full h-11 px-2.5 text-sm font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 cursor-pointer"
                   >
                     {[1, 2, 3, 4, 5, 6].map(cr => (
                       <option key={cr} value={cr}>{cr} cr</option>
@@ -822,25 +828,25 @@ export default function SchedulerEngine() {
 
               {/* Course Title */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Course Title <span className="text-zinc-400 font-normal">(optional)</span>
+                <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">
+                  Course Title <span className="text-zinc-400 dark:text-zinc-500 font-normal">(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="e.g. Intro to Computer Science"
-                  className="w-full h-9 px-3 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                  className="w-full h-11 px-3.5 text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 />
               </div>
 
               {/* Days Selection */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
                     Days of Week <span className="text-rose-500">*</span>
                   </label>
-                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                  <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
                     <button
                       type="button"
                       onClick={() => setPresetDays('MWF')}
@@ -859,7 +865,7 @@ export default function SchedulerEngine() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-5 gap-2">
                   {DAYS.map(day => {
                     const isSelected = selectedDays.includes(day);
                     return (
@@ -867,10 +873,10 @@ export default function SchedulerEngine() {
                         key={day}
                         type="button"
                         onClick={() => toggleDay(day)}
-                        className={`h-9 rounded-lg text-xs font-semibold transition border cursor-pointer flex flex-col items-center justify-center ${
+                        className={`h-11 rounded-xl text-xs sm:text-sm font-bold transition border cursor-pointer flex flex-col items-center justify-center ${
                           isSelected
-                            ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white shadow-2xs'
-                            : 'bg-white border-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                            ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white shadow-xs scale-[1.02]'
+                            : 'bg-zinc-50 border-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                         }`}
                       >
                         <span>{DAY_LABELS[day].short}</span>
@@ -880,10 +886,10 @@ export default function SchedulerEngine() {
                 </div>
               </div>
 
-              {/* Class Timings: Start & End */}
-              <div className="grid grid-cols-2 gap-2.5">
+              {/* Class Timings */}
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">
                     Start Time <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -892,7 +898,7 @@ export default function SchedulerEngine() {
                     onChange={e => setStartTime(e.target.value)}
                     placeholder="09:00 AM"
                     list="start-times-list"
-                    className="w-full h-9 px-3 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                    className="w-full h-11 px-3 text-sm font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
                   />
                   <datalist id="start-times-list">
                     {COMMON_START_TIMES.map(t => (
@@ -902,7 +908,7 @@ export default function SchedulerEngine() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">
                     End Time <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -911,7 +917,7 @@ export default function SchedulerEngine() {
                     onChange={e => setEndTime(e.target.value)}
                     placeholder="10:15 AM"
                     list="end-times-list"
-                    className="w-full h-9 px-3 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                    className="w-full h-11 px-3 text-sm font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
                   />
                   <datalist id="end-times-list">
                     {COMMON_END_TIMES.map(t => (
@@ -923,55 +929,55 @@ export default function SchedulerEngine() {
 
               {/* Room / Location */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Room / Location <span className="text-zinc-400 font-normal">(optional)</span>
+                <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">
+                  Room / Location <span className="text-zinc-400 dark:text-zinc-500 font-normal">(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={room}
                   onChange={e => setRoom(e.target.value)}
                   placeholder="e.g. Turing Hall 101"
-                  className="w-full h-9 px-3 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                  className="w-full h-11 px-3.5 text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900"
                 />
               </div>
 
-              {/* Color Swatch Selector */}
+              {/* Card Color Palette Selection */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                <label className="block text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-2">
                   Card Color
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   {COLOR_PALETTES.map((pal, idx) => (
                     <button
                       key={pal.id}
                       type="button"
                       onClick={() => setColorIndex(idx)}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${pal.dot} ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer ${pal.dot} ${
                         colorIndex === idx
-                          ? 'ring-2 ring-offset-2 ring-zinc-900 dark:ring-white scale-110'
+                          ? 'ring-3 ring-offset-2 ring-zinc-900 dark:ring-white scale-110'
                           : 'opacity-70 hover:opacity-100 hover:scale-105'
                       }`}
                       title={pal.name}
                     >
-                      {colorIndex === idx && <Check className="w-3.5 h-3.5 text-white" />}
+                      {colorIndex === idx && <Check className="w-4 h-4 text-white stroke-[3]" />}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Big Primary Submit Button */}
               <button
                 type="submit"
-                className="w-full h-10 mt-1 bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs active:scale-[0.99]"
+                className="w-full h-12 mt-2 bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm font-bold rounded-xl flex items-center justify-center gap-2.5 transition cursor-pointer shadow-md active:scale-[0.99]"
               >
-                <Plus className="w-4 h-4" />
-                <span>Add Class to Timetable</span>
+                <Plus className="w-4 h-4 stroke-[2.5]" />
+                <span>+ Add Class to Timetable</span>
               </button>
             </form>
           </div>
 
           {/* Enrolled Classes List */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs p-5 space-y-3">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm p-5 space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
               <span className="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
                 My Classes ({courses.length})
@@ -979,7 +985,7 @@ export default function SchedulerEngine() {
               {courses.length > 0 && (
                 <button
                   onClick={handleClearAll}
-                  className="text-xs text-zinc-400 hover:text-rose-600 transition cursor-pointer"
+                  className="text-xs font-semibold text-zinc-400 hover:text-rose-600 transition cursor-pointer"
                 >
                   Clear All
                 </button>
@@ -991,34 +997,34 @@ export default function SchedulerEngine() {
                 No classes enrolled yet. Use the form above to add your schedule.
               </div>
             ) : (
-              <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
                 {courses.map(course => {
                   const palette = COLOR_PALETTES[course.colorIndex % COLOR_PALETTES.length];
                   const sec = course.sections.find(s => s.id === course.selectedSectionId);
                   return (
                     <div
                       key={course.id}
-                      className="p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-850/50 flex items-center justify-between gap-2 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/60 transition"
+                      className="p-3 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 flex items-center justify-between gap-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className={`w-3 h-3 rounded-full shrink-0 ${palette.dot}`} />
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className={`w-3.5 h-3.5 rounded-full shrink-0 ${palette.dot}`} />
                         <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-zinc-900 dark:text-white">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-zinc-900 dark:text-white">
                               {course.code}
                             </span>
-                            <span className="text-[10px] text-zinc-500 font-medium">
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
                               ({course.credits} cr)
                             </span>
                           </div>
-                          <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
+                          <div className="text-xs text-zinc-600 dark:text-zinc-300 truncate font-medium">
                             {course.title}
                           </div>
                           {sec && (
-                            <div className="text-[10px] text-zinc-600 dark:text-zinc-400 font-medium flex items-center gap-1 mt-0.5">
-                              <span>{sec.days.join(', ')}</span>
+                            <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium flex items-center gap-1 mt-0.5">
+                              <span className="font-bold text-zinc-700 dark:text-zinc-200">{sec.days.join(', ')}</span>
                               <span>&bull;</span>
-                              <span>{formatTime12(sec.startTime)} - {formatTime12(sec.endTime)}</span>
+                              <span>{formatClassTimeRange(sec.startTime, sec.endTime)}</span>
                             </div>
                           )}
                         </div>
@@ -1026,10 +1032,10 @@ export default function SchedulerEngine() {
 
                       <button
                         onClick={() => handleDeleteCourse(course.id)}
-                        className="text-zinc-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer"
+                        className="text-zinc-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer"
                         title="Delete class"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   );
@@ -1041,81 +1047,81 @@ export default function SchedulerEngine() {
         </div>
 
         {/* Right Timetable Matrix: Real Apple/Google Calendar Layout (Col 5-12) */}
-        <div className={`space-y-3 lg:col-span-8 ${mobileTab === 'calendar' ? 'block' : 'hidden lg:block'}`}>
+        <div className={`space-y-4 lg:col-span-8 ${mobileTab === 'calendar' ? 'block' : 'hidden lg:block'}`}>
           
-          {/* Calendar Toolbar */}
-          <div className="p-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          {/* Calendar Toolbar with Generous Breathing Space */}
+          <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-wrap items-center justify-between gap-3">
             
             {/* Live Stats Chips */}
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <div className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-zinc-500" />
+            <div className="flex flex-wrap items-center gap-2.5 text-xs sm:text-sm font-semibold">
+              <div className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center gap-2 border border-zinc-200 dark:border-zinc-700">
+                <BookOpen className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
                 <span>{metrics.totalCredits} Credits</span>
               </div>
 
-              <div className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-zinc-500" />
+              <div className="px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center gap-2 border border-zinc-200 dark:border-zinc-700">
+                <Clock className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
                 <span>Gaps: {metrics.gapHours}h</span>
               </div>
 
-              <div className="inline-flex px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-xs items-center gap-1.5 font-medium">
+              <div className="inline-flex px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-850 items-center gap-2">
                 {metrics.conflicts === 0 ? (
                   <>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <span className="text-emerald-700 dark:text-emerald-400">Conflict-Free</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">Conflict-Free</span>
                   </>
                 ) : (
                   <>
-                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
                     <span className="text-rose-600 dark:text-rose-400 font-bold">{metrics.conflicts} Conflict(s)</span>
                   </>
                 )}
               </div>
             </div>
 
-            {/* Quick Action Buttons */}
-            <div className="flex items-center gap-2">
+            {/* Quick Action Buttons (Spacious, Well-Padded, Distinct Icons) */}
+            <div className="flex items-center gap-2.5">
               <button
                 onClick={handleOptimizeGaps}
-                className="h-8.5 px-3 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition active:scale-98 cursor-pointer"
+                className="h-10 px-4 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-sm transition active:scale-98 cursor-pointer"
                 title="Automatically choose sections with minimum campus waiting time"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 dark:text-amber-500" />
+                <Sparkles className="w-4 h-4 text-amber-400 dark:text-amber-600 shrink-0" />
                 <span>Auto-Optimize</span>
               </button>
 
               <button
                 onClick={handleExportICS}
-                className="h-8.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+                className="h-10 px-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-100 text-xs sm:text-sm font-semibold flex items-center gap-2 transition cursor-pointer"
                 title="Export .ICS for Apple Calendar, Google Calendar, and Outlook"
               >
-                <Calendar className="w-3.5 h-3.5" />
+                <Calendar className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
                 <span className="hidden sm:inline">Export .ICS</span>
               </button>
 
               <button
                 onClick={handleExportPNG}
                 disabled={isExporting}
-                className="h-8.5 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs transition cursor-pointer"
+                className="w-10 h-10 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 flex items-center justify-center transition cursor-pointer shadow-2xs"
                 title="Download High-Res PNG wallpaper"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-4 h-4" />
               </button>
 
               <button
                 onClick={() => window.print()}
-                className="h-8.5 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs transition cursor-pointer"
+                className="w-10 h-10 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 flex items-center justify-center transition cursor-pointer shadow-2xs"
                 title="Print timetable"
               >
-                <Printer className="w-3.5 h-3.5" />
+                <Printer className="w-4 h-4" />
               </button>
 
               <button
                 onClick={handleReset}
-                className="h-8.5 w-8.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:white flex items-center justify-center transition cursor-pointer"
+                className="w-10 h-10 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-300 flex items-center justify-center transition cursor-pointer shadow-2xs"
                 title="Reset to sample schedule"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -1126,30 +1132,30 @@ export default function SchedulerEngine() {
             className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm timetable-print-target overflow-hidden"
           >
             {/* Calendar Canvas Header */}
-            <div className="px-5 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/70 dark:bg-zinc-850/60">
-              <div className="flex items-center gap-2">
+            <div className="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-850">
+              <div className="flex items-center gap-2.5">
                 <CalendarDays className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                <span className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
                   Weekly Class Timetable
                 </span>
-                <span className="text-xs text-zinc-400 font-normal hidden md:inline">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium hidden md:inline">
                   &bull; Monday to Friday (08:00 AM – 08:00 PM)
                 </span>
               </div>
-              <div className="text-xs text-zinc-500 font-medium">
+              <div className="text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-300">
                 {courses.length} Classes Enrolled
               </div>
             </div>
 
-            {/* Timetable Matrix with Clean Compact Time Axis */}
+            {/* Timetable Matrix */}
             <div className="overflow-x-auto">
-              <div className="min-w-[640px]">
+              <div className="min-w-[680px]">
                 
                 {/* Day Header Columns */}
-                <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-850/40">
-                  {/* Left Time Axis Spacing (60px fixed width) */}
-                  <div className="w-[60px] shrink-0 border-r border-zinc-200/80 dark:border-zinc-800 py-3 text-center">
-                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
+                <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-800/80">
+                  {/* Left Time Axis Spacing (64px fixed width) */}
+                  <div className="w-[64px] shrink-0 border-r border-zinc-200 dark:border-zinc-800 py-3 text-center">
+                    <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                       TIME
                     </span>
                   </div>
@@ -1159,9 +1165,9 @@ export default function SchedulerEngine() {
                     {DAYS.map(day => (
                       <div
                         key={day}
-                        className="py-2.5 text-center border-r border-zinc-200/80 dark:border-zinc-800 last:border-r-0"
+                        className="py-3 text-center border-r border-zinc-200 dark:border-zinc-800 last:border-r-0"
                       >
-                        <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                        <span className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
                           {DAY_LABELS[day].full}
                         </span>
                       </div>
@@ -1172,13 +1178,13 @@ export default function SchedulerEngine() {
                 {/* Calendar Body: Hours Grid & Event Overlay */}
                 <div className="relative flex" style={{ height: `${totalGridHeight}px` }}>
                   
-                  {/* Left Time Column (60px width) */}
-                  <div className="w-[60px] shrink-0 relative border-r border-zinc-200/80 dark:border-zinc-800 select-none bg-white dark:bg-zinc-900">
+                  {/* Left Time Column (64px width, crystal-clear labels) */}
+                  <div className="w-[64px] shrink-0 relative border-r border-zinc-200 dark:border-zinc-800 select-none bg-zinc-50/50 dark:bg-zinc-900">
                     {hoursList.slice(0, -1).map(item => (
                       <div
                         key={item.hour}
                         style={{ height: `${HOUR_ROW_HEIGHT}px` }}
-                        className="border-b border-zinc-100 dark:border-zinc-850 flex items-start justify-end pr-2 pt-1 text-[11px] font-medium text-zinc-400 dark:text-zinc-500"
+                        className="border-b border-zinc-200 dark:border-zinc-800 flex items-start justify-end pr-2.5 pt-1.5 text-xs font-bold text-zinc-500 dark:text-zinc-400"
                       >
                         {item.label}
                       </div>
@@ -1188,16 +1194,16 @@ export default function SchedulerEngine() {
                   {/* 5 Day Columns Area */}
                   <div className="flex-1 relative h-full">
                     
-                    {/* Background Hour Lines (Solid on hour, faint on half-hour) */}
+                    {/* Background Hour Lines (Solid on hour, subtle on half-hour) */}
                     <div className="absolute inset-0 pointer-events-none select-none">
                       {hoursList.slice(0, -1).map(item => (
                         <div
                           key={item.hour}
                           style={{ height: `${HOUR_ROW_HEIGHT}px` }}
-                          className="border-b border-zinc-100 dark:border-zinc-800/80 relative"
+                          className="border-b border-zinc-200 dark:border-zinc-800 relative"
                         >
                           {/* Half-hour marker line */}
-                          <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-zinc-100/60 dark:border-zinc-850/40" />
+                          <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-zinc-100 dark:border-zinc-800/60" />
                         </div>
                       ))}
                     </div>
@@ -1209,12 +1215,12 @@ export default function SchedulerEngine() {
                         return (
                           <div
                             key={day}
-                            className="relative h-full border-r border-zinc-200/80 dark:border-zinc-800 last:border-r-0"
+                            className="relative h-full border-r border-zinc-200 dark:border-zinc-800 last:border-r-0"
                           >
                             {events.map(event => {
                               const palette = COLOR_PALETTES[event.colorIndex % COLOR_PALETTES.length];
 
-                              // Side-by-Side Collision Positioning (Google Calendar / FullCalendar cluster lanes)
+                              // Dynamic Side-by-Side Collision Positioning
                               const isClashed = event.hasClash;
                               const totalCols = event.totalLanes || 1;
                               const colWidthPercent = 100 / totalCols;
@@ -1235,15 +1241,15 @@ export default function SchedulerEngine() {
                                     left: leftPos,
                                     width: blockWidth
                                   }}
-                                  className={`absolute rounded-lg border p-2 transition-all shadow-xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-default select-none ${palette.cardBg} ${palette.cardBorder} border-l-[3.5px] ${palette.cardBorder} ${
-                                    isClashed ? 'ring-1 ring-rose-500 border-rose-500' : ''
+                                  className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-sm hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-default select-none ${palette.cardBg} ${palette.cardBorder} border-l-4 ${palette.leftBar} ${
+                                    isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
                                   }`}
                                   title={`${event.code} - ${event.title}\n${event.startTime} - ${event.endTime}\n${event.room}`}
                                 >
                                   {/* Top Row: Code + Close Button */}
                                   <div className="leading-tight">
-                                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                                      <span className={`font-bold text-xs tracking-tight truncate ${palette.textCode}`}>
+                                    <div className="flex items-center justify-between gap-1 mb-1">
+                                      <span className={`font-bold text-xs sm:text-sm tracking-tight truncate ${palette.textCode}`}>
                                         {event.code}
                                       </span>
                                       
@@ -1253,31 +1259,31 @@ export default function SchedulerEngine() {
                                           e.stopPropagation();
                                           handleDeleteCourse(event.courseId);
                                         }}
-                                        className="opacity-0 group-hover:opacity-100 hover:text-rose-600 transition p-0.5 rounded cursor-pointer"
+                                        className="opacity-0 group-hover:opacity-100 hover:text-rose-600 transition p-1 rounded-md cursor-pointer"
                                         title="Delete class"
                                       >
-                                        <X className="w-3 h-3" />
+                                        <X className="w-3.5 h-3.5" />
                                       </button>
                                     </div>
 
                                     {/* Title */}
-                                    <div className={`text-[11px] font-semibold truncate ${palette.textTitle}`}>
+                                    <div className={`text-xs font-semibold truncate leading-snug ${palette.textTitle}`}>
                                       {event.title}
                                     </div>
 
                                     {/* Room */}
                                     {event.room && (
-                                      <div className={`text-[10px] font-medium truncate flex items-center gap-1 mt-0.5 opacity-80 ${palette.textMeta}`}>
-                                        <MapPin className="w-2.5 h-2.5 shrink-0" />
+                                      <div className={`text-[11px] font-medium truncate flex items-center gap-1 mt-1 opacity-90 ${palette.textMeta}`}>
+                                        <MapPin className="w-3 h-3 shrink-0" />
                                         <span>{event.room}</span>
                                       </div>
                                     )}
                                   </div>
 
-                                  {/* Bottom Time Stamp */}
-                                  <div className={`text-[10px] font-medium pt-1 flex items-center justify-between border-t border-black/5 dark:border-white/10 ${palette.textMeta}`}>
-                                    <span>{formatTime12(event.startTime)}</span>
-                                    <span>{formatTime12(event.endTime)}</span>
+                                  {/* Bottom Time Stamp (Clean single line without awkward wrapping) */}
+                                  <div className={`text-[11px] font-semibold pt-1 truncate flex items-center gap-1 border-t border-black/10 dark:border-white/15 ${palette.textMeta}`}>
+                                    <Clock className="w-3 h-3 shrink-0 opacity-80" />
+                                    <span className="truncate">{formatClassTimeRange(event.startTime, event.endTime, totalCols > 1)}</span>
                                   </div>
                                 </div>
                               );

@@ -142,9 +142,10 @@ const siteName = "Class Schedule";
       </div>
     </footer>
 
-    <!-- Theme Toggle Script -->
+    <!-- Theme Toggle & Anchor Navigation Script -->
     <script is:inline>
       (function() {
+        // Theme Toggle
         var btn = document.getElementById('theme-toggle');
         if (btn) {
           btn.addEventListener('click', function() {
@@ -157,6 +158,36 @@ const siteName = "Class Schedule";
               try { localStorage.setItem('theme', 'dark'); } catch(e) {}
             }
           });
+        }
+
+        // Anchor navigation for FAQ & Planning Guide
+        function openAndScroll(hash) {
+          if (!hash || (hash !== '#planning-guide' && hash !== '#faq')) return;
+          var hub = document.getElementById('editorial-hub');
+          if (hub) {
+            hub.open = true;
+          }
+          setTimeout(function() {
+            var target = document.querySelector(hash);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 60);
+        }
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (link && link.getAttribute('href') && link.getAttribute('href').startsWith('#')) {
+            var hash = link.getAttribute('href');
+            if (hash === '#planning-guide' || hash === '#faq') {
+              e.preventDefault();
+              openAndScroll(hash);
+            }
+          }
+        });
+
+        if (window.location.hash) {
+          openAndScroll(window.location.hash);
         }
       })();
     </script>
