@@ -688,6 +688,12 @@ export default function AcademicStudioApp() {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
   };
 
+  // Delete Task
+  const deleteTask = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTasks(prev => prev.filter(t => t.id !== id));
+  };
+
   // Add Task
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -2120,18 +2126,27 @@ export default function AcademicStudioApp() {
                   <div
                     key={task.id}
                     onClick={() => toggleTask(task.id)}
-                    className="p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between gap-3 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-850"
+                    className="p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between gap-3 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-850 group transition"
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       {task.completed ? (
-                        <CheckSquare className="w-4 h-4 text-zinc-900 dark:text-white" />
+                        <CheckSquare className="w-4 h-4 text-zinc-900 dark:text-white shrink-0" />
                       ) : (
-                        <Square className="w-4 h-4 text-zinc-400" />
+                        <Square className="w-4 h-4 text-zinc-400 shrink-0" />
                       )}
-                      <span className={task.completed ? 'line-through text-zinc-400' : 'font-medium text-zinc-800 dark:text-zinc-200'}>
+                      <span className={`truncate ${task.completed ? 'line-through text-zinc-400' : 'font-medium text-zinc-800 dark:text-zinc-200'}`}>
                         {task.title}
                       </span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={(e) => deleteTask(task.id, e)}
+                      className="p-1 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer"
+                      title="Delete task"
+                      aria-label="Delete task"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))
               )}
