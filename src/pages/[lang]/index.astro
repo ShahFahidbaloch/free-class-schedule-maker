@@ -98,12 +98,12 @@ const structuredSchema = {
     </div>
 
     <!-- H1 Headline -->
-    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.08]">
+    <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.14]">
       {content.h1}
     </h1>
 
     <!-- Subtitle -->
-    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto font-normal leading-relaxed">
+    <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
       {content.subtitle}
     </p>
 
@@ -227,11 +227,41 @@ const structuredSchema = {
       </div>
     </section>
 
-    <!-- Bento Card 3: Step-by-Step Guide -->
+    <!-- Bento Card 3: University Schedule Guides & Registration Strategy -->
     <section id="course-planning" class="scroll-mt-20">
       <div id="portal-guides" class="-mt-20 pt-20 pointer-events-none"></div>
-      <div id="step-by-step" class="-mt-20 pt-20 pointer-events-none"></div>
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div id="university-guides" class="-mt-20 pt-20 pointer-events-none"></div>
+      <div class="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.secPlanningBadge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.secPlanningTitle}
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {content.secPlanningSubtitle}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {content.planningPillars.map((pillar) => (
+            <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-3">
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">
+                {pillar.title}
+              </h3>
+              <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                {pillar.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 4: Step-by-Step Guide -->
+    <section id="step-by-step" class="scroll-mt-20">
+      <div class="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             {content.sec3Badge}
@@ -256,9 +286,9 @@ const structuredSchema = {
       </div>
     </section>
 
-    <!-- Bento Card 4: Templates Hub -->
+    <!-- Bento Card 5: Templates Hub -->
     <section id="templates-hub" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             {content.sec4Badge}
@@ -291,9 +321,51 @@ const structuredSchema = {
       </div>
     </section>
 
-    <!-- Bento Card 5: FAQ Accordions -->
+    <!-- Bento Card 6: Tool Comparison Matrix Table -->
+    <section id="comparison-table" class="scroll-mt-20">
+      <div class="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.tableBadge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.tableTitle}
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {content.tableSubtitle}
+          </p>
+        </div>
+
+        <div class="w-full overflow-x-auto pb-2">
+          <table class="w-full min-w-[620px] text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 font-mono text-[11px] uppercase">
+                <th class="py-3 px-4 font-bold">{content.tableHeaders.col1}</th>
+                <th class="py-3 px-4 font-bold text-zinc-900 dark:text-white bg-zinc-100/60 dark:bg-zinc-800/40 rounded-t-lg">{content.tableHeaders.col2}</th>
+                <th class="py-3 px-4 font-bold">{content.tableHeaders.col3}</th>
+                <th class="py-3 px-4 font-bold">{content.tableHeaders.col4}</th>
+                <th class="py-3 px-4 font-bold">{content.tableHeaders.col5}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-zinc-600 dark:text-zinc-300">
+              {content.tableRows.map((row) => (
+                <tr>
+                  <td class="py-3 px-4 font-medium text-zinc-900 dark:text-white">{row.feature}</td>
+                  <td class="py-3 px-4 font-semibold text-zinc-950 dark:text-white bg-zinc-100/40 dark:bg-zinc-800/20">{row.studio}</td>
+                  <td class="py-3 px-4">{row.portals}</td>
+                  <td class="py-3 px-4">{row.excel}</td>
+                  <td class="py-3 px-4">{row.paper}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 7: FAQ Accordions -->
     <section id="faq" class="scroll-mt-20">
-      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+      <div class="p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
             {content.faqBadge}
