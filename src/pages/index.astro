@@ -1,31 +1,44 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SchedulerEngine from '../components/SchedulerEngine';
+import { 
+  Sparkles, 
+  ArrowRight, 
+  Clock, 
+  Calendar, 
+  BookOpen, 
+  ShieldCheck, 
+  Download, 
+  FileSpreadsheet, 
+  FileText, 
+  Layers, 
+  CheckCircle2,
+  CalendarDays
+} from 'lucide-react';
 
 const faqList = [
   {
-    q: "How does the Gap Optimizer algorithm select conflict-free class sections?",
-    a: "The engine runs a combinatorial permutation solver across all alternative sections you input. It maps lecture intervals into discrete minutes from midnight, discards any combinations with overlapping intervals [start, end], and then scores valid combinations based on aggregate idle waiting time. It selects the timetable with the absolute minimum campus dead time."
+    q: "How does the Gap Optimizer algorithm eliminate awkward campus gaps?",
+    a: "The engine solves an interval scheduling combinatorial optimization problem across every alternative course section you input. It converts all lecture start and end times into discrete integer minutes from midnight, discards any combinations with conflicting intervals, and evaluates the remaining permutations to select the schedule with minimal idle waiting time between lectures."
   },
   {
-    q: "Why are 1-to-2 hour campus gaps worse for GPA than back-to-back classes?",
-    a: "According to research on attention residue by Dr. Sophie Leroy, context-switching between complex subjects incurs a 20-30 minute cognitive penalty. Factoring in packing up, walking across campus quads, finding library seats, and packing up early for the next lecture, a 75-minute gap leaves less than 20 minutes of shallow focus. This fragmented 'limbo state' induces decision fatigue without producing meaningful study progress."
+    q: "Why are 1-to-2 hour campus gaps damaging to academic performance?",
+    a: "Organizational psychology and cognitive science research on attention residue (notably by Dr. Sophie Leroy) proves that transitioning between different cognitive contexts imposes a 20 to 30-minute refocus penalty. Considering campus transit, finding study space, and packing up early, a 75-minute gap leaves less than 20 minutes of shallow focus. This fragmented dead time creates fatigue without producing real study output."
   },
   {
-    q: "Can I export my timetable directly to Apple Calendar, Google Calendar, and Outlook?",
-    a: "Yes. Clicking 'Export ICS' generates a standard RFC 5545 iCalendar file configured with 15 weekly recurring events for your semester, complete with 15-minute advance alerts. You can open it natively in Apple Calendar (Mac/iPhone) or import it into Google Calendar and Microsoft Outlook."
+    q: "Can I export my timetable directly to Apple Calendar, Google Calendar, and Microsoft Outlook?",
+    a: "Yes. In the Schedule Studio (/editor), clicking 'Export .ICS' generates a standard RFC 5545 iCalendar file configured with 16 recurring weekly events for your full semester, equipped with 15-minute advance alerts. You can open it natively on iPhone, Mac, Android, Google Calendar, and Outlook."
   },
   {
-    q: "Is any student or university course data stored on external servers?",
-    a: "No. The entire scheduler operates under a zero-backend, client-side privacy architecture. All permutation calculations, class timings, and notes are processed locally in your browser and saved exclusively in your private browser localStorage."
+    q: "Is any student or university course registration data stored on external servers?",
+    a: "No. The entire platform operates with zero backend telemetry and strict client-side privacy architecture. All timetable calculations, conflict detection, and course inputs are processed purely within your browser and saved exclusively in local storage."
   },
   {
-    q: "What is the recommended credit distribution between MWF and Tuesday/Thursday?",
-    a: "For a standard 15-to-16 credit semester, we recommend an 8/7 or 9/6 distribution: three 3-credit modules on Monday/Wednesday/Friday (50-minute lectures) and two modules on Tuesday/Thursday (75-minute lectures). This prevents mid-week exam crunches and preserves Friday afternoons for project work."
+    q: "What is the optimal credit hour distribution between MWF and Tuesday/Thursday?",
+    a: "For a standard 15-credit semester, we recommend an 8/7 or 9/6 balance: three 3-credit modules on Monday/Wednesday/Friday (50-minute lectures) and two 3-credit modules on Tuesday/Thursday (75-minute lectures). This prevents mid-week exam crunches and preserves Friday afternoons for project work."
   },
   {
-    q: "How should engineering and STEM majors balance 3-hour laboratory blocks?",
-    a: "Anchor your low-capacity 3-hour wet or hardware laboratory blocks first, typically on Tuesday or Thursday afternoons. Because lab capacities are limited to 20 seats by bench equipment, their timing cannot be moved. Once anchored, permute your large-lecture requirements around them, ensuring at least a 30-minute cognitive buffer after lab sessions."
+    q: "How should STEM majors schedule 3-hour laboratory blocks?",
+    a: "Always anchor fixed 3-hour wet or hardware laboratory blocks first, ideally on Tuesday or Thursday afternoons. Because laboratory capacities are capped by physical bench equipment, their times cannot be shifted. Once anchored, arrange high-capacity lecture modules around them with at least a 30-minute cognitive buffer."
   }
 ];
 
@@ -44,223 +57,320 @@ const faqSchema = {
 ---
 
 <Layout 
-  title="Class Schedule — College Timetable & Gap Optimizer"
-  description="Free interactive Class Schedule Maker and Timetable Optimizer. Eliminate awkward campus gaps and export conflict-free schedules to Apple & Google Calendar."
+  title="The Smart Class Schedule Maker — Build Conflict-Free Timetables"
+  description="Build conflict-free weekly timetables in seconds. Eliminate awkward campus gaps and export to Apple Calendar, Google Calendar, and PDF."
   schemaJson={faqSchema}
 >
-  <!-- Zero-Scroll Top Workbench (Above the Fold) -->
-  <div class="max-w-[1536px] mx-auto px-3 sm:px-6 pt-2 pb-6">
-    <SchedulerEngine client:load />
-  </div>
+  <!-- Minimal Hero Section -->
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-14 text-center space-y-6">
+    
+    <!-- Micro Badge -->
+    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
+      <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white"></span>
+      <span>Timetable Studio &bull; Open Academic Tool</span>
+    </div>
 
-  <!-- Collapsed Academic Planning Hub & SEO Documentation (For AdSense & Reference) -->
-  <div class="max-w-[1536px] mx-auto px-3 sm:px-6 py-6 border-t border-zinc-200 dark:border-zinc-800/80 editorial-hub">
-    <details id="editorial-hub" class="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] transition-all shadow-2xs [&_summary::-webkit-details-marker]:hidden">
-      <summary class="flex cursor-pointer items-center justify-between p-4 sm:p-5 select-none text-zinc-900 dark:text-white">
-        <div class="flex items-center gap-3">
-          <span class="w-2 h-2 rounded-xs bg-zinc-400 dark:bg-zinc-600"></span>
-          <span class="text-xs font-semibold uppercase tracking-wider">
-            Class Schedule Guide, Timetable Optimization & Student FAQ
-          </span>
-          <span class="text-[11px] text-zinc-400 hidden sm:inline">
-            — Course planning tips, gap reduction strategies & schedule FAQs
-          </span>
+    <!-- Punchy Single H1 -->
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.08]">
+      The Smart Class Schedule Maker.
+    </h1>
+
+    <!-- One Line Subheadline -->
+    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto font-normal">
+      Build conflict-free weekly timetables in seconds.
+    </p>
+
+    <!-- Primary Call To Action (Hero Center) -->
+    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a
+        href="/editor"
+        class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98]"
+      >
+        <span>Launch Schedule Studio</span>
+        <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </a>
+    </div>
+
+    <!-- Minimal Aesthetic Preview Mockup Card -->
+    <div class="pt-10 max-w-3xl mx-auto">
+      <div class="p-4 sm:p-6 rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white/70 dark:bg-[#121215]/70 backdrop-blur-md shadow-lg space-y-4 text-left">
+        <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+            <span class="text-xs font-mono font-semibold text-zinc-400 ml-2">STUDIO PREVIEW &bull; 08:00 AM – 08:00 PM</span>
+          </div>
+          <span class="text-xs font-mono font-bold text-zinc-500">15 Credits &bull; 0 Conflicts</span>
         </div>
-        <span class="text-xs font-mono text-zinc-400 group-open:rotate-180 transition-transform duration-200">
-          ▼
-        </span>
-      </summary>
 
-      <!-- Expandable Deep Editorial Content -->
-      <div class="p-6 sm:p-8 border-t border-zinc-100 dark:border-zinc-800/60 space-y-16 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-        
-        <!-- Section 1: The Mathematics of Timetable Gap Optimization -->
-        <section class="space-y-4">
-          <div class="space-y-1">
-            <span class="text-[11px] font-mono font-bold uppercase text-zinc-500">ALGORITHM SPECIFICATION</span>
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              The Mathematics of Timetable Gap Optimization: Permutation Checks & Interval Algorithms
-            </h2>
+        <div class="grid grid-cols-5 gap-2 text-center text-xs font-bold py-1 text-zinc-500">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+        </div>
+
+        <div class="grid grid-cols-5 gap-2 h-28">
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white">CS 101</span>
+            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white">ENG 102</span>
+            <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white">CS 101</span>
+            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white">ENG 102</span>
+            <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white">CS 101</span>
+            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- High-Value Editorial Hub (1,500+ words for Google AdSense) -->
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 space-y-16">
+    
+    <!-- Bento Grid Section 1: The Science of Gap Minimization in University Timetables -->
+    <section id="science-of-gaps" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            ALGORITHM SPECIFICATION &bull; INTERVAL SCHEDULING
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            The Science of Gap Minimization in University Timetables
+          </h2>
+        </div>
+
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
+          <p>
+            University course registration presents a classic discrete combinatorial optimization challenge. When an undergraduate student enrolls in four to six modules—each offering multiple alternative lecture sessions, discussion sections, and laboratory blocks—the total number of possible combinations compounds factorially. For five courses with three alternative times each, students navigate 243 discrete candidate timetables.
+          </p>
+
+          <p>
+            The fundamental flaw in manual timetable assembly is the accidental introduction of <strong>fragmented campus voids</strong>. A 60-to-90 minute interval between lectures is too brief to walk back to off-campus housing or engage in deep analytical work, yet long enough to cause decision fatigue and mental drift.
+          </p>
+
+          <!-- Bento Sub-Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-2">
+              <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+                ATTENTION RESIDUE & COGNITIVE PENALTY
+              </span>
+              <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Peer-reviewed research on attention residue demonstrates that context-switching between complex academic disciplines incurs a 20 to 30-minute cognitive adjustment period. An isolated 75-minute gap yields under 25 minutes of usable shallow focus once packing, walking, and setting up are factored in.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-2">
+              <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+                CONSOLIDATED BLOCK EFFICIENCY
+              </span>
+              <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Consolidating lectures into consecutive morning blocks (with 15-minute passing walks) preserves large, uninterrupted 4-hour afternoon blocks. These consolidated blocks provide the uninterrupted cognitive flow necessary for STEM problem sets, programming labs, and analytical writing.
+              </p>
+            </div>
           </div>
 
           <p>
-            University course registration is a classic discrete combinatorial optimization problem analogous to the Boolean Satisfiability (SAT) and Exact Cover problems. When an undergraduate student enrolls in 5 academic courses with multiple alternative lecture sections, recitations, and lab blocks, the parameter search space grows factorially.
+            Our engine addresses this problem via a two-stage deterministic resolution:
           </p>
-
-          <div class="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900 font-mono text-xs text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800">
-            Combinatorial Permutations: S = &prod; |Sec_i| = 3 &times; 3 &times; 3 &times; 3 &times; 3 = 243 discrete candidate timetables
-          </div>
-
-          <p>
-            Our engine processes this search space through a two-stage deterministic resolution:
-          </p>
-          <ul class="list-disc pl-5 space-y-2">
+          <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
             <li>
-              <strong>Stage 1 (Overlap Pruning):</strong> Maps all class timing intervals into integer minutes from midnight. For every candidate section pairing occurring on the same day with intervals [s₁, e₁] and [s₂, e₂], the algorithm verifies that <code>max(s₁, s₂) &ge; min(e₁, e₂)</code>. If an overlap is identified, the candidate branch is immediately pruned.
+              <strong>Stage 1 (Overlap Pruning):</strong> Maps all class time intervals into integer minutes from midnight. For any candidate section pair on the same day with intervals [s₁, e₁] and [s₂, e₂], the algorithm verifies that max(s₁, s₂) &ge; min(e₁, e₂). Overlapping combinations are immediately eliminated.
             </li>
             <li>
-              <strong>Stage 2 (Cost Function Evaluation):</strong> For remaining non-conflicting permutations, the engine calculates the idle interval duration between consecutive lectures and minimizes the total weekly gap score.
+              <strong>Stage 2 (Idle Gap Minimization):</strong> For all valid, conflict-free permutations, the solver computes the total weekly dead time and identifies the configuration that maximizes consolidated focus blocks.
             </li>
           </ul>
+        </div>
+      </div>
+    </section>
 
-          <!-- Before/After Scientific Breakdown -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-2">
-              <span class="font-mono font-bold text-xs text-rose-600 dark:text-rose-400">UNOPTIMIZED SCHEDULE (3.5H DEAD GAP)</span>
-              <p class="text-xs">
-                Students stranded between 11:15 AM and 2:45 PM suffer from cognitive attention residue. Research by Dr. Sophie Leroy indicates transitions without task closure impair performance on subsequent analytical tasks by 28%.
-              </p>
-            </div>
-            <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-2">
-              <span class="font-mono font-bold text-xs text-zinc-900 dark:text-white">OPTIMIZED SCHEDULE (15M PASSING WALK)</span>
-              <p class="text-xs">
-                Back-to-back lectures consolidate cognitive focus in the morning, freeing the entire afternoon from 12:45 PM onward for uninterrupted 4-hour study sessions or lab work.
-              </p>
-            </div>
-          </div>
-        </section>
+    <!-- Bento Grid Section 2: Step-by-Step College Course Planning Strategy -->
+    <section id="course-planning" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            ACADEMIC ADVISING &bull; 15-CREDIT CURRICULUM
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            Step-by-Step College Course Planning Strategy
+          </h2>
+        </div>
 
-        <!-- Section 2: Strategic College Course Planning Guide -->
-        <section id="planning-guide" class="space-y-4 pt-4 scroll-mt-20">
-          <div class="space-y-1">
-            <span class="text-[11px] font-mono font-bold uppercase text-zinc-500">CURRICULUM PLANNING FRAMEWORK</span>
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              Strategic College Course Planning Guide: The Golden 15-Credit Balance
-            </h2>
-          </div>
-
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
           <p>
-            Graduating within four academic years requires completing 120 semester credit hours (averaging 15 credits per semester). However, treating all credit hours as equivalent units causes severe midterm exam clustering and GPA burnout.
+            Graduating within four academic years requires completing 120 semester credit hours—an average of 15 credits per term across eight terms. However, treating every credit as equivalent in effort leads directly to mid-term exam clustering, deadline overlap, and GPA decline.
           </p>
 
-          <div class="space-y-3">
-            <h3 class="text-base font-semibold text-zinc-900 dark:text-white">The 2:2:1 Workload Balancing Formula</h3>
-            <ul class="list-disc pl-5 space-y-2">
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-3">
+            <h3 class="text-sm font-bold text-zinc-900 dark:text-white">The 2:2:1 Workload Balancing Formula</h3>
+            <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm">
               <li>
-                <strong>Two Quantitative Heavyweights (6–8 Credits):</strong> Rigorous major requirements (e.g. Data Structures, Multivariable Calculus, Organic Chemistry) demanding continuous weekly problem set calculations.
+                <strong>Two Quantitative Heavyweights (6–8 Credits):</strong> Rigorous major requirements (e.g. Data Structures, Multivariable Calculus, Organic Chemistry) that demand weekly calculation sets.
               </li>
               <li>
-                <strong>Two Qualitative Seminars (6 Credits):</strong> Writing-intensive breadth electives or institutional general education requirements evaluated primarily via mid-term essays.
+                <strong>Two Qualitative Seminars (6 Credits):</strong> Writing-intensive breadth electives or general education requirements evaluated through mid-term essays.
               </li>
               <li>
-                <strong>One Applied Practical / Kinetic Lab (1–3 Credits):</strong> Hardware engineering laboratories or design studios engaging sensory faculties rather than textbook reading memory.
+                <strong>One Applied Practical / Studio Block (1–3 Credits):</strong> Hardware engineering laboratory, visual design studio, or physical activity requiring sensory immersion rather than rote memorization.
               </li>
             </ul>
           </div>
 
-          <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-2">
-            <h4 class="font-bold text-zinc-900 dark:text-white text-xs">Managing 3-Hour Wet/Dry Laboratory Blocks</h4>
-            <p class="text-xs">
-              Laboratory sections require physical bench equipment, restricting capacity to 18-24 students. Because lab times cannot be moved, anchor them on Tuesday or Thursday afternoons first, then permute high-capacity lecture sections around them. Always ensure a 45-minute recovery buffer following any 3-hour lab block.
-            </p>
-          </div>
-        </section>
-
-        <!-- Section 3: Timetable Architectures Comparison -->
-        <section class="space-y-4">
-          <div class="space-y-1">
-            <span class="text-[11px] font-mono font-bold uppercase text-zinc-500">COMPARATIVE ARCHITECTURE</span>
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              Timetable Architectures Comparison: Evaluating Block vs Alternating vs Hybrid Models
-            </h2>
-          </div>
-
-          <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-zinc-800 font-mono">
-                <tr>
-                  <th class="py-3 px-4 font-semibold">MODEL ARCHITECTURE</th>
-                  <th class="py-3 px-4 font-semibold">WEEKLY RHYTHM</th>
-                  <th class="py-3 px-4 font-semibold">CORE ADVANTAGE</th>
-                  <th class="py-3 px-4 font-semibold">ACADEMIC RISK</th>
-                  <th class="py-3 px-4 font-semibold">RECOMMENDED PROFILE</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-zinc-600 dark:text-zinc-300">
-                <tr>
-                  <td class="py-3 px-4 font-bold text-zinc-900 dark:text-white">Block Scheduling (Compact)</td>
-                  <td class="py-3 px-4 font-mono text-zinc-500">T/Th or MWF Only</td>
-                  <td class="py-3 px-4">Frees 2–3 full weekdays for uninterrupted co-ops and research.</td>
-                  <td class="py-3 px-4 text-rose-600 dark:text-rose-400">High exam-day cognitive fatigue.</td>
-                  <td class="py-3 px-4">Commuter students & working professionals.</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-4 font-bold text-zinc-900 dark:text-white">Uniform Alternating Spread</td>
-                  <td class="py-3 px-4 font-mono text-zinc-500">MWF (50m) + TTh (75m)</td>
-                  <td class="py-3 px-4">Consistent circadian rhythm; distributed daily homework pace.</td>
-                  <td class="py-3 px-4 text-amber-600 dark:text-amber-400">Requires daily commute; limits 4-hour deep-work blocks.</td>
-                  <td class="py-3 px-4">Freshmen & on-campus residential students.</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-4 font-bold text-zinc-900 dark:text-white">Hybrid Anchor Model</td>
-                  <td class="py-3 px-4 font-mono text-zinc-500">Heavy TTh + Light MW</td>
-                  <td class="py-3 px-4">Accommodates 3-hour lab sections cleanly; Friday afternoon free.</td>
-                  <td class="py-3 px-4 text-zinc-500">Requires self-discipline on light lecture days.</td>
-                  <td class="py-3 px-4">STEM, Pre-Med, and Computer Science majors.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- Section 4: Downloadable Schedule Formats -->
-        <section class="space-y-4">
-          <div class="space-y-1">
-            <span class="text-[11px] font-mono font-bold uppercase text-zinc-500">DOCUMENTATION</span>
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              Supported Export Formats & Standards
-            </h2>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-1.5">
-              <span class="font-mono font-bold text-xs text-zinc-900 dark:text-white">RFC 5545 iCALENDAR (.ICS)</span>
-              <p class="text-xs">
-                Standard recurring calendar syntax with 15-week semester repeat rules and 15-minute advance alarms for Apple Calendar, Google Calendar, and Microsoft Outlook.
-              </p>
-            </div>
-            <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-1.5">
-              <span class="font-mono font-bold text-xs text-zinc-900 dark:text-white">WALLPAPER PNG (2X DENSITY)</span>
-              <p class="text-xs">
-                High-definition canvas rendering optimized for iPad GoodNotes covers, lock screens, and secondary desktop monitor display.
-              </p>
-            </div>
-            <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-1.5">
-              <span class="font-mono font-bold text-xs text-zinc-900 dark:text-white">PRINT MEDIA CSS (A4/LETTER)</span>
-              <p class="text-xs">
-                Custom CSS media query stripping all web navigation, form controls, and theme toggles for paper noticeboard pinning.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Section 5: Frequently Asked Questions -->
-        <section id="faq" class="space-y-4 pt-4 scroll-mt-20">
-          <div class="space-y-1">
-            <span class="text-[11px] font-mono font-bold uppercase text-zinc-500">FAQ REPOSITORY</span>
-            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-              Frequently Asked Questions: College Schedule & Gap Optimization
-            </h2>
-          </div>
-
-          <div class="space-y-2">
-            {faqList.map((item) => (
-              <details class="group rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 transition-all [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-semibold text-zinc-900 dark:text-white select-none">
-                  <span>{item.q}</span>
-                  <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
-                    ▼
-                  </span>
-                </summary>
-                <div class="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
-                  {item.a}
-                </div>
-              </details>
-            ))}
-          </div>
-        </section>
-
+          <h3 class="text-base font-bold text-zinc-900 dark:text-white pt-2">Managing Multi-Hour Laboratory Blocks</h3>
+          <p>
+            Laboratory sections require physical equipment benches, capping seat capacity to 18–24 students. Because laboratory timings cannot be adjusted, always anchor them on Tuesday or Thursday afternoons first. Once anchored, permute your large-lecture requirements around them, ensuring at least a 30-minute cognitive buffer after lab sessions.
+          </p>
+        </div>
       </div>
-    </details>
+    </section>
+
+    <!-- Bento Grid Section 3: Downloadable Templates Hub (PDF, Excel, Pinterest formats) -->
+    <section id="templates-hub" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            TEMPLATES REPOSITORY &bull; MULTI-FORMAT
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            Downloadable Templates Hub
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            Export and integrate your schedule across paper planners, digital spreadsheets, and mobile wallpaper.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          
+          <!-- Template 1: PDF Printable -->
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
+                <FileText class="w-4 h-4" />
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Printable PDF Timetable</h3>
+              <p class="text-xs text-zinc-500 leading-relaxed">
+                Clean A4/Letter vector grid with bold hour lines and room notes for dorm wall pinning.
+              </p>
+            </div>
+            <a 
+              href="/editor" 
+              class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
+            >
+              <span>Build & Print PDF</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+
+          <!-- Template 2: Excel / Sheets -->
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
+                <FileSpreadsheet class="w-4 h-4" />
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Excel & Sheets Template</h3>
+              <p class="text-xs text-zinc-500 leading-relaxed">
+                Structured spreadsheet matrix with conditional formatting and automatic credit sum calculators.
+              </p>
+            </div>
+            <a 
+              href="/editor" 
+              class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
+            >
+              <span>Export in Studio</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+
+          <!-- Template 3: Pinterest Wallpaper -->
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
+                <Download class="w-4 h-4" />
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Minimalist Lock Screen PNG</h3>
+              <p class="text-xs text-zinc-500 leading-relaxed">
+                High-density 2x canvas rendering calibrated for iPhone, iPad, and desktop lock screen backgrounds.
+              </p>
+            </div>
+            <a 
+              href="/editor" 
+              class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
+            >
+              <span>Generate Wallpaper</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Grid Section 4: Interactive FAQ Accordions with JSON-LD Schema -->
+    <section id="faq" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            FAQ &bull; QUESTIONS & ANSWERS
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            Frequently Asked Questions
+          </h2>
+        </div>
+
+        <div class="space-y-3">
+          {faqList.map((item) => (
+            <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 transition-all [&_summary::-webkit-details-marker]:hidden">
+              <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-bold text-zinc-900 dark:text-white select-none">
+                <span>{item.q}</span>
+                <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200 text-xs">
+                  ▼
+                </span>
+              </summary>
+              <div class="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
+                {item.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
   </div>
+
+  <!-- Bottom Hero CTA Banner -->
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pb-20">
+    <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-xl">
+      <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Ready to build your conflict-free timetable?
+      </h3>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto">
+        No accounts, no downloads, zero server tracking. Instant client-side schedule optimization in your browser.
+      </p>
+      <div class="pt-2">
+        <a
+          href="/editor"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-black font-bold text-xs sm:text-sm transition shadow-sm"
+        >
+          <span>Open Schedule Studio Now</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  </section>
+
 </Layout>
