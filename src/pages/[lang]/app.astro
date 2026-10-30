@@ -1,0 +1,67 @@
+---
+import '../../styles/global.css';
+import AcademicStudioApp from '../../components/AcademicStudioApp';
+import { SUPPORTED_LANGUAGES, LOCALIZED_PAGES } from '../../data/i18nData';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'tl' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const content = LOCALIZED_PAGES[lang] || LOCALIZED_PAGES.es;
+---
+
+<!doctype html>
+<html lang={lang} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>{content.metaTitle} — Schedule Studio</title>
+    <meta name="description" content={content.metaDescription} />
+    <link rel="canonical" href={`https://classscheduleoptimizer.com/${lang}/app`} />
+
+    <!-- Hreflang Alternates -->
+    <link rel="alternate" hreflang="x-default" href="https://classscheduleoptimizer.com/app" />
+    <link rel="alternate" hreflang="en" href="https://classscheduleoptimizer.com/app" />
+    {SUPPORTED_LANGUAGES.filter(l => l.code !== 'en').map((locale) => (
+      <link 
+        rel="alternate" 
+        hreflang={locale.code} 
+        href={`https://classscheduleoptimizer.com/${locale.code}/app`} 
+      />
+    ))}
+
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#09090b" />
+    
+    <script is:inline>
+      (function() {
+        var savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-[#FBFBFD] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-150">
+    <AcademicStudioApp client:load />
+  </body>
+</html>

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import AcademicStudioApp from '../components/AcademicStudioApp';
+import { SUPPORTED_LANGUAGES } from '../data/i18nData';
 ---
 
 <!doctype html>
@@ -10,6 +11,18 @@ import AcademicStudioApp from '../components/AcademicStudioApp';
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>Schedule Studio — Class Schedule Maker & Academic Planner</title>
     <meta name="description" content="Dedicated full-screen academic course schedule builder. Plan conflict-free weekly timetables, track tasks, and export to Google/Apple Calendar." />
+    <link rel="canonical" href="https://classscheduleoptimizer.com/app" />
+
+    <!-- Hreflang Alternates -->
+    <link rel="alternate" hreflang="x-default" href="https://classscheduleoptimizer.com/app" />
+    <link rel="alternate" hreflang="en" href="https://classscheduleoptimizer.com/app" />
+    {SUPPORTED_LANGUAGES.filter(l => l.code !== 'en').map((locale) => (
+      <link 
+        rel="alternate" 
+        hreflang={locale.code} 
+        href={`https://classscheduleoptimizer.com/${locale.code}/app`} 
+      />
+    ))}
     <!-- Favicons & App Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

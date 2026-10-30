@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { SUPPORTED_LANGUAGES } from '../data/i18nData';
 
 interface Props {
   title: string;
@@ -8,6 +9,8 @@ interface Props {
   canonicalUrl?: string;
   ogImage?: string;
   schemaJson?: object;
+  lang?: string;
+  currentPath?: string;
 }
 
 const {
@@ -16,14 +19,22 @@ const {
   keywords = "class schedule, class schedule maker, free class schedule maker, weekly class schedule maker, class schedule maker template, pcc class schedule, college class schedule, uf class schedule, class schedule maker online, class schedule maker free, school schedule maker",
   canonicalUrl = Astro.url.href,
   ogImage = "https://classscheduleoptimizer.com/logo.png",
-  schemaJson
+  schemaJson,
+  lang = "en",
+  currentPath = ""
 } = Astro.props;
 
+// Compute normalized path for hreflang links (e.g., "" for home, "/app" for app)
+const rawPath = currentPath || Astro.url.pathname;
+const normalizedPath = rawPath.replace(/^\/(es|tl|ja|fr|de|pt|ko|it)(\/|$)/, '$2') || '';
+const cleanPath = normalizedPath.startsWith('/') ? normalizedPath : (normalizedPath ? `/${normalizedPath}` : '');
+
 const siteName = "Class Schedule Maker";
+const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPORTED_LANGUAGES[0];
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
@@ -32,6 +43,16 @@ const siteName = "Class Schedule Maker";
     <meta name="keywords" content={keywords} />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Hreflang Alternates for Multilingual SEO -->
+    <link rel="alternate" hreflang="x-default" href={`https://classscheduleoptimizer.com${cleanPath || '/'}`} />
+    {SUPPORTED_LANGUAGES.map((locale) => (
+      <link 
+        rel="alternate" 
+        hreflang={locale.code} 
+        href={`https://classscheduleoptimizer.com${locale.code === 'en' ? (cleanPath || '/') : `/${locale.code}${cleanPath}`}`} 
+      />
+    ))}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -43,7 +64,7 @@ const siteName = "Class Schedule Maker";
     <meta property="og:image:width" content="600" />
     <meta property="og:image:height" content="600" />
     <meta property="og:image:alt" content="Class Schedule Maker & Academic Timetable Planner" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={currentLangMeta.ogLocale} />
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -112,10 +133,41 @@ const siteName = "Class Schedule Maker";
         </nav>
 
         <!-- Right Actions -->
-        <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2">
+          <!-- Language Selector Dropdown -->
+          <div class="relative">
+            <details class="group relative">
+              <summary class="list-none flex items-center gap-1.5 h-8.5 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850 cursor-pointer select-none transition">
+                <span>{currentLangMeta.flag}</span>
+                <span class="hidden sm:inline text-[11px]">{currentLangMeta.nativeName}</span>
+                <svg class="w-3 h-3 text-zinc-400 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div class="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-lg p-1.5 z-50 flex flex-col gap-0.5 text-xs">
+                {SUPPORTED_LANGUAGES.map((item) => (
+                  <a
+                    href={`${item.code === 'en' ? (cleanPath || '/') : `/${item.code}${cleanPath}`}`}
+                    class={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors ${
+                      item.code === lang 
+                        ? 'bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-950 dark:text-white' 
+                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white'
+                    }`}
+                  >
+                    <span class="flex items-center gap-2">
+                      <span>{item.flag}</span>
+                      <span>{item.nativeName}</span>
+                    </span>
+                    {item.code === lang && <span class="text-[10px]">✓</span>}
+                  </a>
+                ))}
+              </div>
+            </details>
+          </div>
+
           <!-- Launch Studio CTA -->
           <a
-            href="/app"
+            href={lang === 'en' ? '/app' : `/${lang}/app`}
             class="h-8.5 px-3 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs"
           >
             <span>Launch Studio</span>

@@ -1,0 +1,347 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { LOCALIZED_PAGES, SUPPORTED_LANGUAGES } from '../../data/i18nData';
+import { 
+  ArrowRight, 
+  FileText, 
+  FileSpreadsheet, 
+  Download, 
+  Shield, 
+  Zap, 
+  Sliders 
+} from 'lucide-react';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'tl' } },
+    { params: { lang: 'ja' } },
+    { params: { lang: 'fr' } },
+    { params: { lang: 'de' } },
+    { params: { lang: 'pt' } },
+    { params: { lang: 'ko' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const content = LOCALIZED_PAGES[lang] || LOCALIZED_PAGES.es;
+const appUrl = `/${lang}/app`;
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": `https://classscheduleoptimizer.com/${lang}/#webapp`,
+      "name": "Class Schedule Maker & Academic Planner",
+      "url": `https://classscheduleoptimizer.com/${lang}/`,
+      "inLanguage": lang,
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": content.metaDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `https://classscheduleoptimizer.com/${lang}/#faq`,
+      "mainEntity": content.faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `https://classscheduleoptimizer.com/${lang}/#breadcrumb`,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": `https://classscheduleoptimizer.com/${lang}/`
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Schedule Studio",
+          "item": `https://classscheduleoptimizer.com/${lang}/app`
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={content.metaTitle}
+  description={content.metaDescription}
+  keywords={content.metaKeywords}
+  lang={lang}
+  currentPath={`/${lang}`}
+  schemaJson={structuredSchema}
+>
+  <!-- Hero Section -->
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 text-center space-y-6">
+    
+    <!-- Micro Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
+      <span class="w-2 h-2 rounded-full bg-zinc-900 dark:bg-white animate-pulse"></span>
+      <span>{content.badge}</span>
+    </div>
+
+    <!-- H1 Headline -->
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.08]">
+      {content.h1}
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto font-normal leading-relaxed">
+      {content.subtitle}
+    </p>
+
+    <!-- CTAs -->
+    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a
+        href={appUrl}
+        class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98]"
+      >
+        <span>{content.ctaLaunch}</span>
+        <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </a>
+      <a
+        href="#templates-hub"
+        class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-800 dark:text-zinc-200 text-sm font-semibold transition"
+      >
+        <FileText class="w-4 h-4" />
+        <span>{content.ctaTemplates}</span>
+      </a>
+    </div>
+
+    <!-- Live Preview Teaser Card -->
+    <div class="pt-8 max-w-3xl mx-auto">
+      <div class="p-4 sm:p-6 rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-sm space-y-4 text-left">
+        <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+            <span class="text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400 ml-2">{content.previewHeader}</span>
+          </div>
+          <span class="text-xs font-mono text-zinc-600 dark:text-zinc-400 font-semibold">{content.previewGridText}</span>
+        </div>
+
+        <div class="grid grid-cols-5 gap-2 text-center text-xs font-bold py-1 text-zinc-500">
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+        </div>
+
+        <div class="grid grid-cols-5 gap-2 h-24">
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 101</span>
+            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
+            <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 101</span>
+            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
+            <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
+          </div>
+          <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 101</span>
+            <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Editorial Bento Hub -->
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 space-y-16">
+    
+    <!-- Bento Card 1: Tool Overview -->
+    <section class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.sec1Badge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.sec1Title}
+          </h2>
+        </div>
+
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
+          <p>{content.sec1P1}</p>
+          <p>{content.sec1P2}</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            {content.sec1Pillars.map((pillar) => (
+              <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+                <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+                  {pillar.title}
+                </h3>
+                <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {pillar.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 2: Gap Optimization -->
+    <section class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.sec2Badge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.sec2Title}
+          </h2>
+        </div>
+
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
+          <p>{content.sec2P1}</p>
+          <p>{content.sec2P2}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 3: Step-by-Step Guide -->
+    <section class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.sec3Badge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.sec3Title}
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {content.sec3Subtitle}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          {content.steps.map((st) => (
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-3">
+              <span class="text-2xl font-black font-mono text-zinc-300 dark:text-zinc-700">{st.num}</span>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">{st.title}</h3>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">{st.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 4: Templates Hub -->
+    <section id="templates-hub" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.sec4Badge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.sec4Title}
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {content.sec4Subtitle}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {content.templates.map((tpl) => (
+            <div class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
+              <div class="space-y-2">
+                <h3 class="font-bold text-sm text-zinc-900 dark:text-white">{tpl.title}</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">{tpl.desc}</p>
+              </div>
+              <a 
+                href={appUrl} 
+                class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
+              >
+                <span>{tpl.cta}</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Card 5: FAQ Accordions -->
+    <section id="faq" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            {content.faqBadge}
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            {content.faqTitle}
+          </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {content.faqSubtitle}
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          {content.faqs.map((item) => (
+            <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 transition-all [&_summary::-webkit-details-marker]:hidden">
+              <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-bold text-zinc-900 dark:text-white select-none">
+                <span>{item.q}</span>
+                <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200 text-xs">
+                  ▼
+                </span>
+              </summary>
+              <div class="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
+                {item.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Bottom Conversion Call To Action -->
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pb-20">
+    <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-xl">
+      <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        {content.footerCtaTitle}
+      </h3>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto">
+        {content.footerCtaSubtitle}
+      </p>
+      <div class="pt-2">
+        <a
+          href={appUrl}
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-black font-bold text-xs sm:text-sm transition shadow-sm"
+        >
+          <span>{content.footerCtaBtn}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
