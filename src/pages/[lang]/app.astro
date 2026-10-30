@@ -27,16 +27,16 @@ const content = LOCALIZED_PAGES[lang] || LOCALIZED_PAGES.es;
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>{content.metaTitle} — Schedule Studio</title>
     <meta name="description" content={content.metaDescription} />
-    <link rel="canonical" href={`https://classscheduleoptimizer.com/${lang}/app`} />
+    <link rel="canonical" href={`https://freeclassschedule.com/${lang}/app`} />
 
     <!-- Hreflang Alternates -->
-    <link rel="alternate" hreflang="x-default" href="https://classscheduleoptimizer.com/app" />
-    <link rel="alternate" hreflang="en" href="https://classscheduleoptimizer.com/app" />
+    <link rel="alternate" hreflang="x-default" href="https://freeclassschedule.com/app" />
+    <link rel="alternate" hreflang="en" href="https://freeclassschedule.com/app" />
     {SUPPORTED_LANGUAGES.filter(l => l.code !== 'en').map((locale) => (
       <link 
         rel="alternate" 
         hreflang={locale.code} 
-        href={`https://classscheduleoptimizer.com/${locale.code}/app`} 
+        href={`https://freeclassschedule.com/${locale.code}/app`} 
       />
     ))}
 

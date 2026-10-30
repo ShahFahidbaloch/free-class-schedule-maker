@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://classscheduleoptimizer.com/sitemap-index.xml
+Sitemap: https://freeclassschedule.com/sitemap-index.xml
 

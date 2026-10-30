@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://classscheduleoptimizer.com',
+  site: 'https://freeclassschedule.com',
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'es', 'tl', 'ja', 'fr', 'de', 'pt', 'ko', 'it'],

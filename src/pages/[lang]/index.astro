@@ -33,9 +33,9 @@ const structuredSchema = {
   "@graph": [
     {
       "@type": "WebApplication",
-      "@id": `https://classscheduleoptimizer.com/${lang}/#webapp`,
+      "@id": `https://freeclassschedule.com/${lang}/#webapp`,
       "name": "Class Schedule Maker & Academic Planner",
-      "url": `https://classscheduleoptimizer.com/${lang}/`,
+      "url": `https://freeclassschedule.com/${lang}/`,
       "inLanguage": lang,
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "All",
@@ -48,7 +48,7 @@ const structuredSchema = {
     },
     {
       "@type": "FAQPage",
-      "@id": `https://classscheduleoptimizer.com/${lang}/#faq`,
+      "@id": `https://freeclassschedule.com/${lang}/#faq`,
       "mainEntity": content.faqs.map(item => ({
         "@type": "Question",
         "name": item.q,
@@ -60,19 +60,19 @@ const structuredSchema = {
     },
     {
       "@type": "BreadcrumbList",
-      "@id": `https://classscheduleoptimizer.com/${lang}/#breadcrumb`,
+      "@id": `https://freeclassschedule.com/${lang}/#breadcrumb`,
       "itemListElement": [
         {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": `https://classscheduleoptimizer.com/${lang}/`
+          "item": `https://freeclassschedule.com/${lang}/`
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Schedule Studio",
-          "item": `https://classscheduleoptimizer.com/${lang}/app`
+          "item": `https://freeclassschedule.com/${lang}/app`
         }
       ]
     }

@@ -18,7 +18,7 @@ const {
   description = "Design your ideal class schedule with our free weekly class schedule maker online. Effortlessly create conflict-free college, school, PCC, and UF class schedules with zero gaps. Export to iCal, Google Calendar, and printable PDF.",
   keywords = "class schedule, class schedule maker, free class schedule maker, weekly class schedule maker, class schedule maker template, pcc class schedule, college class schedule, uf class schedule, class schedule maker online, class schedule maker free, school schedule maker",
   canonicalUrl = Astro.url.href,
-  ogImage = "https://classscheduleoptimizer.com/logo.png",
+  ogImage = "https://freeclassschedule.com/logo.png",
   schemaJson,
   lang = "en",
   currentPath = ""
@@ -46,12 +46,12 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Hreflang Alternates for Multilingual SEO -->
-    <link rel="alternate" hreflang="x-default" href={`https://classscheduleoptimizer.com${cleanPath || '/'}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://freeclassschedule.com${cleanPath || '/'}`} />
     {SUPPORTED_LANGUAGES.map((locale) => (
       <link 
         rel="alternate" 
         hreflang={locale.code} 
-        href={`https://classscheduleoptimizer.com${locale.code === 'en' ? (cleanPath || '/') : `/${locale.code}${cleanPath}`}`} 
+        href={`https://freeclassschedule.com${locale.code === 'en' ? (cleanPath || '/') : `/${locale.code}${cleanPath}`}`} 
       />
     ))}
 
@@ -110,6 +110,8 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
           <img 
             src="/logo.svg" 
             alt="Class Schedule Logo" 
+            width="28"
+            height="28"
             class="w-7 h-7 rounded-lg group-hover:scale-105 transition-transform" 
           />
           <div class="flex flex-col">
@@ -221,7 +223,7 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
           <!-- Drawer Header -->
           <div class="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
             <div class="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="Logo" class="w-7 h-7 rounded-lg" />
+              <img src="/logo.svg" alt="Logo" width="28" height="28" class="w-7 h-7 rounded-lg" />
               <div class="flex flex-col">
                 <span class="text-sm font-bold text-zinc-900 dark:text-white">Class Schedule</span>
                 <span class="text-[10px] font-mono text-zinc-500">Schedule Maker</span>
