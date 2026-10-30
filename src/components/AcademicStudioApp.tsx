@@ -1248,12 +1248,10 @@ export default function AcademicStudioApp() {
           <div className="flex items-center gap-2 sm:gap-3">
             <a 
               href="/"
-              className="md:hidden flex items-center gap-1.5 text-zinc-900 dark:text-white font-bold text-xs p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+              className="md:hidden flex items-center p-0.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
               title="Return to Home"
             >
-              <div className="w-7 h-7 rounded-lg bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center font-black text-xs">
-                CS
-              </div>
+              <img src="/logo.svg" alt="Class Schedule Logo" className="w-7 h-7 rounded-lg object-contain" />
             </a>
 
             <h1 className="text-sm sm:text-base font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
@@ -1632,10 +1630,8 @@ export default function AcademicStudioApp() {
             <div className="space-y-6">
               {/* Drawer Header */}
               <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center font-bold text-xs">
-                    CS
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <img src="/logo.svg" alt="Class Schedule Logo" className="w-8 h-8 rounded-xl object-contain" />
                   <div>
                     <h2 className="text-sm font-bold text-zinc-950 dark:text-white">Studio Settings</h2>
                     <p className="text-[11px] text-zinc-500">Preferences & Academic Tools</p>
