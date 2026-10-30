@@ -1,4 +1,4 @@
-export type SupportedLocale = 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja' | 'ko' | 'fil';
+export type SupportedLocale = 'en' | 'es' | 'pt' | 'de' | 'fr' | 'it' | 'ja' | 'ko' | 'tl' | 'fil';
 
 export interface LocaleInfo {
   code: SupportedLocale;
@@ -8,7 +8,7 @@ export interface LocaleInfo {
   ogLocale: string;
 }
 
-export const LOCALES: Record<SupportedLocale, LocaleInfo> = {
+export const LOCALES: Record<string, LocaleInfo> = {
   en: { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸', ogLocale: 'en_US' },
   es: { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', ogLocale: 'es_ES' },
   pt: { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹', ogLocale: 'pt_BR' },
@@ -17,7 +17,7 @@ export const LOCALES: Record<SupportedLocale, LocaleInfo> = {
   it: { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹', ogLocale: 'it_IT' },
   ja: { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵', ogLocale: 'ja_JP' },
   ko: { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷', ogLocale: 'ko_KR' },
-  fil: { code: 'fil', name: 'Filipino', nativeName: 'Filipino (PH)', flag: '🇵🇭', ogLocale: 'fil_PH' },
+  tl: { code: 'tl', name: 'Filipino', nativeName: 'Filipino (PH)', flag: '🇵🇭', ogLocale: 'fil_PH' },
 };
 
 export const SUPPORTED_LOCALES_LIST = Object.values(LOCALES);
@@ -956,7 +956,7 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
 
 // Aliases for compatibility
 (TRANSLATIONS as any)['tl'] = TRANSLATIONS['fil'];
-(LOCALES as any)['tl'] = LOCALES['fil'];
+(TRANSLATIONS as any)['fil'] = TRANSLATIONS['fil'];
 
 export function getTranslations(lang?: string): TranslationDictionary {
   if (!lang) return TRANSLATIONS.en;

@@ -288,6 +288,7 @@ const MOBILE_NAV_LABELS: Record<SupportedLocale, { tasks: string; optimize: stri
   ja: { tasks: 'タスク', optimize: '最適化', export: '出力' },
   ko: { tasks: '과제', optimize: '최적화', export: '내보내기' },
   fil: { tasks: 'Gawain', optimize: 'Ayusin', export: 'I-export' },
+  tl: { tasks: 'Gawain', optimize: 'Ayusin', export: 'I-export' },
 };
 
 export default function AcademicStudioApp() {
