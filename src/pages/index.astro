@@ -28,8 +28,56 @@ const pageKeywords = "class schedule, class schedule maker, free class schedule 
 
 const faqList = [
   {
-    q: "What is the best free class schedule maker online for students?",
-    a: "Class Schedule Maker is a completely free class schedule maker online that requires zero accounts, sign-ups, or subscriptions. It runs client-side in your web browser, allowing university, college, and high school students to build weekly class timetables, resolve schedule conflicts, optimize awkward campus gaps, and export directly to Apple Calendar, Google Calendar, and printable PDFs."
+    q: "What is a class schedule?",
+    a: "A class schedule (also known as a course timetable or academic schedule) is a structured weekly agenda that outlines the specific days, clock times, classroom buildings, and instructors for all registered academic courses in a term. For college and university students, a typical class schedule balances 12 to 18 credit hours spread across Monday/Wednesday/Friday (50-minute lectures) and Tuesday/Thursday (75-minute lectures) blocks, alongside hands-on laboratory or studio periods."
+  },
+  {
+    q: "What is the best class schedule maker online?",
+    a: "The best class schedule maker online is our free, browser-based Schedule Studio (/app). It provides an interactive 5-day and 7-day visual matrix (8:00 AM – 8:00 PM), automated side-by-side collision handling for overlapping lectures, a campus dead-time gap optimizer, task deadline tracking, and one-click calendar exports to Apple Calendar, Google Calendar, and printable PDFs—all without requiring an account or email."
+  },
+  {
+    q: "What is a free class schedule maker?",
+    a: "A free class schedule maker is a zero-cost digital tool that allows students and teachers to input course codes, meeting times, and locations to generate a visual weekly timetable. Unlike paid software or rigid university registrar systems, our free class schedule maker is 100% free with no paywalls, subscriptions, or intrusive ads, running entirely in your browser using local storage for complete privacy."
+  },
+  {
+    q: "How to add a class schedule to Google Calendar?",
+    a: "To add your class schedule to Google Calendar: (1) Build your weekly timetable in our Schedule Studio (/app). (2) Click 'Export Hub' in the left toolbar and select 'Export .ICS'. (3) Open Google Calendar on your computer. (4) Click the Settings gear icon in the top right and select 'Settings' > 'Import & export'. (5) Under 'Import', click 'Select file from your computer' and upload your downloaded .ics file. (6) Choose your target calendar and click 'Import'. Your entire semester's classes will immediately appear as recurring weekly events with automatic reminders."
+  },
+  {
+    q: "What does a college class schedule look like?",
+    a: "A college class schedule looks significantly different from a rigid high school day. Instead of back-to-back classes from 8:00 AM to 3:00 PM every day, a college schedule typically consists of 4 to 5 courses (12–16 credit hours). Most classes follow a split pattern: Monday, Wednesday, and Friday for 50 minutes each (e.g. 10:00 AM – 10:50 AM), or Tuesday and Thursday for 75 minutes each (e.g. 11:00 AM – 12:15 PM). In addition, science and engineering majors usually have a dedicated 3-hour weekly afternoon lab, leaving variable breaks and study blocks between lectures."
+  },
+  {
+    q: "How to import a class schedule into Google Calendar?",
+    a: "Importing your class schedule into Google Calendar takes less than a minute using a standard iCalendar (.ics) file. In our Schedule Studio, finalize your course hours and click 'Export .ICS'. Next, visit calendar.google.com, navigate to Settings > Import & Export, select the .ics file from your downloads folder, and click 'Import'. Google Calendar automatically populates all recurring lecture intervals, course codes, and classroom locations for the full 15-week academic semester."
+  },
+  {
+    q: "What is the best free class schedule for students?",
+    a: "For university, college, and high school students, Class Schedule Maker is the ideal free schedule tool because it eliminates student registration friction. It requires no login, features an automatic gap-minimization engine to eliminate unproductive 1-to-2 hour campus dead spots, highlights overlapping section conflicts side-by-side, and offers one-click exports to mobile lock-screen wallpapers, spreadsheets, and calendar apps."
+  },
+  {
+    q: "Where can I find a free editable class schedule template?",
+    a: "You can customize and download free editable class schedule templates directly from our Templates Hub. Our Schedule Studio exports your personalized weekly schedule into three editable formats: (1) A clean, printable PDF template formatted for US Letter and A4 printing; (2) A structured spreadsheet template compatible with Microsoft Excel and Google Sheets with formula support; and (3) A 2x Retina PNG lock-screen wallpaper for iOS and Android devices."
+  },
+  {
+    q: "What is a free schedule?",
+    a: "In academic time management, a 'free schedule' (or unscheduled block) refers to the open, unscheduled hours between or after mandatory classes. A well-designed class schedule consolidates these free hours into large, continuous 3-to-4 hour blocks (rather than scattered 30-minute breaks), allowing students to achieve deep focus for homework, exam preparation, campus jobs, or personal downtime."
+  },
+  {
+    q: "How can I create a fake class schedule?",
+    a: "You can create a mock or 'fake' class schedule in seconds using our Schedule Studio (/app) without needing real university credentials. Students frequently generate mock schedules to test 'what-if' registration scenarios before their enrollment window opens, compare alternative professor sections, draft hypothetical syllabi, or generate realistic student timetables for film, theater, and roleplay projects. Simply click '+ Add Class', enter dummy course codes (e.g., CS 101, ART 200), test different day and time slots, and export as a PDF or image."
+  },
+  {
+    q: "How can I create a class schedule?",
+    a: "To create a class schedule: (1) Gather your course codes, section times, and building locations from your institution's course catalog. (2) Open our Schedule Studio (/app). (3) Click '+ Add Class' and type the course code and credits. (4) Use the one-click day selector pills to assign days (M, T, W, Th, F). (5) Enter start and end times (e.g., 09:00 AM – 10:15 AM). (6) Review the interactive 5-day grid to ensure no overlapping conflict borders appear. (7) Click 'Export Hub' to save your schedule to Google Calendar, Apple Calendar, or print a PDF."
+  },
+  {
+    q: "How do I find when I'm free in my schedule?",
+    a: "To find when you are free, use our visual weekly matrix in the Schedule Studio. The grid clearly maps out your occupied lecture blocks from 08:00 AM to 08:00 PM, making open morning, afternoon, and evening spaces instantly apparent. You can also view the 'Idle Gaps' counter at the top of the studio, which measures total unassigned time between classes, helping you coordinate study groups, work shifts, or extracurricular meetings."
+  },
+  {
+    q: "What is a 5-2-5-3 work schedule?",
+    a: "A 5-2-5-3 work schedule is a popular rotating shift pattern frequently used in healthcare, emergency services, security, and student employment. Under this pattern, an employee works 5 consecutive days, takes 2 days off, works another 5 consecutive days, and then receives 3 consecutive days off (totaling a 15-day recurring cycle). College students balancing part-time jobs with academic courses often map their 5-2-5-3 shifts alongside their classes to ensure shift hours never conflict with mandatory lectures or lab periods."
   },
   {
     q: "How do I build a PCC class schedule using this tool?",
@@ -38,26 +86,6 @@ const faqList = [
   {
     q: "How do I plan my UF class schedule for the University of Florida?",
     a: "UF uses an 11-period scheduling matrix (Period 1 starting at 7:25 AM through Period 11 ending at 8:10 PM, plus evening periods) on ONE.UF. When building your UF class schedule, simply translate your ONE.UF period times into our weekly timetable grid. Because walking between Turlington Hall, the Reitz Union, and the engineering quad can take 15 minutes, our visual conflict matrix highlights tight turnarounds and gives you a clear visual blueprint for Drop/Add week."
-  },
-  {
-    q: "Can I use this tool as a school schedule maker for middle or high school?",
-    a: "Yes. Our school schedule maker is fully customizable for K-12, secondary academies, and middle schools. Whether your school follows a traditional 7-period day, an alternating A/B block schedule, or a rotating weekly timetable, you can enter subjects, teacher names, and room numbers. You can also switch between a 5-day school week and a 7-day academic planner."
-  },
-  {
-    q: "How does the weekly class schedule maker handle course conflicts and overlapping classes?",
-    a: "Unlike basic calendar apps that hide or stack overlapping classes on top of each other, our weekly class schedule maker uses dynamic interval clustering. When two lectures or labs overlap on the same day, they automatically render in side-by-side lanes with a prominent red clash indicator. This visual cues you to select alternative section times before your registration window opens."
-  },
-  {
-    q: "Can I download a printable class schedule maker template in PDF or Excel format?",
-    a: "Yes. The Studio engine lets you export your finalized class schedule in multiple formats: a clean, high-contrast black-and-white printable PDF template formatted for A4 and US Letter paper, a tabular spreadsheet layout for Microsoft Excel or Google Sheets, a high-resolution lock-screen wallpaper PNG for your smartphone, and an industry-standard .ICS calendar file."
-  },
-  {
-    q: "How does the Auto-Gap Optimizer help eliminate awkward campus 'dead time'?",
-    a: "Our Auto-Gap Optimizer evaluates all active lectures in your weekly class schedule and calculates total idle waiting time between classes on each day. It tests section permutations to find the tightest, most cohesive timetable—helping you avoid awkward 90-minute gaps so you can finish your classes early and enjoy long, uninterrupted study or work afternoons."
-  },
-  {
-    q: "Is this class schedule maker free forever, and is my academic data private?",
-    a: "Yes, this class schedule maker free tool is 100% free and client-side private. None of your courses, room locations, or notes are stored on external servers or tracked by third-party databases. Everything is securely saved directly in your personal browser's local storage (localStorage)."
   }
 ];
 
@@ -95,7 +123,7 @@ const structuredSchema = {
         "name": item.q,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": item.a
+          "text": `<p>${item.a}</p>`
         }
       }))
     },
