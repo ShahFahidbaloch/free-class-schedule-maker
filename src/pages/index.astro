@@ -1,44 +1,44 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { 
-  Sparkles, 
   ArrowRight, 
   Clock, 
   Calendar, 
   BookOpen, 
-  ShieldCheck, 
   Download, 
   FileSpreadsheet, 
   FileText, 
-  Layers, 
   CheckCircle2,
-  CalendarDays
+  CalendarDays,
+  Shield,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 
 const faqList = [
   {
-    q: "How does the Gap Optimizer algorithm eliminate awkward campus gaps?",
-    a: "The engine solves an interval scheduling combinatorial optimization problem across every alternative course section you input. It converts all lecture start and end times into discrete integer minutes from midnight, discards any combinations with conflicting intervals, and evaluates the remaining permutations to select the schedule with minimal idle waiting time between lectures."
+    q: "How does this tool help remove awkward gaps between my classes?",
+    a: "When you enter your courses and alternative section options, our scheduling engine tests every possible conflict-free combination of your classes. It calculates the idle minutes sitting between consecutive lectures on the same day and highlights the specific timetable configuration that minimizes awkward 1-to-2 hour dead spots, giving you solid blocks of free time."
   },
   {
-    q: "Why are 1-to-2 hour campus gaps damaging to academic performance?",
-    a: "Organizational psychology and cognitive science research on attention residue (notably by Dr. Sophie Leroy) proves that transitioning between different cognitive contexts imposes a 20 to 30-minute refocus penalty. Considering campus transit, finding study space, and packing up early, a 75-minute gap leaves less than 20 minutes of shallow focus. This fragmented dead time creates fatigue without producing real study output."
+    q: "Why are 1-hour or 2-hour gaps on campus so unproductive?",
+    a: "In real college life, an isolated 75-minute break between lectures is almost useless for serious studying. Once you pack your bag, walk across campus, find an open desk or library chair, and unpack, you only have about 25 minutes left before you need to pack up again. Grouping classes close together protects long 3-to-4 hour afternoon blocks where you can actually get work done or head home early."
   },
   {
-    q: "Can I export my timetable directly to Apple Calendar, Google Calendar, and Microsoft Outlook?",
-    a: "Yes. In the Schedule Studio (/editor), clicking 'Export .ICS' generates a standard RFC 5545 iCalendar file configured with 16 recurring weekly events for your full semester, equipped with 15-minute advance alerts. You can open it natively on iPhone, Mac, Android, Google Calendar, and Outlook."
+    q: "Can I export my finished schedule directly into Apple Calendar or Google Calendar?",
+    a: "Yes. In the Schedule Studio (/app), clicking 'Export .ICS' downloads a standard calendar file that imports directly into Apple Calendar on your Mac or iPhone, Google Calendar, and Microsoft Outlook. It automatically schedules recurring weekly events for all 15 or 16 weeks of your semester, complete with 15-minute advance notifications."
   },
   {
-    q: "Is any student or university course registration data stored on external servers?",
-    a: "No. The entire platform operates with zero backend telemetry and strict client-side privacy architecture. All timetable calculations, conflict detection, and course inputs are processed purely within your browser and saved exclusively in local storage."
+    q: "Does this schedule maker save or upload my university courses anywhere?",
+    a: "No. Everything runs strictly in your web browser. None of your courses, timings, room numbers, or notes ever touch a database or remote server. When you close your browser or return later, your schedule is securely retrieved from your device's local browser storage."
   },
   {
-    q: "What is the optimal credit hour distribution between MWF and Tuesday/Thursday?",
-    a: "For a standard 15-credit semester, we recommend an 8/7 or 9/6 balance: three 3-credit modules on Monday/Wednesday/Friday (50-minute lectures) and two 3-credit modules on Tuesday/Thursday (75-minute lectures). This prevents mid-week exam crunches and preserves Friday afternoons for project work."
+    q: "What is the best way to balance classes between Monday/Wednesday/Friday and Tuesday/Thursday?",
+    a: "A healthy 15-credit semester usually works best with a 9-credit and 6-credit split. Taking three 50-minute lectures on Monday, Wednesday, and Friday, paired with two 75-minute classes on Tuesday and Thursday, keeps your daily mental workload predictable and stops multiple midterms or heavy project deadlines from crashing down on the same afternoon."
   },
   {
-    q: "How should STEM majors schedule 3-hour laboratory blocks?",
-    a: "Always anchor fixed 3-hour wet or hardware laboratory blocks first, ideally on Tuesday or Thursday afternoons. Because laboratory capacities are capped by physical bench equipment, their times cannot be shifted. Once anchored, arrange high-capacity lecture modules around them with at least a 30-minute cognitive buffer."
+    q: "How should I fit mandatory 3-hour lab classes into my schedule?",
+    a: "Because university science and engineering labs require physical equipment benches, their class sizes are capped and section times rarely change. Always pick and place your 3-hour lab periods on Tuesday or Thursday afternoons first. Once your labs are locked down, fit your large lecture sections around them, leaving at least 30 minutes of rest right after your lab finishes."
   }
 ];
 
@@ -57,33 +57,33 @@ const faqSchema = {
 ---
 
 <Layout 
-  title="The Smart Class Schedule Maker — Build Conflict-Free Timetables"
-  description="Build conflict-free weekly timetables in seconds. Eliminate awkward campus gaps and export to Apple Calendar, Google Calendar, and PDF."
+  title="Class Schedule Maker & Academic Planner — Build Your Ideal Schedule"
+  description="Build your ideal class schedule with zero clutter. Effortlessly plan semester timetables, eliminate awkward campus gaps, and export directly to your calendar."
   schemaJson={faqSchema}
 >
-  <!-- Minimal Hero Section -->
-  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-14 text-center space-y-6">
+  <!-- Minimalist Hero Section -->
+  <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-16 text-center space-y-6">
     
     <!-- Micro Badge -->
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 shadow-2xs">
       <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white"></span>
-      <span>Timetable Studio &bull; Open Academic Tool</span>
+      <span>100% Free &bull; Zero Accounts Required &bull; Private</span>
     </div>
 
-    <!-- Punchy Single H1 -->
+    <!-- Bold, Clean Headline -->
     <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white max-w-4xl mx-auto leading-[1.08]">
-      The Smart Class Schedule Maker.
+      Build Your Ideal Class Schedule. Zero Clutter.
     </h1>
 
-    <!-- One Line Subheadline -->
-    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto font-normal">
-      Build conflict-free weekly timetables in seconds.
+    <!-- Subtitle -->
+    <p class="text-base sm:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
+      Effortlessly plan semester timetables, eliminate awkward campus gaps, and export directly to your calendar.
     </p>
 
-    <!-- Primary Call To Action (Hero Center) -->
-    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+    <!-- Central Action: Large, Elegant, Micro-Animated Apple-Style Button -->
+    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
       <a
-        href="/editor"
+        href="/app"
         class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98]"
       >
         <span>Launch Schedule Studio</span>
@@ -91,17 +91,17 @@ const faqSchema = {
       </a>
     </div>
 
-    <!-- Minimal Aesthetic Preview Mockup Card -->
-    <div class="pt-10 max-w-3xl mx-auto">
-      <div class="p-4 sm:p-6 rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white/70 dark:bg-[#121215]/70 backdrop-blur-md shadow-lg space-y-4 text-left">
+    <!-- Subtle Live Studio Visual Teaser -->
+    <div class="pt-8 max-w-3xl mx-auto">
+      <div class="p-4 sm:p-6 rounded-3xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-sm space-y-4 text-left">
         <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
             <span class="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
-            <span class="text-xs font-mono font-semibold text-zinc-400 ml-2">STUDIO PREVIEW &bull; 08:00 AM – 08:00 PM</span>
+            <span class="text-xs font-mono font-semibold text-zinc-400 ml-2">STUDIO ENGINE &bull; 08:00 AM – 08:00 PM</span>
           </div>
-          <span class="text-xs font-mono font-bold text-zinc-500">15 Credits &bull; 0 Conflicts</span>
+          <span class="text-xs font-mono text-zinc-500 font-semibold">5-Day / 7-Day Matrix Active</span>
         </div>
 
         <div class="grid grid-cols-5 gap-2 text-center text-xs font-bold py-1 text-zinc-500">
@@ -112,25 +112,25 @@ const faqSchema = {
           <div>Fri</div>
         </div>
 
-        <div class="grid grid-cols-5 gap-2 h-28">
+        <div class="grid grid-cols-5 gap-2 h-24">
           <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white">CS 101</span>
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
             <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
           </div>
           <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white">ENG 102</span>
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
             <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
           </div>
           <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white">CS 101</span>
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
             <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
           </div>
           <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white">ENG 102</span>
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
             <span class="text-[10px] font-mono text-zinc-500">11:00 - 12:15 PM</span>
           </div>
           <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-            <span class="font-bold text-xs text-zinc-900 dark:text-white">CS 101</span>
+            <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
             <span class="text-[10px] font-mono text-zinc-500">10:00 - 11:15 AM</span>
           </div>
         </div>
@@ -139,179 +139,178 @@ const faqSchema = {
 
   </section>
 
-  <!-- High-Value Editorial Hub (1,500+ words for Google AdSense) -->
+  <!-- Humanized Editorial & SEO Hub (1,500+ Words in Structured Bento Grid) -->
   <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 space-y-16">
     
-    <!-- Bento Grid Section 1: The Science of Gap Minimization in University Timetables -->
-    <section id="science-of-gaps" class="scroll-mt-20">
+    <!-- Bento Card 1: The Cognitive Cost of Campus 'Dead Time' & Gap Optimization Algorithms -->
+    <section id="dead-time" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            ALGORITHM SPECIFICATION &bull; INTERVAL SCHEDULING
+            SECTION 01 &bull; TIME BLOCKING SCIENCE
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            The Science of Gap Minimization in University Timetables
+            The Cognitive Cost of Campus 'Dead Time' & Gap Optimization Algorithms
           </h2>
         </div>
 
         <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
           <p>
-            University course registration presents a classic discrete combinatorial optimization challenge. When an undergraduate student enrolls in four to six modules—each offering multiple alternative lecture sessions, discussion sections, and laboratory blocks—the total number of possible combinations compounds factorially. For five courses with three alternative times each, students navigate 243 discrete candidate timetables.
+            Every college student has lived through the misery of awkward schedule gaps: you finish an introductory chemistry lecture at 10:15 AM, and your next required history seminar doesn't start until 12:45 PM. On paper, two and a half hours sounds like plenty of time to catch up on readings or study in the university library. In practice, it almost never works out that way.
           </p>
 
           <p>
-            The fundamental flaw in manual timetable assembly is the accidental introduction of <strong>fragmented campus voids</strong>. A 60-to-90 minute interval between lectures is too brief to walk back to off-campus housing or engage in deep analytical work, yet long enough to cause decision fatigue and mental drift.
+            When you factor in gathering your laptop, walking out of a crowded lecture hall, hiking across campus through rainy or freezing weather, hunting for an open table near a power outlet, pulling out your notes, and getting your head back into gear, thirty minutes have already vanished. Then, twenty minutes before your next class begins, you have to pack everything back into your backpack and start walking again. Your two and a half hours of supposed free time just shrunk into forty minutes of shallow, distracted browsing on your phone.
           </p>
 
-          <!-- Bento Sub-Cards -->
+          <!-- Bento Inner Highlight Blocks -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-2">
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
               <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
-                ATTENTION RESIDUE & COGNITIVE PENALTY
+                THE REALITY OF CONTEXT SWITCHING
               </span>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                Peer-reviewed research on attention residue demonstrates that context-switching between complex academic disciplines incurs a 20 to 30-minute cognitive adjustment period. An isolated 75-minute gap yields under 25 minutes of usable shallow focus once packing, walking, and setting up are factored in.
+                Switching mental gears between completely different academic fields takes a real toll on your focus. When your schedule forces you into frequent short stops and starts, your brain never settles into deep concentration. You end up spending your entire day feeling busy and exhausted without finishing your primary assignments.
               </p>
             </div>
 
-            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-2">
+            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
               <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
-                CONSOLIDATED BLOCK EFFICIENCY
+                CONSOLIDATED MORNING FOCUS
               </span>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                Consolidating lectures into consecutive morning blocks (with 15-minute passing walks) preserves large, uninterrupted 4-hour afternoon blocks. These consolidated blocks provide the uninterrupted cognitive flow necessary for STEM problem sets, programming labs, and analytical writing.
+                Stitching your lectures together back-to-back with clean 15-minute passing walks changes your entire semester. When you finish all your classes by 1:00 PM, you gain a massive uninterrupted afternoon block. You can sit down once, stay in one place, and knock out assignments without watching the clock.
               </p>
             </div>
           </div>
 
           <p>
-            Our engine addresses this problem via a two-stage deterministic resolution:
+            Our gap optimization algorithm handles this calculation automatically. Instead of forcing you to open twelve browser tabs with your university's course catalog and manually compare overlapping section codes on a scratchpad, our engine checks every permutation. It evaluates all open sections, spots time clashes before they happen, and surfaces the schedules that give you the tightest, cleanest daily flow.
           </p>
-          <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
-            <li>
-              <strong>Stage 1 (Overlap Pruning):</strong> Maps all class time intervals into integer minutes from midnight. For any candidate section pair on the same day with intervals [s₁, e₁] and [s₂, e₂], the algorithm verifies that max(s₁, s₂) &ge; min(e₁, e₂). Overlapping combinations are immediately eliminated.
-            </li>
-            <li>
-              <strong>Stage 2 (Idle Gap Minimization):</strong> For all valid, conflict-free permutations, the solver computes the total weekly dead time and identifies the configuration that maximizes consolidated focus blocks.
-            </li>
-          </ul>
         </div>
       </div>
     </section>
 
-    <!-- Bento Grid Section 2: Step-by-Step College Course Planning Strategy -->
+    <!-- Bento Card 2: Semester Registration Strategy: Balancing 15-Credit Loads with Heavy Labs -->
     <section id="course-planning" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            ACADEMIC ADVISING &bull; 15-CREDIT CURRICULUM
+            SECTION 02 &bull; COURSE REGISTRATION STRATEGY
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            Step-by-Step College Course Planning Strategy
+            Semester Registration Strategy: Balancing 15-Credit Loads with Heavy Labs
           </h2>
         </div>
 
         <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
           <p>
-            Graduating within four academic years requires completing 120 semester credit hours—an average of 15 credits per term across eight terms. However, treating every credit as equivalent in effort leads directly to mid-term exam clustering, deadline overlap, and GPA decline.
+            Graduating on time usually requires earning 120 credit hours over four years, which comes out to an average of 15 credits per semester. But one of the biggest traps first-year and second-year college students fall into is assuming that all credits demand the exact same amount of energy.
           </p>
 
-          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-3">
-            <h3 class="text-sm font-bold text-zinc-900 dark:text-white">The 2:2:1 Workload Balancing Formula</h3>
+          <p>
+            A 3-credit course in multivariable calculus or organic chemistry with weekly problem sets and rigorous exams demands far more mental stamina than a 3-credit general education elective with two short essays. If you register for four quantitative heavyweights in the same term, you will find yourself drowning when midterm exams hit all in the same 48-hour window.
+          </p>
+
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-3">
+            <h3 class="text-sm font-bold text-zinc-900 dark:text-white">A Practical Workload Balancing Framework</h3>
             <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm">
               <li>
-                <strong>Two Quantitative Heavyweights (6–8 Credits):</strong> Rigorous major requirements (e.g. Data Structures, Multivariable Calculus, Organic Chemistry) that demand weekly calculation sets.
+                <strong>Two Heavy Major Requirements (6–8 Credits):</strong> Core courses that define your degree progress, such as Data Structures, Microeconomics, or Organic Chemistry. These need steady weekly study habits.
               </li>
               <li>
-                <strong>Two Qualitative Seminars (6 Credits):</strong> Writing-intensive breadth electives or general education requirements evaluated through mid-term essays.
+                <strong>Two Reading or Writing Electives (6 Credits):</strong> General education courses or humanities requirements evaluated mainly through discussion and term papers rather than weekly homework calculations.
               </li>
               <li>
-                <strong>One Applied Practical / Studio Block (1–3 Credits):</strong> Hardware engineering laboratory, visual design studio, or physical activity requiring sensory immersion rather than rote memorization.
+                <strong>One Hands-On Lab or Studio (1–3 Credits):</strong> Physical laboratory blocks or creative studios that involve hands-on work rather than reading textbooks, giving your analytical brain a break.
               </li>
             </ul>
           </div>
 
-          <h3 class="text-base font-bold text-zinc-900 dark:text-white pt-2">Managing Multi-Hour Laboratory Blocks</h3>
+          <h3 class="text-base font-bold text-zinc-900 dark:text-white pt-2">How to Handle 3-Hour Wet Labs and Engineering Workshops</h3>
           <p>
-            Laboratory sections require physical equipment benches, capping seat capacity to 18–24 students. Because laboratory timings cannot be adjusted, always anchor them on Tuesday or Thursday afternoons first. Once anchored, permute your large-lecture requirements around them, ensuring at least a 30-minute cognitive buffer after lab sessions.
+            Laboratory sections are always the hardest puzzle piece when building a college schedule. Because chemistry and engineering labs depend on physical equipment benches, class capacities are strictly limited to 18 to 24 students. The university cannot easily add extra sections, meaning lab meeting times are basically set in stone.
+          </p>
+          <p>
+            The golden rule of schedule making is to <strong>anchor your non-negotiable lab blocks first</strong>, preferably on Tuesday or Thursday afternoons. Once your lab slots are locked onto your grid, build your flexible lecture courses around them. Never schedule a demanding quantitative lecture directly after a three-hour lab session; your brain will be exhausted, and your notes will suffer.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Bento Grid Section 3: Downloadable Templates Hub (PDF, Excel, Pinterest formats) -->
+    <!-- Bento Card 3: Printable Schedule Formats Hub: Previews for PDF, Excel, and Wallpaper Formats -->
     <section id="templates-hub" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            TEMPLATES REPOSITORY &bull; MULTI-FORMAT
+            SECTION 03 &bull; EXPORT FORMATS & TEMPLATES
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-            Downloadable Templates Hub
+            Printable Schedule Formats Hub: PDF, Excel, and Phone Wallpapers
           </h2>
           <p class="text-xs text-zinc-500 dark:text-zinc-400">
-            Export and integrate your schedule across paper planners, digital spreadsheets, and mobile wallpaper.
+            Different situations call for different formats. Our studio engine exports your timetable into the exact medium you need.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           
-          <!-- Template 1: PDF Printable -->
+          <!-- Format 1: PDF Printable -->
           <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
               <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
                 <FileText class="w-4 h-4" />
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Printable PDF Timetable</h3>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Printable Clean PDF</h3>
               <p class="text-xs text-zinc-500 leading-relaxed">
-                Clean A4/Letter vector grid with bold hour lines and room notes for dorm wall pinning.
+                Formatted for standard A4 and Letter paper. Strips away all web navigation, buttons, and menus for a crisp black-and-white grid to tape onto your dorm wall or desk organizer.
               </p>
             </div>
             <a 
-              href="/editor" 
+              href="/app" 
               class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
             >
-              <span>Build & Print PDF</span>
+              <span>Create in Studio</span>
               <span>&rarr;</span>
             </a>
           </div>
 
-          <!-- Template 2: Excel / Sheets -->
+          <!-- Format 2: Excel / Google Sheets -->
           <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
               <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
                 <FileSpreadsheet class="w-4 h-4" />
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Excel & Sheets Template</h3>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Spreadsheet Timetable</h3>
               <p class="text-xs text-zinc-500 leading-relaxed">
-                Structured spreadsheet matrix with conditional formatting and automatic credit sum calculators.
+                A clean tabular layout designed for Google Sheets or Microsoft Excel. Includes built-in formulas for credit hour totals and easy manual customization.
               </p>
             </div>
             <a 
-              href="/editor" 
+              href="/app" 
               class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
             >
-              <span>Export in Studio</span>
+              <span>Build Spreadsheet</span>
               <span>&rarr;</span>
             </a>
           </div>
 
-          <!-- Template 3: Pinterest Wallpaper -->
+          <!-- Format 3: Lock Screen Wallpaper -->
           <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
               <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
                 <Download class="w-4 h-4" />
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Minimalist Lock Screen PNG</h3>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Lock Screen Wallpaper</h3>
               <p class="text-xs text-zinc-500 leading-relaxed">
-                High-density 2x canvas rendering calibrated for iPhone, iPad, and desktop lock screen backgrounds.
+                A sharp high-resolution image rendered with 2x pixel density. Perfect for setting as your iPhone or Android lock screen during syllabus week so you never walk into the wrong room.
               </p>
             </div>
             <a 
-              href="/editor" 
+              href="/app" 
               class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white hover:underline"
             >
-              <span>Generate Wallpaper</span>
+              <span>Export Wallpaper</span>
               <span>&rarr;</span>
             </a>
           </div>
@@ -320,16 +319,63 @@ const faqSchema = {
       </div>
     </section>
 
-    <!-- Bento Grid Section 4: Interactive FAQ Accordions with JSON-LD Schema -->
+    <!-- Bento Card 4: University Portal Integration Guides -->
+    <section id="portal-guides" class="scroll-mt-20">
+      <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
+        <div class="space-y-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            SECTION 04 &bull; UNIVERSITY PORTAL COMPATIBILITY
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            University Portal Integration Guides: Matching Courses & Syllabus Codes
+          </h2>
+        </div>
+
+        <div class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-4">
+          <p>
+            Navigating university registrar systems—whether your school runs on Ellucian Banner, Canvas, PeopleSoft, Blackboard, or a custom student portal—is notoriously stressful on registration morning. When registration opens, servers slow to a crawl, class seats vanish in seconds, and you don't have time to second-guess section codes or room locations.
+          </p>
+
+          <p>
+            To avoid losing your preferred schedule on registration day, keep your primary schedule and two backup alternatives planned ahead of time:
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-1.5">
+              <span class="font-bold text-xs text-zinc-900 dark:text-white uppercase font-mono">1. Record Five-Digit CRN Numbers</span>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                Always note down the exact Course Reference Number (CRN) alongside your course title. On registration day, entering raw 5-digit CRNs is ten times faster than searching by professor or department.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 space-y-1.5">
+              <span class="font-bold text-xs text-zinc-900 dark:text-white uppercase font-mono">2. Match Syllabus Prerequisites</span>
+              <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                Check whether your lecture requires a mandatory co-requisite discussion or recitation session. Missing a required zero-credit recitation will trigger registration errors when you submit.
+              </p>
+            </div>
+          </div>
+
+          <p>
+            By designing your ideal weekly matrix in our Schedule Studio beforehand, you know the exact rhythm of your semester before spending a single dollar on tuition or course materials.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordions with JSON-LD Schema -->
     <section id="faq" class="scroll-mt-20">
       <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
           <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
-            FAQ &bull; QUESTIONS & ANSWERS
+            SECTION 05 &bull; STUDENT QUESTIONS & ANSWERS
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             Frequently Asked Questions
           </h2>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            Answers to common questions about timetable optimization, calendar syncing, and privacy.
+          </p>
         </div>
 
         <div class="space-y-3">
@@ -352,21 +398,21 @@ const faqSchema = {
 
   </div>
 
-  <!-- Bottom Hero CTA Banner -->
+  <!-- Bottom Conversion CTA -->
   <section class="max-w-[1280px] mx-auto px-4 sm:px-6 pb-20">
     <div class="p-8 sm:p-12 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-xl">
       <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
-        Ready to build your conflict-free timetable?
+        Build your semester schedule in seconds.
       </h3>
       <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto">
-        No accounts, no downloads, zero server tracking. Instant client-side schedule optimization in your browser.
+        No accounts, no downloads, zero server tracking. Open the studio and organize your weekly college timetable right in your browser.
       </p>
       <div class="pt-2">
         <a
-          href="/editor"
+          href="/app"
           class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-black font-bold text-xs sm:text-sm transition shadow-sm"
         >
-          <span>Open Schedule Studio Now</span>
+          <span>Launch Schedule Studio</span>
           <ArrowRight class="w-4 h-4" />
         </a>
       </div>

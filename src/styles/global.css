@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --bg-canvas: #fafafa;
+    --bg-canvas: #FBFBFD;
     --bg-surface: #ffffff;
-    --border-subtle: #e4e4e7;
+    --border-subtle: rgba(228, 228, 231, 0.8);
     --text-primary: #09090b;
     --text-secondary: #52525b;
     --text-muted: #71717a;
@@ -23,7 +23,7 @@
 
   html {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
-    background-color: #fafafa;
+    background-color: #FBFBFD;
     color: #09090b;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

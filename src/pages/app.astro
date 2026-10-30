@@ -1,0 +1,31 @@
+---
+import '../styles/global.css';
+import AcademicStudioApp from '../components/AcademicStudioApp';
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Schedule Studio — Class Schedule Maker & Academic Planner</title>
+    <meta name="description" content="Dedicated full-screen academic course schedule builder. Plan conflict-free weekly timetables, track tasks, and export to Google/Apple Calendar." />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    
+    <script is:inline>
+      (function() {
+        var savedTheme = null;
+        try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-[#FBFBFD] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-150">
+    <AcademicStudioApp client:load />
+  </body>
+</html>
