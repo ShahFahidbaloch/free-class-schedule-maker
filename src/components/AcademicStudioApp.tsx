@@ -882,10 +882,10 @@ export default function AcademicStudioApp() {
           {/* Logo / Back to Home */}
           <a
             href="/"
-            className="w-11 h-11 rounded-2xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center hover:scale-105 transition-transform shadow-xs cursor-pointer"
+            className="w-11 h-11 rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-xs cursor-pointer overflow-hidden p-0.5"
             title="Class Schedule Home"
           >
-            <Calendar className="w-5 h-5 stroke-[2.2]" />
+            <img src="/logo.svg" alt="Class Schedule Logo" className="w-full h-full object-contain rounded-xl" />
           </a>
 
           <div className="w-8 h-px bg-zinc-200 dark:bg-zinc-800 my-1" />
@@ -1713,3 +1713,4 @@ export default function AcademicStudioApp() {
     </div>
   );
 }
+
