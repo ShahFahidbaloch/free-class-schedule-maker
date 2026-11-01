@@ -5,6 +5,11 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Immutable caching for hashed assets (never collide, always fresh)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
 
 # Disallow indexing on all Cloudflare Pages staging / subdomains
 https://freeclassschedule.pages.dev/*
