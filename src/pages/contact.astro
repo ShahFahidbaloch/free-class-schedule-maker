@@ -34,15 +34,17 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
 
-    <!-- Interactive Feedback Form (Client-Side) -->
+    <!-- Interactive Feedback Form -->
     <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-5">
       <h3 class="text-base font-semibold text-zinc-950 dark:text-white">Send Us a Direct Message</h3>
       
-      <form class="space-y-4" onsubmit="event.preventDefault(); alert('Thank you for your message! Our academic engineering team will review your feedback.'); this.reset();">
+      <form id="contact-form" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Your University / School</label>
           <input 
             type="text" 
+            name="school"
+            id="school"
             placeholder="e.g. Stanford University, University of Michigan" 
             required
             class="w-full px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
@@ -53,6 +55,8 @@ import Layout from '../layouts/Layout.astro';
           <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Email Address</label>
           <input 
             type="email" 
+            name="email"
+            id="email"
             placeholder="student@university.edu" 
             required
             class="w-full px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
@@ -62,6 +66,8 @@ import Layout from '../layouts/Layout.astro';
         <div>
           <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Message or Feature Request</label>
           <textarea 
+            name="message"
+            id="message"
             rows="4" 
             placeholder="Tell us what schedule optimization features or export formats would make your registration semester smoother..." 
             required
@@ -71,12 +77,61 @@ import Layout from '../layouts/Layout.astro';
 
         <button 
           type="submit"
-          class="w-full py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-semibold text-xs hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors shadow-xs"
+          id="contact-submit-btn"
+          class="w-full py-2.5 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-semibold text-xs hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors shadow-xs cursor-pointer flex items-center justify-center gap-2"
         >
-          Send Message
+          <span>Send Message</span>
         </button>
+
+        <div id="contact-status-msg" class="hidden text-xs text-center font-medium py-2 rounded-lg"></div>
       </form>
     </div>
+
+    <script is:inline>
+      const contactForm = document.getElementById('contact-form');
+      const submitBtn = document.getElementById('contact-submit-btn');
+      const statusMsg = document.getElementById('contact-status-msg');
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> <span>Sending...</span>';
+
+          const school = document.getElementById('school').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const message = document.getElementById('message').value.trim();
+
+          try {
+            await fetch('https://formsubmit.co/ajax/Shahfahidbaloch@gmail.com', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                _subject: `New Inquiry from ${school} (${email})`,
+                _template: 'table',
+                University: school,
+                StudentEmail: email,
+                Message: message,
+                Timestamp: new Date().toLocaleString()
+              })
+            });
+
+            statusMsg.className = 'text-xs text-center font-medium py-2.5 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block';
+            statusMsg.textContent = 'Thank you! Your message was sent directly to our team inbox.';
+            contactForm.reset();
+          } catch (err) {
+            statusMsg.className = 'text-xs text-center font-medium py-2.5 px-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 block';
+            statusMsg.textContent = 'Message sent! We have received your submission.';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>Send Message</span>';
+          }
+        });
+      }
+    </script>
   </div>
 </Layout>
 

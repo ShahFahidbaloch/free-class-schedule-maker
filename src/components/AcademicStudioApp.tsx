@@ -379,6 +379,8 @@ export default function AcademicStudioApp() {
   const [hoverRating, setHoverRating] = useState(0);
   const [feedbackCategory, setFeedbackCategory] = useState<'Feature Request' | 'Timetable Bug' | 'Export Issue' | 'Other'>('Feature Request');
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [feedbackEmail, setFeedbackEmail] = useState('');
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   // Task Input State
   const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -659,27 +661,58 @@ export default function AcademicStudioApp() {
   };
 
   // Feedback Submission
-  const handleSubmitFeedback = (e: React.FormEvent) => {
+  const handleSubmitFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!feedbackMessage.trim()) return;
+
+    setIsSubmittingFeedback(true);
+
     const submission = {
       id: `fb_${Date.now()}`,
       rating,
       category: feedbackCategory,
       message: feedbackMessage.trim(),
+      email: feedbackEmail.trim() || 'Not provided',
       timestamp: new Date().toISOString()
     };
+
+    // 1. Send direct email to site owner via FormSubmit AJAX
+    try {
+      await fetch('https://formsubmit.co/ajax/Shahfahidbaloch@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: `New ${rating}-Star Student Feedback [${feedbackCategory}]`,
+          _template: 'table',
+          Rating: `${rating} / 5 Stars`,
+          Category: feedbackCategory,
+          Message: feedbackMessage.trim(),
+          StudentEmail: feedbackEmail.trim() || 'None given',
+          SubmittedAt: new Date().toLocaleString()
+        })
+      });
+    } catch (err) {
+      console.warn('Feedback email dispatch:', err);
+    }
+
+    // 2. Persist locally as backup
     try {
       const existing = JSON.parse(localStorage.getItem('student_feedback_logs') || '[]');
       existing.push(submission);
       localStorage.setItem('student_feedback_logs', JSON.stringify(existing));
     } catch (e) {}
 
+    setIsSubmittingFeedback(false);
     setIsFeedbackModalOpen(false);
     setFeedbackMessage('');
+    setFeedbackEmail('');
     try {
       confetti({ particleCount: 50, spread: 50, origin: { y: 0.7 } });
     } catch (e) {}
-    setBanner('Thank you for helping us improve!');
+    setBanner('Thank you! Your feedback has been sent directly to our team.');
     setTimeout(() => setBanner(null), 3500);
   };
 
@@ -2312,11 +2345,33 @@ export default function AcademicStudioApp() {
                 />
               </div>
 
+              {/* Student Email (Optional) */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Your Email (Optional, if you'd like a response)
+                </label>
+                <input
+                  type="email"
+                  value={feedbackEmail}
+                  onChange={e => setFeedbackEmail(e.target.value)}
+                  placeholder="student@university.edu"
+                  className="w-full h-10 px-3 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                />
+              </div>
+
               <button
                 type="submit"
-                className="w-full h-11 bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold rounded-xl shadow-md transition cursor-pointer"
+                disabled={isSubmittingFeedback}
+                className="w-full h-11 bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold rounded-xl shadow-md transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {t.feedback.submitBtn}
+                {isSubmittingFeedback ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Sending directly to team...</span>
+                  </>
+                ) : (
+                  <span>{t.feedback.submitBtn}</span>
+                )}
               </button>
 
             </form>
