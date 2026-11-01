@@ -25,7 +25,11 @@ import {
   ChevronRight,
   Share2,
   Globe,
-  Menu
+  Menu,
+  HelpCircle,
+  Sparkles,
+  Zap,
+  Mail
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
@@ -351,6 +355,40 @@ export default function AcademicStudioApp() {
     window.dispatchEvent(new CustomEvent('langchange', { detail: newLang }));
   };
 
+  // 1. Onboarding Quick Guide on Studio Open (Shows on first visit)
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('studio_onboarding_guide_seen');
+      if (!seen) {
+        const timer = setTimeout(() => setIsOnboardingOpen(true), 600);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {}
+  }, []);
+
+  // 2. Automatic Feedback Prompt after 15 Minutes of Usage (Shown ONLY ONCE)
+  useEffect(() => {
+    try {
+      const alreadyPrompted = localStorage.getItem('studio_feedback_auto_prompted');
+      if (!alreadyPrompted) {
+        const timer = setTimeout(() => {
+          setIsFeedbackModalOpen(true);
+          try {
+            localStorage.setItem('studio_feedback_auto_prompted', 'true');
+          } catch (e) {}
+        }, 15 * 60 * 1000); // Exactly 15 minutes
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {}
+  }, []);
+
+  const handleDismissOnboarding = () => {
+    setIsOnboardingOpen(false);
+    try {
+      localStorage.setItem('studio_onboarding_guide_seen', 'true');
+    } catch (e) {}
+  };
+
   const t = useMemo(() => getTranslations(locale), [locale]);
   const navLabels = MOBILE_NAV_LABELS[locale] || MOBILE_NAV_LABELS.en;
 
@@ -359,6 +397,7 @@ export default function AcademicStudioApp() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [selectedEventForEdit, setSelectedEventForEdit] = useState<{
     course: Course;
     section: Section;
@@ -1289,21 +1328,31 @@ export default function AcademicStudioApp() {
           >
             {includeWeekend ? '7D' : '5D'}
           </button>
-        </div>
 
-        {/* Bottom: Feedback & Dark/Light Mode */}
-        <div className="flex flex-col items-center gap-3 w-full px-2">
-          
-          {/* Feedback & Rating Modal Trigger */}
+          <div className="w-8 h-px bg-zinc-200 dark:bg-zinc-800 my-0.5" />
+
+          {/* Quick Instructions & Feature Guide */}
           <button
-            onClick={() => setIsFeedbackModalOpen(true)}
-            className="w-10 h-10 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
-            title="Send Student Feedback & Rating"
+            onClick={() => setIsOnboardingOpen(true)}
+            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
+            title="How to Use & Feature Instructions"
           >
-            <MessageSquare className="w-4 h-4" />
+            <BookOpen className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
           </button>
 
-          {/* Dark / Light Mode Switch */}
+          {/* Student Feedback & Rating Modal Trigger */}
+          <button
+            onClick={() => setIsFeedbackModalOpen(true)}
+            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer relative"
+            title="Send Student Feedback & Rating"
+          >
+            <MessageSquare className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-amber-500" />
+          </button>
+        </div>
+
+        {/* Bottom: Dark/Light Mode Theme Switcher */}
+        <div className="flex flex-col items-center w-full px-2">
           <button
             onClick={toggleTheme}
             className="w-10 h-10 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
@@ -1396,6 +1445,26 @@ export default function AcademicStudioApp() {
             >
               <Download className="w-3.5 h-3.5" />
               <span>{t.actions.export}</span>
+            </button>
+
+            {/* Guide & Instructions (Desktop/Tablet) */}
+            <button
+              onClick={() => setIsOnboardingOpen(true)}
+              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
+              title="How to Use & Feature Instructions"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-zinc-500" />
+              <span className="hidden xl:inline">Guide</span>
+            </button>
+
+            {/* Quick Feedback Button (Top Navigation) */}
+            <button
+              onClick={() => setIsFeedbackModalOpen(true)}
+              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+              title="Send Student Feedback & Rating"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-zinc-500" />
+              <span className="hidden xl:inline">{t.feedback.title || 'Feedback'}</span>
             </button>
 
             {/* Language Selector Dropdown (Desktop Only) */}
@@ -1994,7 +2063,7 @@ export default function AcademicStudioApp() {
               </div>
 
               {/* Start & End Times + Room */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-start">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     {t.form.startTime}
@@ -2031,14 +2100,14 @@ export default function AcademicStudioApp() {
 
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                    {t.form.classroom}
+                    {t.form.room || 'Room / Location'}
                   </label>
                   <input
                     type="text"
                     value={formRoom}
                     onChange={e => setFormRoom(e.target.value)}
-                    placeholder="e.g. Hall 101"
-                    className="w-full h-10 px-3 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white"
+                    placeholder={t.form.roomPlaceholder || 'e.g. Hall 101'}
+                    className="w-full h-10 px-3 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400"
                   />
                 </div>
               </div>
@@ -2374,7 +2443,139 @@ export default function AcademicStudioApp() {
                 )}
               </button>
 
+              <div className="text-center pt-1">
+                <a
+                  href="mailto:hello@freeclassschedule.com?subject=Student%20Schedule%20Feedback"
+                  className="text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline inline-flex items-center gap-1.5 transition"
+                >
+                  <Mail className="w-3 h-3" />
+                  <span>Or email engineering team directly: hello@freeclassschedule.com</span>
+                </a>
+              </div>
+
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Interactive Studio Welcome & Instructions Guide Modal */}
+      {isOnboardingOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto p-5 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150">
+            {/* Header */}
+            <div className="flex items-start justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center shadow-sm">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
+                    Welcome to Schedule Studio
+                  </h3>
+                  <p className="text-xs text-zinc-500">Quick 60-second guide to building your ideal timetable</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleDismissOnboarding} 
+                className="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                aria-label="Close guide"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Feature Walkthrough Grid */}
+            <div className="space-y-3">
+              <div className="p-3 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <Plus className="w-4 h-4 text-zinc-900 dark:text-white" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">1. Add Your Classes Instantly</h4>
+                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                    Click <strong>+ Class</strong> to input your course code (e.g. CS 101), lecture times, classroom hall, and select a color tag.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">2. Automatic Conflict Lanes</h4>
+                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                    Overlapping courses automatically split into side-by-side lanes so you immediately spot schedule clashes without clutter.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sliders className="w-4 h-4 text-zinc-900 dark:text-white" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">3. Eliminate Campus Dead-Time</h4>
+                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                    The <strong>Gap Optimizer</strong> measures idle hours between classes, helping you pack lectures efficiently or keep study breaks balanced.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <CheckSquare className="w-4 h-4 text-zinc-900 dark:text-white" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">4. Homework & Task Deadlines</h4>
+                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                    Manage semester assignments right alongside your schedule. Mark completed or delete finished tasks with 1 click.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <Download className="w-4 h-4 text-zinc-900 dark:text-white" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">5. 1-Click Calendar Sync & PDF</h4>
+                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                    Export your timetable as a <strong>.ICS file</strong> to Google Calendar / Apple Calendar, or generate a clean printable PDF.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feedback Callout */}
+            <div className="p-3.5 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+                <MessageSquare className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                <span className="text-[11px]">Found a bug or need a feature? Click <strong>Feedback</strong> anytime to reach our team!</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  handleDismissOnboarding();
+                  setIsFeedbackModalOpen(true);
+                }}
+                className="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] shrink-0 transition cursor-pointer"
+              >
+                Feedback
+              </button>
+            </div>
+
+            {/* Actions */}
+            <div className="pt-2 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={handleDismissOnboarding}
+                className="w-full h-11 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold transition shadow-md cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>Start Building My Schedule</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
