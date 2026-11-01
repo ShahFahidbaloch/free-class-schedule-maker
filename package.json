@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "astro build && wrangler pages deploy dist --project-name=class-schedule-optimizer"
+    "deploy": "astro build && wrangler pages deploy dist --project-name=class-schedule-optimizer --branch=master"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.2",
