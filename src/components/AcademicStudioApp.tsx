@@ -510,9 +510,16 @@ export default function AcademicStudioApp() {
     }
   };
 
-  // Open Modal with optional slot prefill
+  // Open Modal with clean reset
   const handleOpenNewClassModal = (day?: DayOfWeek, defaultStart?: string) => {
+    setFormCode('');
+    setFormTitle('');
+    setFormRoom('');
+    setFormCredits(3);
+    setFormColorIndex(courses.length % APPLE_TAG_PALETTES.length);
     if (day) setFormDays([day]);
+    else setFormDays(['mon']);
+
     if (defaultStart) {
       setFormStartTime(defaultStart);
       const startM = parseFlexibleTime(defaultStart);
@@ -523,6 +530,9 @@ export default function AcademicStudioApp() {
       const displayH = h % 12 === 0 ? 12 : h % 12;
       const displayM = m < 10 ? `0${m}` : m;
       setFormEndTime(`${displayH}:${displayM} ${ampm}`);
+    } else {
+      setFormStartTime('09:00 AM');
+      setFormEndTime('10:15 AM');
     }
     setSelectedEventForEdit(null);
     setFormError(null);
@@ -1124,25 +1134,9 @@ export default function AcademicStudioApp() {
           }
         }}
         onDrop={(e) => handleDropOnDay(e, day)}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const clickY = e.clientY - rect.top;
-            const hoursFrom8 = clickY / HOUR_ROW_HEIGHT;
-            const totalMins = 8 * 60 + Math.floor(hoursFrom8 * 60);
-            const roundedMins = Math.floor(totalMins / 30) * 30;
-            const h = Math.floor(roundedMins / 60);
-            const m = roundedMins % 60;
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            const displayH = h % 12 === 0 ? 12 : h % 12;
-            const displayM = m < 10 ? `0${m}` : m;
-            handleOpenNewClassModal(day, `${displayH}:${displayM} ${ampm}`);
-          }
-        }}
-        className={`relative h-full ${isMobileSingle ? 'w-full' : 'border-r border-zinc-200 dark:border-zinc-800 last:border-r-0'} cursor-pointer transition-colors ${
+        className={`relative h-full ${isMobileSingle ? 'w-full' : 'border-r border-zinc-200 dark:border-zinc-800 last:border-r-0'} transition-colors ${
           isDayDragTarget ? 'bg-zinc-200/60 dark:bg-zinc-800/60 ring-2 ring-inset ring-zinc-500' : ''
         }`}
-        title={`Click on ${DAY_LABELS[day].full} to add a class or drag an existing class here`}
       >
         {events.map(event => {
           const pal = APPLE_TAG_PALETTES[event.colorIndex % APPLE_TAG_PALETTES.length];
@@ -1974,6 +1968,10 @@ export default function AcademicStudioApp() {
               <button
                 onClick={() => {
                   setSelectedEventForEdit(null);
+                  setFormCode('');
+                  setFormTitle('');
+                  setFormRoom('');
+                  setFormError(null);
                   setIsClassModalOpen(false);
                 }}
                 className="w-8 h-8 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
