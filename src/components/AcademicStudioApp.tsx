@@ -2465,9 +2465,11 @@ export default function AcademicStudioApp() {
             {/* Header */}
             <div className="flex items-start justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center shadow-sm">
-                  <Sparkles className="w-5 h-5" />
-                </div>
+                <img 
+                  src="/logo.svg" 
+                  alt="Free Class Schedule Maker" 
+                  className="w-11 h-11 rounded-2xl shadow-sm object-contain shrink-0 border border-zinc-200/50 dark:border-zinc-700/50" 
+                />
                 <div>
                   <h3 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-white">
                     Welcome to Schedule Studio
