@@ -3,7 +3,7 @@ title: "How Many Credits Should You Take Per Semester?"
 description: "Discover how many credit hours to take per semester. Calculate the 2:1 homework rule, balance 12 vs 15 vs 18 credits, and graduate on time without burnout."
 publishDate: 2026-10-20
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "8 min read"
 category: "Academic Workload Planning"
 ---

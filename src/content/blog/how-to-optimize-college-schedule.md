@@ -3,7 +3,7 @@ title: "How to Optimize Your College Schedule to Eliminate Awkward Gaps"
 description: "A comprehensive guide on scheduling science, cognitive context switching, and algorithmic schedule optimization for collegiate academic success."
 publishDate: 2026-10-15
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "7 min read"
 category: "Scheduling Strategy"
 ---

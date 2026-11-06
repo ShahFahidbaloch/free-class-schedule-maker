@@ -244,6 +244,30 @@ export function minutesToTime12(totalMinutes: number): string {
   return `${displayH}:${displayM} ${ampm}`;
 }
 
+export function stepTime(
+  currentTime: string,
+  direction: 'up' | 'down',
+  timeList: string[]
+): string {
+  if (!timeList || timeList.length === 0) return currentTime;
+  const idx = timeList.indexOf(currentTime);
+  if (idx !== -1) {
+    if (direction === 'down') {
+      return timeList[Math.min(timeList.length - 1, idx + 1)];
+    } else {
+      return timeList[Math.max(0, idx - 1)];
+    }
+  }
+  const currentMins = parseFlexibleTime(currentTime);
+  if (direction === 'down') {
+    const next = timeList.find(t => parseFlexibleTime(t) > currentMins);
+    return next || timeList[timeList.length - 1];
+  } else {
+    const prev = [...timeList].reverse().find(t => parseFlexibleTime(t) < currentMins);
+    return prev || timeList[0];
+  }
+}
+
 const DEFAULT_SAMPLE_COURSES: Course[] = [
   {
     id: 'course-cs301',
@@ -315,8 +339,13 @@ const MOBILE_NAV_LABELS: Record<SupportedLocale, { tasks: string; optimize: stri
 };
 
 export default function AcademicStudioApp() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  // Initialize with DEFAULT_SAMPLE_COURSES so the first paint & SSR pre-render already contain
+  // the full sample schedule with zero empty-grid pop-in and zero Cumulative Layout Shift
+  const [courses, setCourses] = useState<Course[]>(DEFAULT_SAMPLE_COURSES);
+  const [tasks, setTasks] = useState<TaskItem[]>([
+    { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
+    { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
+  ]);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [includeWeekend, setIncludeWeekend] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
@@ -991,19 +1020,27 @@ export default function AcademicStudioApp() {
   const metrics = useMemo(() => {
     const totalCredits = courses.reduce((sum, c) => sum + (c.credits || 0), 0);
     let totalGapMinutes = 0;
-    let conflicts = 0;
+    let conflictPairs = 0;
 
     activeDaysList.forEach(day => {
-      const daySlots = (placedEventsByDay[day] || []).sort((a, b) => a.startMins - b.startMins);
+      const daySlots = placedEventsByDay[day] || [];
 
+      // Calculate true conflicting pairs
       for (let i = 0; i < daySlots.length; i++) {
-        if (daySlots[i].hasClash) conflicts++;
-
-        if (i < daySlots.length - 1) {
-          const gap = daySlots[i + 1].startMins - daySlots[i].endMins;
-          if (gap > 0 && gap < 360) {
-            totalGapMinutes += gap;
+        for (let j = i + 1; j < daySlots.length; j++) {
+          const a = daySlots[i];
+          const b = daySlots[j];
+          if (Math.max(a.startMins, b.startMins) < Math.min(a.endMins, b.endMins)) {
+            conflictPairs++;
           }
+        }
+      }
+
+      const sorted = [...daySlots].sort((a, b) => a.startMins - b.startMins);
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const gap = sorted[i + 1].startMins - sorted[i].endMins;
+        if (gap > 0 && gap < 360 && !sorted[i].hasClash && !sorted[i + 1].hasClash) {
+          totalGapMinutes += gap;
         }
       }
     });
@@ -1011,7 +1048,7 @@ export default function AcademicStudioApp() {
     return {
       totalCredits,
       gapHours: (totalGapMinutes / 60).toFixed(1),
-      conflicts: Math.floor(conflicts / 2)
+      conflicts: conflictPairs
     };
   }, [courses, placedEventsByDay, activeDaysList]);
 
@@ -2135,6 +2172,15 @@ export default function AcademicStudioApp() {
                     type="text"
                     value={formStartTime}
                     onChange={e => setFormStartTime(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setFormStartTime(prev => stepTime(prev, 'down', COMMON_START_TIMES));
+                      } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setFormStartTime(prev => stepTime(prev, 'up', COMMON_START_TIMES));
+                      }
+                    }}
                     placeholder="09:00 AM"
                     list="modal-times-start"
                     className="w-full h-10 px-3 text-xs font-mono font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white"
@@ -2152,6 +2198,15 @@ export default function AcademicStudioApp() {
                     type="text"
                     value={formEndTime}
                     onChange={e => setFormEndTime(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setFormEndTime(prev => stepTime(prev, 'down', COMMON_END_TIMES));
+                      } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setFormEndTime(prev => stepTime(prev, 'up', COMMON_END_TIMES));
+                      }
+                    }}
                     placeholder="10:15 AM"
                     list="modal-times-end"
                     className="w-full h-10 px-3 text-xs font-mono font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white"

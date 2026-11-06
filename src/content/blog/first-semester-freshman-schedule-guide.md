@@ -3,7 +3,7 @@ title: "First-Semester Freshman Schedule: A Simple Guide"
 description: "Build your first-semester college freshman schedule. Avoid the 8 AM trap, balance general education electives, and transition smoothly to university life."
 publishDate: 2026-10-16
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "7 min read"
 category: "College Transition"
 ---

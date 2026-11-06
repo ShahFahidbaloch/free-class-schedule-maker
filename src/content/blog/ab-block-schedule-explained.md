@@ -3,7 +3,7 @@ title: "A/B Block Schedule Explained (For Students and Teachers)"
 description: "A comprehensive guide to A/B block scheduling. Understand alternating days, 90-minute periods, homework strategies, and teacher lesson pacing."
 publishDate: 2026-10-04
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "8 min read"
 category: "Curriculum & Timetables"
 ---

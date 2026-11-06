@@ -3,7 +3,7 @@ title: "How to Read a Course Catalog and CRN Numbers"
 description: "Master course registration terminology: decipher 5-digit CRNs, course numbering codes, prerequisites, co-requisites, recitation sections, and waitlists."
 publishDate: 2026-10-12
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "7 min read"
 category: "Course Registration"
 ---

@@ -3,7 +3,7 @@ title: "How to Add Your Class Schedule to Google Calendar"
 description: "Step-by-step guide to import your class schedule into Google Calendar using an .ICS file. Sync recurring lectures, room locations, and reminders in minutes."
 publishDate: 2026-10-25
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "6 min read"
 category: "Calendar Integration"
 ---

@@ -3,7 +3,7 @@ title: "MWF vs TTh Classes: What They Mean and How to Plan Around Them"
 description: "Compare Monday/Wednesday/Friday (MWF) vs Tuesday/Thursday (TTh) college schedules. Learn cognitive pros and cons, study rhythms, and weekly balance tips."
 publishDate: 2026-10-22
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "7 min read"
 category: "Scheduling Strategy"
 ---

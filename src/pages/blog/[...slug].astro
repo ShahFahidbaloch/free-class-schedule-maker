@@ -30,8 +30,9 @@ const articleSchema = {
     "@id": Astro.url.href
   },
   "author": {
-    "@type": "Organization",
-    "name": post.data.author,
+    "@type": "Person",
+    "name": "Shah Fahid",
+    "jobTitle": "Full Stack AI Engineer",
     "url": "https://freeclassschedule.com/about/"
   },
   "publisher": {
@@ -91,9 +92,11 @@ const articleSchema = {
       </p>
 
       <div class="pt-2 flex items-center gap-3 text-xs text-zinc-500">
-        <span>By <strong class="text-zinc-800 dark:text-zinc-200">{post.data.author}</strong></span>
+        <span>By <strong class="text-zinc-800 dark:text-zinc-200">Shah Fahid</strong></span>
         <span>•</span>
-        <a href="/about" class="hover:underline text-zinc-600 dark:text-zinc-400">Editorial Team</a>
+        <span>Full Stack AI Engineer</span>
+        <span>•</span>
+        <a href="/about" class="hover:underline text-zinc-600 dark:text-zinc-400">About the Author</a>
       </div>
     </header>
 

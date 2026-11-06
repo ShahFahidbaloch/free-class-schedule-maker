@@ -3,7 +3,7 @@ title: "How to Make an Exam Study Timetable That Actually Works"
 description: "Learn how to build an effective exam study timetable. Use active recall, spaced repetition, error logs, and Pomodoro blocks to ace finals with zero cramming."
 publishDate: 2026-10-08
 updatedDate: 2026-11-06
-author: "Academic Productivity Lab"
+author: "Shah Fahid"
 readTime: "8 min read"
 category: "Exam Strategy"
 ---
