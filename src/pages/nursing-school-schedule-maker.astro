@@ -1,0 +1,378 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  HeartPulse, 
+  ArrowRight, 
+  Clock, 
+  CalendarDays, 
+  Sparkles, 
+  ShieldCheck, 
+  AlertTriangle,
+  Stethoscope,
+  Activity,
+  CheckCircle2,
+  BookOpen
+} from 'lucide-react';
+
+const pageTitle = "Nursing School Schedule Maker — Clinicals & Lectures Timetable Planner";
+const pageDescription = "Free nursing school schedule maker online. Balance 12-hour hospital clinical rotations, simulation labs, pharmacology lectures, and NCLEX study blocks with zero login.";
+const pageKeywords = "nursing school schedule maker, nursing timetable planner, clinical rotation schedule, bsn class schedule, nursing student timetable, nursing clinicals planner";
+
+const faqs = [
+  {
+    q: "How do nursing students balance 12-hour clinical rotations with lecture classes?",
+    a: "Nursing students balance 12-hour hospital clinicals by anchoring hospital rotation days (typically Tuesday or Thursday from 06:30 AM to 07:00 PM) as non-negotiable full-day commitments, grouping heavy didactic lectures like Pharmacology and Pathophysiology on alternate weekdays (Monday and Wednesday), and reserving Friday mornings for simulation skills labs. Never schedule evening coursework or exams directly following a 12-hour clinical shift."
+  },
+  {
+    q: "How many study hours per week do nursing students need outside of class?",
+    a: "Nursing faculty and accrediting bodies recommend the 3:1 study rule: for every 1 didactic credit hour, plan 3 dedicated hours of self-study, NCLEX practice questions, and concept mapping each week. For a standard 15-credit nursing semester with 9 didactic credits and 6 clinical/lab credits, nursing students should schedule between 25 and 35 independent weekly study hours."
+  },
+  {
+    q: "How do I prevent schedule conflicts between hospital clinicals and campus exams?",
+    a: "Enter your hospital rotation shift times and required pre-clinical briefing windows into Schedule Studio before term registration opens. Our visual collision engine renders overlapping lecture and clinical hours side-by-side with high-visibility conflict borders, ensuring you never enroll in a campus lecture that overlaps with mandatory hospital patient handoff hours."
+  },
+  {
+    q: "Can I load a pre-built nursing timetable preset into Free Class Schedule Maker?",
+    a: "Yes. Open Schedule Studio (/app), click 'Presets' in the top toolbar, and select the 'Nursing Student (15 Credits)' preset. It instantly pre-populates a balanced semester comprising Pharmacology, Adult Health Pathophysiology, Clinical Skills Simulation Lab, Health Assessment, and a 12-hour Medical-Surgical Clinical rotation into your chosen schedule plan."
+  },
+  {
+    q: "How can I export my nursing clinical schedule to Google Calendar and Apple Calendar?",
+    a: "Once your nursing lectures, hospital shifts, and skills labs are mapped in Schedule Studio, open the Export Hub and click 'Apple & Google Calendar (.ICS)'. Import the downloaded .ics file into your phone's calendar app to sync your 16-week recurring clinical shifts, clinical site hospital tags, and automatic 45-minute morning commute alarms."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/nursing-school-schedule-maker/#webapp",
+      "name": "Nursing School Schedule Maker",
+      "url": "https://freeclassschedule.com/nursing-school-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/nursing-school-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/nursing-school-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Nursing School Schedule Maker",
+          "item": "https://freeclassschedule.com/nursing-school-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Nursing School Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-900 shadow-2xs">
+        <HeartPulse class="w-4 h-4 text-rose-600 dark:text-rose-400" />
+        <span>Clinical Rotations &bull; BSN &amp; ADN Academic Timetable Engineering</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Nursing School Schedule Maker: Master 12-Hour Clinicals, Labs, and Lectures
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Nursing school timetables are among the most demanding in higher education. Coordinate marathon 12-hour hospital clinical shifts, high-stakes pharmacology lectures, simulation skills labs, and mandatory NCLEX study blocks without double-booking or burning out.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/class-schedule-template" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Printable Nursing Templates</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual Interactive Timetable Preview -->
+    <figure class="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-2 sm:p-3 my-6">
+      <img 
+        src="/images/studio-preview.svg" 
+        alt="Nursing school schedule maker interface showing pharmacology lectures, simulation lab, and full-day hospital clinical rotation blocks" 
+        width="1200" 
+        height="700" 
+        loading="lazy" 
+        class="w-full h-auto rounded-xl shadow-xs"
+      />
+      <figcaption class="text-[11px] font-mono text-zinc-500 text-center py-2">
+        Figure 1: FreeClassSchedule.com Studio multi-day weekly view with 12-hour hospital clinical blocks and credit tracking.
+      </figcaption>
+    </figure>
+
+    <!-- Article Content -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Nursing School Scheduling Demands a Specialized Timetable Maker
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A nursing school schedule maker is a specialized timetable planner designed to manage the unique constraints of healthcare education, including 12-hour hospital clinical shifts (06:30 AM–07:00 PM), 4-hour simulation labs, multi-course didactic lectures, and intensive NCLEX review blocks. Standard university calendars fail nursing students because they cannot accommodate off-campus travel or non-standard hospital shift hours.
+        </p>
+        <p>
+          Unlike liberal arts or business degree programs where courses follow predictable 50-minute MWF or 75-minute TTh slots between 9:00 AM and 3:00 PM, nursing cohorts must juggle three fundamentally distinct academic formats simultaneously:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 not-prose">
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 uppercase">Didactic Lectures</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Pharmacology &amp; Pathophysiology</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              High-memorization theory sessions requiring daily active recall, drug mechanism flashcards, and concept maps.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 uppercase">Hands-On Simulation</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">Skills Lab Practicums</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              3 to 4-hour intensive lab blocks covering sterile technique, IV placement, patient assessment, and emergency mock codes.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">Hospital Rotations</span>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white">12-Hour Clinical Shifts</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Full-day patient care shifts in acute-care hospitals starting at 06:30 AM with pre-conference briefings and night handoffs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pre-Built Nursing Blueprint Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample Undergraduate BSN Timetable: 15-Credit Nursing Blueprint
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A balanced 15-credit nursing semester timetable clusters high-cognitive didactic lectures on Monday and Wednesday, dedicates Tuesday and Thursday to hospital clinical shifts, and schedules simulation labs on Friday mornings. This separation isolates physically exhausting hospital rotations from intense campus exam days.
+        </p>
+        <p>
+          The table below illustrates a realistic sophomore-year BSN semester modeled directly in our Schedule Studio:
+        </p>
+
+        <div class="w-full overflow-x-auto not-prose">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215]">
+            <thead class="bg-zinc-100/70 dark:bg-zinc-850/80 border-b border-zinc-200 dark:border-zinc-800 font-mono text-[11px] uppercase text-zinc-500">
+              <tr>
+                <th class="py-3 px-4">Course Code</th>
+                <th class="py-3 px-4">Course Title</th>
+                <th class="py-3 px-4">Weekly Meeting Pattern</th>
+                <th class="py-3 px-4">Time Interval</th>
+                <th class="py-3 px-4">Credits</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-sans">
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-rose-600 dark:text-rose-400">NURS 210</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Clinical Pharmacology I</td>
+                <td class="py-3.5 px-4 font-mono">Mon / Wed</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">09:00 AM – 10:30 AM</td>
+                <td class="py-3.5 px-4 font-mono">3.0 cr</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-sky-600 dark:text-sky-400">NURS 220</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Adult Health Pathophysiology</td>
+                <td class="py-3.5 px-4 font-mono">Mon / Wed</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">11:00 AM – 12:30 PM</td>
+                <td class="py-3.5 px-4 font-mono">3.0 cr</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-amber-600 dark:text-amber-400">NURS 230L</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Simulation Skills Practicum Lab</td>
+                <td class="py-3.5 px-4 font-mono">Friday</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">08:30 AM – 12:30 PM</td>
+                <td class="py-3.5 px-4 font-mono">2.0 cr</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">NURS 240C</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Medical-Surgical Hospital Rotation</td>
+                <td class="py-3.5 px-4 font-mono">Tuesday</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">06:30 AM – 06:45 PM</td>
+                <td class="py-3.5 px-4 font-mono">4.0 cr</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-purple-600 dark:text-purple-400">NURS 250</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Holistic Health Assessment</td>
+                <td class="py-3.5 px-4 font-mono">Friday</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">01:30 PM – 03:30 PM</td>
+                <td class="py-3.5 px-4 font-mono">3.0 cr</td>
+              </tr>
+              <tr class="bg-zinc-50 dark:bg-zinc-900 font-bold border-t border-zinc-200 dark:border-zinc-700">
+                <td colspan="4" class="py-3.5 px-4 text-zinc-900 dark:text-white">Total Semester Academic &amp; Clinical Load</td>
+                <td class="py-3.5 px-4 font-mono text-rose-600 dark:text-rose-400">15.0 Credits</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Four Tactical Rules for Nursing Timetable Design -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Four Tactical Rules for Designing a Sustainable Nursing Timetable
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To design a sustainable nursing school timetable, protect post-clinical recovery days, block dedicated 90-minute NCLEX revision sessions between morning lectures, avoid late-night study marathons before early hospital rotations, and simulate multiple enrollment drafts (Plan A, Plan B, Plan C) before clinical lottery selection.
+        </p>
+
+        <div class="space-y-3 pt-2">
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Rule 1: Never Schedule High-Stakes Exams Immediately After Clinicals</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              After a 12-hour shift administering medications, repositioning patients, and preparing charting notes, your prefrontal cortex experiences severe decision fatigue. If your university offers pharmacology exams on Wednesday mornings, ensure your hospital clinical day is on Tuesday or Friday—never Tuesday night before a major test.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Rule 2: Factor in Acute Hospital Commute Buffers</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Clinical sites are frequently located 15 to 40 miles off-campus in regional trauma centers. A 07:00 AM shift requires arrival by 06:30 AM for shift briefing, meaning a 05:15 AM departure. Build dedicated commute blocks in Schedule Studio so your calendar reflects genuine sleep and wake routines.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Rule 3: Establish Multi-Schedule Plans (Plan A, Plan B, Plan C)</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Hospital clinical placements are notorious for lottery lot allocation. If your preferred Medical-Surgical hospital section fills up, having pre-configured Plan B and Plan C drafts ready in Schedule Studio allows you to pivot instantly during registration morning without losing course seats.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Rule 4: Time-Block 90-Minute NCLEX Sprints During Campus Gaps</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Rather than scrolling your phone during the 90-minute break between Pharmacology and Pathophysiology, use the Schedule Studio task list to schedule 40 Next-Generation NCLEX (NGN) clinical judgment case studies. Consistent 90-minute daily sprints outperform weekend cramming every semester.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Syncing and Exporting -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Exporting Your Nursing Timetable to Phone and Calendar Apps
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To export your nursing school schedule to smartphone calendars, finalize your clinical and lecture blocks in Schedule Studio, click 'Export Hub', and download the universal .ICS calendar file. This automatically synchronizes all 16 semester weeks with Apple Calendar, Google Calendar, and Outlook, generating 30-minute departure reminders before early morning hospital shifts.
+        </p>
+        <p>
+          In addition, Schedule Studio exports high-resolution lock-screen PNG wallpapers. Keep your daily hospital room numbers, simulation lab codes, and lecture halls visible on your phone screen with a single tap, without unlocking your device in sterile clinical environments.
+        </p>
+      </section>
+
+    </article>
+
+    <!-- FAQ Section with Schema Support -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Clinical &amp; Academic Questions</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Nursing School Course Scheduling FAQ
+        </h2>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400">
+          Answers to common questions about clinical rotations, lecture balances, NCLEX preparation, and schedule optimization.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map((faq) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-bold text-zinc-900 dark:text-white select-none">
+              <span>{faq.q}</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200 text-xs">
+                ▼
+              </span>
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom Conversion CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your Nursing School Timetable in Seconds
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Free, private, and running 100% in your browser. Load the Nursing Student preset or build your hospital rotation blueprint from scratch.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 font-bold text-sm inline-flex items-center justify-center gap-2 transition shadow-sm"
+        >
+          <span>Launch Schedule Studio Now &rarr;</span>
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>
+

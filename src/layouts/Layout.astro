@@ -32,6 +32,76 @@ const cleanPath = normalizedPath.startsWith('/') ? normalizedPath : (normalizedP
 const siteName = "Class Schedule Maker";
 const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPORTED_LANGUAGES[0];
 const langPrefix = lang === 'en' ? '' : `/${lang}`;
+
+// OWNER CONFIGURATION: Add verified founder social/profile URLs here (do not invent placeholders)
+export const FOUNDER_SAMEAS: string[] = [
+  // e.g. "https://www.linkedin.com/in/...", "https://github.com/..."
+];
+
+// Site-Wide Entity Graph Schema (AEO / GEO Knowledge Graph)
+const siteWideEntityGraph = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://freeclassschedule.com/#organization",
+      "name": "Free Class Schedule Maker",
+      "url": "https://freeclassschedule.com",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://freeclassschedule.com/#logo",
+        "url": "https://freeclassschedule.com/logo.png",
+        "contentUrl": "https://freeclassschedule.com/logo.png",
+        "caption": "Free Class Schedule Maker Official Logo"
+      },
+      "image": {
+        "@id": "https://freeclassschedule.com/#logo"
+      },
+      "founder": {
+        "@id": "https://freeclassschedule.com/#founder"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://freeclassschedule.com/#founder",
+      "name": "Shah Fahid",
+      "jobTitle": "Full Stack AI Engineer",
+      "worksFor": {
+        "@id": "https://freeclassschedule.com/#organization"
+      },
+      "description": "Shah Fahid is a Full Stack AI Engineer who builds practical, student-first web tools.",
+      ...(FOUNDER_SAMEAS.length > 0 ? { "sameAs": FOUNDER_SAMEAS } : {})
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://freeclassschedule.com/#website",
+      "url": "https://freeclassschedule.com",
+      "name": "Free Class Schedule Maker",
+      "description": "Free weekly class schedule and academic timetable maker running 100% in browser with zero sign-up.",
+      "publisher": {
+        "@id": "https://freeclassschedule.com/#organization"
+      },
+      "inLanguage": lang
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://freeclassschedule.com/#application",
+      "name": "Class Schedule Studio",
+      "url": "https://freeclassschedule.com/app",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@id": "https://freeclassschedule.com/#organization"
+      }
+    }
+  ]
+};
 ---
 
 <!doctype html>
@@ -106,6 +176,10 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
       })();
     </script>
 
+    <!-- Site-Wide JSON-LD Entity Graph (Organization, Person, WebSite, SoftwareApplication) -->
+    <script type="application/ld+json" set:html={JSON.stringify(siteWideEntityGraph)} />
+
+    <!-- Page-Specific JSON-LD Schema (FAQ, Article, etc.) -->
     {schemaJson && (
       <script type="application/ld+json" set:html={JSON.stringify(schemaJson)} />
     )}
@@ -348,26 +422,29 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
           <!-- Col 2: Product & Tools -->
           <div class="space-y-2.5 text-xs">
-            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">Product</h4>
+            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">Product &amp; Tools</h4>
             <ul class="space-y-2">
               <li><a href="/app" class="hover:text-zinc-900 dark:hover:text-white transition-colors font-semibold text-zinc-800 dark:text-zinc-200">Schedule Studio</a></li>
               <li><a href="/college-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">College Schedule Maker</a></li>
               <li><a href="/school-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">School Schedule Maker</a></li>
+              <li><a href="/timetable-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors font-medium">Timetable Maker (Time Table)</a></li>
               <li><a href="/block-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Block Schedule Maker</a></li>
               <li><a href="/weekly-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Weekly Schedule Maker</a></li>
-              <li><a href="/class-schedule-template" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Printable & Excel Templates</a></li>
+              <li><a href="/class-schedule-template" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Printable &amp; Excel Templates</a></li>
             </ul>
           </div>
 
-          <!-- Col 3: University Guides -->
+          <!-- Col 3: Specialized Planners & Guides -->
           <div class="space-y-2.5 text-xs">
-            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">University Guides</h4>
+            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">Specialized Planners</h4>
             <ul class="space-y-2">
-              <li><a href="/pcc-class-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">PCC Class Schedule</a></li>
-              <li><a href="/uf-class-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">UF Class Schedule (ONE.UF)</a></li>
-              <li><a href="/study-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Study Schedule Planner</a></li>
-              <li><a href="/blog" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Guides & Articles</a></li>
-              <li><a href="/app#feedback" class="hover:text-zinc-900 dark:hover:text-white transition-colors font-medium">Student Feedback</a></li>
+              <li><a href="/nursing-school-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Nursing School Schedule</a></li>
+              <li><a href="/teacher-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Teacher &amp; Classroom Schedule</a></li>
+              <li><a href="/homeschool-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Homeschool Family Routine</a></li>
+              <li><a href="/work-and-class-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Work &amp; Class Schedule</a></li>
+              <li><a href="/study-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Study &amp; Revision Planner</a></li>
+              <li><a href="/pcc-class-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">PCC Registration Guide</a></li>
+              <li><a href="/uf-class-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">UF Schedule (ONE.UF)</a></li>
             </ul>
           </div>
 

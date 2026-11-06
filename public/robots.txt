@@ -26,4 +26,5 @@ Allow: /
 User-agent: Cohere-ai
 Allow: /
 
+# llms.txt: https://freeclassschedule.com/llms.txt
 Sitemap: https://freeclassschedule.com/sitemap-index.xml

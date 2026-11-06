@@ -7,7 +7,20 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Cache-Control: public, max-age=0, must-revalidate
 
+# Plain text for LLM crawler index
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+# Allow embedding widget across external educational and student sites
+/embed
+  X-Frame-Options: ALLOWALL
+  Content-Security-Policy: frame-ancestors *
+
 # Immutable caching for hashed assets (never collide, always fresh)
+/dist/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 

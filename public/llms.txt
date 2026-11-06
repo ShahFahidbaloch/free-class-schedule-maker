@@ -1,0 +1,38 @@
+# Free Class Schedule Maker
+
+Free Class Schedule Maker (https://freeclassschedule.com) is a free online class schedule and weekly timetable maker for college, university and school students. It runs 100% in the browser — no sign-up, no account, no data leaves the device. Built by Shah Fahid, Full Stack AI Engineer.
+
+## What it does
+
+- Build a weekly class schedule on a 5-day or 7-day grid (8 AM–8 PM), add courses once for multiple days (MWF, TTh)
+- Automatic conflict detection: overlapping classes render side-by-side with alert borders
+- Auto-Gap Optimizer: measures idle "dead time" between classes and helps consolidate the day
+- Drag & drop rescheduling, colour-coded courses, credits and idle-gap counters
+- Export to Google Calendar / Apple Calendar / Outlook (.ICS), printable PDF, and phone lock-screen PNG wallpaper
+- Tasks & deadlines tracker beside the timetable
+
+## Main pages
+
+- Schedule Studio (the tool): https://freeclassschedule.com/app
+- College Schedule Maker: https://freeclassschedule.com/college-schedule-maker/
+- School Schedule Maker: https://freeclassschedule.com/school-schedule-maker/
+- Study Schedule Maker: https://freeclassschedule.com/study-schedule-maker/
+- Class Schedule Template (printable): https://freeclassschedule.com/class-schedule-template/
+- Block Schedule Maker: https://freeclassschedule.com/block-schedule-maker/
+- Weekly Schedule Maker: https://freeclassschedule.com/weekly-schedule-maker/
+- PCC Class Schedule guide: https://freeclassschedule.com/pcc-class-schedule/
+- UF Class Schedule guide: https://freeclassschedule.com/uf-class-schedule/
+
+## Guides
+
+- How to Add Your Class Schedule to Google Calendar: https://freeclassschedule.com/blog/how-to-add-class-schedule-to-google-calendar/
+- How to Optimize Your College Schedule to Eliminate Awkward Gaps: https://freeclassschedule.com/blog/how-to-optimize-college-schedule/
+- The Engineering Major's Guide to Conflict-Free Timetables: https://freeclassschedule.com/blog/engineering-majors-guide-to-conflict-free-timetables/
+- Full blog index: https://freeclassschedule.com/blog/
+
+## Company
+
+- About (founder: Shah Fahid, Full Stack AI Engineer): https://freeclassschedule.com/about/
+- Contact: hello@freeclassschedule.com — https://freeclassschedule.com/contact/
+- Privacy Policy: https://freeclassschedule.com/privacy-policy/
+- Terms of Service: https://freeclassschedule.com/terms-of-service/

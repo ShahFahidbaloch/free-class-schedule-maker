@@ -1,0 +1,388 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  Building2, 
+  ArrowRight, 
+  Clock, 
+  CalendarDays, 
+  Sparkles, 
+  Printer, 
+  CheckCircle2, 
+  Briefcase, 
+  GraduationCap, 
+  AlertTriangle,
+  Send
+} from 'lucide-react';
+
+const pageTitle = "Work and Class Schedule Maker — Combine Jobs, Shifts & College Timetables";
+const pageDescription = "Free work and class schedule maker for working students. Combine part-time jobs, campus lectures, rotating shifts, and generate employer availability charts.";
+const pageKeywords = "work and class schedule maker, student work schedule planner, combine work and school schedule, part-time student timetable, college job schedule maker, student availability template";
+
+const faqs = [
+  {
+    q: "How do working students successfully balance 20+ hours of work with full-time college classes?",
+    a: "Working students balance 20+ hours of work with full-time college classes by clustering their lectures into dedicated morning or alternating day blocks (e.g., all classes on Tuesday and Thursday or morning MWF before 1:00 PM), leaving continuous 4-to-6 hour windows for employment shifts. Never scatter isolated one-hour work shifts between classes, as travel time and cognitive context-switching will destroy your study efficiency."
+  },
+  {
+    q: "How can I print my student availability schedule to submit to my employer or shift manager?",
+    a: "In Schedule Studio (/app), map out your non-negotiable class lecture blocks, campus labs, and transit times. Open the Export Hub and click 'Print / Save as PDF'. This creates a clean, employer-friendly weekly availability sheet showing your exact free hours formatted for manager submission and shift scheduling."
+  },
+  {
+    q: "How do I manage rotating or fluctuating work shifts that change every week?",
+    a: "Use our Multi-Plan feature in Schedule Studio to maintain alternative schedule drafts: keep 'Plan A' for your fixed academic lecture baseline, and duplicate it into 'Plan B' and 'Plan C' to model morning shifts versus evening shift rotations. You can switch between weekly plans with one click without re-typing course codes or exam times."
+  },
+  {
+    q: "How does the tool prevent accidental conflicts between work shifts and campus exams?",
+    a: "Schedule Studio features an automatic visual collision detection engine. If you schedule a shift that overlaps with a laboratory section, lecture, or final exam, both commitments render side-by-side with high-visibility conflict badges, alerting you before you commit to employer shift rosters."
+  },
+  {
+    q: "Can I export my combined school and job schedule to Google Calendar and Apple Calendar?",
+    a: "Yes. Once your class hours and work commitments are plotted on the matrix, click 'Export .ICS' in the Export Hub. Import the downloaded file into Google Calendar, Apple Calendar, or Outlook to automatically populate your phone with recurring lectures, work shift addresses, and 30-minute commute warning chimes."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/work-and-class-schedule-maker/#webapp",
+      "name": "Work and Class Schedule Maker",
+      "url": "https://freeclassschedule.com/work-and-class-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/work-and-class-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/work-and-class-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Work and Class Schedule Maker",
+          "item": "https://freeclassschedule.com/work-and-class-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Work and Class Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-900 shadow-2xs">
+        <Building2 class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        <span>Working Students &bull; Employment Shifts &amp; College Timetable Integration</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Work and Class Schedule Maker: Seamlessly Combine Jobs and College
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Over 70% of college undergraduates work while enrolled in school. Harmonize lectures, laboratories, retail or restaurant shifts, and study hours on a unified weekly grid. Eliminate double-booking and generate professional employer availability sheets in seconds.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/class-schedule-template" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Printable Availability Sheets</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual Interactive Timetable Preview -->
+    <figure class="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-2 sm:p-3 my-6">
+      <img 
+        src="/images/studio-preview.svg" 
+        alt="Work and class schedule maker showing morning university lectures combined with afternoon part-time job shifts and weekend study blocks" 
+        width="1200" 
+        height="700" 
+        loading="lazy" 
+        class="w-full h-auto rounded-xl shadow-xs"
+      />
+      <figcaption class="text-[11px] font-mono text-zinc-500 text-center py-2">
+        Figure 1: Unified weekly timetable combining academic lectures with retail employment shifts and commute buffers.
+      </figcaption>
+    </figure>
+
+    <!-- Article Content -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Working Students Need a Unified Work &amp; Class Schedule Maker
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A work and class schedule maker is an integrated calendar planner designed for students balancing part-time jobs, internships, or full-time employment alongside academic coursework. It maps lectures, labs, work shifts, and transit buffers onto a single visual matrix, preventing schedule collisions and generating clean availability printouts for employers.
+        </p>
+        <p>
+          Managing college while working is a delicate juggling act. Most university portals only display enrolled class periods, leaving students to mentally calculate when they can clock into work. Meanwhile, employer scheduling apps (like 7shifts, HotSchedules, or Deputy) have no visibility into when your biology lab or midterm exam takes place.
+        </p>
+        <p>
+          When you manage classes in one app and work shifts in another, disaster strikes: you accidentally agree to a Thursday closing shift before an 8:00 AM Friday exam, or schedule a class that leaves only 10 minutes to cross town for work. Our <strong>Schedule Studio</strong> unites both halves of your life onto a single canvas:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 not-prose">
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 uppercase">Academic Blocks</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Fixed Course Lectures</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Non-negotiable Monday/Wednesday/Friday or Tuesday/Thursday university class and laboratory meetings.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">Employment Shifts</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Job Shifts &amp; Internships</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Consolidated 4-to-8 hour work shifts, campus library desk hours, or remote internship working hours.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase">Commute &amp; Study</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Transit &amp; Study Buffers</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Essential 30-minute campus-to-work driving buffers and dedicated 90-minute evening study blocks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sample Work & School Schedule Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample Weekly Blueprint: 15-Credit Student with a 20-Hour Part-Time Job
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A successful work and school timetable clusters college classes into morning MWF slots (09:00 AM to 01:00 PM), leaving Tuesday, Thursday, and weekend afternoons open for consolidated employment shifts. This eliminates fragmented travel and ensures reliable work availability.
+        </p>
+        <p>
+          The table below illustrates how a working undergraduate balances 15 academic credits with a 20-hour weekly retail or restaurant job:
+        </p>
+
+        <div class="w-full overflow-x-auto not-prose">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215]">
+            <thead class="bg-zinc-100/70 dark:bg-zinc-850/80 border-b border-zinc-200 dark:border-zinc-800 font-mono text-[11px] uppercase text-zinc-500">
+              <tr>
+                <th class="py-3 px-4">Category</th>
+                <th class="py-3 px-4">Commitment / Course</th>
+                <th class="py-3 px-4">Meeting Pattern</th>
+                <th class="py-3 px-4">Time Interval</th>
+                <th class="py-3 px-4">Weekly Hours</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-sans">
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-sky-600 dark:text-sky-400 text-xs">College Class</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">CS 101: Intro to Programming (4 cr)</td>
+                <td class="py-3.5 px-4 font-mono">Mon / Wed / Fri</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">09:00 AM – 10:15 AM</td>
+                <td class="py-3.5 px-4 font-mono">3.75 hrs</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-sky-600 dark:text-sky-400 text-xs">College Class</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">MATH 141: Calculus I (4 cr)</td>
+                <td class="py-3.5 px-4 font-mono">Mon / Wed / Fri</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">10:30 AM – 11:45 AM</td>
+                <td class="py-3.5 px-4 font-mono">3.75 hrs</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-sky-600 dark:text-sky-400 text-xs">College Class</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">ECON 102: Macroeconomics (3 cr)</td>
+                <td class="py-3.5 px-4 font-mono">Mon / Wed</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">12:00 PM – 01:15 PM</td>
+                <td class="py-3.5 px-4 font-mono">2.5 hrs</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-sky-600 dark:text-sky-400 text-xs">College Class</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">ENG 102: Academic Writing (4 cr)</td>
+                <td class="py-3.5 px-4 font-mono">Tue / Thu</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">09:30 AM – 11:00 AM</td>
+                <td class="py-3.5 px-4 font-mono">3.0 hrs</td>
+              </tr>
+              <tr class="bg-emerald-50/60 dark:bg-emerald-950/20 font-bold border-t border-emerald-200 dark:border-emerald-800">
+                <td class="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400 text-xs">Job Shift 1</td>
+                <td class="py-3.5 px-4 text-zinc-900 dark:text-white">Campus Coffee Bar Shift</td>
+                <td class="py-3.5 px-4 font-mono">Tue / Thu</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">12:30 PM – 06:30 PM</td>
+                <td class="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400">12.0 hrs</td>
+              </tr>
+              <tr class="bg-emerald-50/60 dark:bg-emerald-950/20 font-bold">
+                <td class="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400 text-xs">Job Shift 2</td>
+                <td class="py-3.5 px-4 text-zinc-900 dark:text-white">Weekend Customer Support Shift</td>
+                <td class="py-3.5 px-4 font-mono">Saturday</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">09:00 AM – 05:30 PM</td>
+                <td class="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400">8.0 hrs</td>
+              </tr>
+              <tr class="bg-zinc-50 dark:bg-zinc-900 font-bold border-t border-zinc-200 dark:border-zinc-700">
+                <td colspan="4" class="py-3.5 px-4 text-zinc-900 dark:text-white">Total Productive Weekly Load</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-950 dark:text-white">15.0 Credits + 20.0 Work Hrs</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Four Tactical Rules for Working Students -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Four Rules for Surviving College While Working 20+ Hours
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To successfully juggle employment and undergraduate coursework, batch all classes into morning blocks to preserve afternoon work availability, factor in realistic commute travel buffers, submit your availability sheet early to managers, and schedule non-negotiable study appointments.
+        </p>
+
+        <div class="space-y-3 pt-2">
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>1. Batch Classes into Either Morning MWF or TTh All-Day</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Employers love consistency. If your schedule has two classes on Monday morning, one on Tuesday afternoon, and one on Wednesday evening, no manager can assign you reliable shifts. Batch your courses so you have predictable 4-to-8 hour windows every single week.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>2. Never Forget the "Transit + Decompression" Buffer</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              If your lecture ends at 01:15 PM and your job shift starts at 01:30 PM, you will be chronically late, stressed, or forced to leave class early. Always build a minimum 45-minute buffer between campus dismissal and workplace arrival.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>3. Provide Clear Availability Sheets Before the Term Begins</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Do not text your manager a messy string of times. Export a clean PDF from Schedule Studio showing your exact class times shaded in gray and your open working windows highlighted. Managers respect organized employees and will honor your study boundaries.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>4. Treat Homework as an Unpaid Part-Time Job</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              When working 20 hours a week, casual "I'll study whenever I have time" leads to dropped courses. Block two 90-minute study sprints into Schedule Studio on Monday, Wednesday, and Sunday evenings. When study time is on the calendar, homework gets finished.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Printing and Customizing -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Exporting and Printing Your Work &amp; School Schedule
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To export and print your combined work and school timetable, build your lecture and shift blocks in Schedule Studio, click 'Export Hub', and choose between a print-ready vector PDF for employer submission, an iCal (.ICS) file for Google and Apple Calendar alarms, or a high-resolution smartphone wallpaper.
+        </p>
+        <p>
+          With our <strong>Share / Copy Link</strong> feature, you can also send a direct link to your live timetable to shift supervisors, roommates, or study partners with zero accounts or logins required.
+        </p>
+      </section>
+
+    </article>
+
+    <!-- FAQ Section with Schema Support -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Working Student Inquiries</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Work &amp; Class Schedule Planning FAQ
+        </h2>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400">
+          Answers to common questions about balancing part-time employment, course loads, commute times, and employer availability.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map((faq) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-bold text-zinc-950 dark:text-white select-none">
+              <span>{faq.q}</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200 text-xs">
+                ▼
+              </span>
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom Conversion CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Combine Your Classes and Work Shifts for Free
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        100% free, private, and running entirely in your browser. Build a balanced, conflict-free routine and print your employer availability sheet today.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 font-bold text-sm inline-flex items-center justify-center gap-2 transition shadow-sm"
+        >
+          <span>Open Schedule Studio Now &rarr;</span>
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>
+

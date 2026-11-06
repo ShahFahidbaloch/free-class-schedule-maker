@@ -1,0 +1,387 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  Calendar, 
+  ArrowRight, 
+  Clock, 
+  CalendarDays, 
+  Sparkles, 
+  Printer, 
+  Globe2, 
+  BookOpen, 
+  CheckCircle2,
+  GraduationCap
+} from 'lucide-react';
+
+const pageTitle = "Timetable Maker — Free Online Time Table Creator for School & College";
+const pageDescription = "Free online timetable maker (time table creator). Build 5-day or 6-day Monday-Saturday weekly timetables, school periods, exam study routines, and printable PDFs.";
+const pageKeywords = "timetable maker, time table maker, online timetable creator, free timetable maker, school timetable maker, study timetable maker, weekly timetable maker, 6 day timetable";
+
+const faqs = [
+  {
+    q: "What is a timetable maker and how does it differ from a class schedule maker?",
+    a: "A timetable maker (frequently spelled 'time table maker') is the primary term used across the UK, India, Pakistan, Australia, and Commonwealth education systems for an academic schedule creator. While North American universities refer to 'class schedules' based on credit hours, international schools and colleges structure their academic week around numbered daily periods (Periods 1 to 8), recess breaks, and 5 or 6-day lecture rotations."
+  },
+  {
+    q: "Does this timetable maker support a 6-day (Monday through Saturday) schedule?",
+    a: "Yes. While standard Western schools follow a 5-day Monday–Friday week, many schools and universities across India, Pakistan, and the Commonwealth operate on a 6-day schedule. In Schedule Studio (/app), click the '5D / 7D' toggle in the toolbar to activate full-week mode, allowing you to schedule classes across Monday through Saturday seamlessly."
+  },
+  {
+    q: "How do I map school periods (Period 1 to Period 8) into the timetable grid?",
+    a: "Schedule Studio uses standard 12-hour clock times (8:00 AM to 8:00 PM). To map numbered periods, enter the period name in the Course Code field (e.g. 'Period 1: English' or 'P1: Maths') and set the start and end clock times matching your institution's bell schedule (e.g. 08:30 AM to 09:20 AM). Each period renders in an organized vertical lane on the interactive weekly matrix."
+  },
+  {
+    q: "Can I download and print my timetable as a PDF or image?",
+    a: "Yes. Once your weekly timetable is arranged, open the Export Hub and select 'Print / Save as PDF' for a clean, ink-friendly vector chart formatted for standard A4 or US Letter paper. You can also export a high-resolution PNG graphic to set your timetable as your smartphone lockscreen wallpaper."
+  },
+  {
+    q: "Is this online timetable maker completely free to use?",
+    a: "Yes. Free Class Schedule Maker is 100% free with no registration, no subscription fees, and no pop-up advertisements. The entire timetable studio runs in your browser and automatically saves your timetable to your local device for complete privacy."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/timetable-maker/#webapp",
+      "name": "Online Timetable Maker",
+      "url": "https://freeclassschedule.com/timetable-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/timetable-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/timetable-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Timetable Maker",
+          "item": "https://freeclassschedule.com/timetable-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Timetable Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <Globe2 class="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+        <span>Academic Management &bull; Weekly Timetable Creation for School, College &amp; Revision</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Timetable Maker: Free Online Time Table Creator for Students &amp; Teachers
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Whether you call it a timetable, time table, or class schedule, structuring your academic week should be effortless. Design 5-day or 6-day (Monday to Saturday) timetables, plan daily subject periods, eliminate clashes, and download printable PDFs in seconds.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Timetable Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/class-schedule-template" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Printable Timetable Templates</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual Interactive Timetable Preview -->
+    <figure class="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-2 sm:p-3 my-6">
+      <img 
+        src="/images/studio-preview.svg" 
+        alt="Online timetable maker studio interface showing structured weekly academic periods, lecture timings, and clash detection" 
+        width="1200" 
+        height="700" 
+        loading="lazy" 
+        class="w-full h-auto rounded-xl shadow-xs"
+      />
+      <figcaption class="text-[11px] font-mono text-zinc-500 text-center py-2">
+        Figure 1: FreeClassSchedule.com Studio multi-day weekly timetable matrix with clash detection and export options.
+      </figcaption>
+    </figure>
+
+    <!-- Article Content -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          What is an Online Timetable Maker? The Global Standard for Academic Organization
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A timetable maker is a free, web-based software tool that allows students, teachers, and parents to create structured weekly timetables (also known as time tables) across 5-day or 6-day academic cycles. It visually organizes class lectures, lab practicals, study periods, and break intervals, detects overlapping scheduling clashes automatically, and exports finished timetables to printable PDFs and digital calendars.
+        </p>
+        <p>
+          In the United Kingdom, India, Pakistan, Nigeria, Australia, and across Commonwealth education systems, students and educators universally use the word <strong>timetable</strong> rather than "class schedule." While the terminology differs across borders, the core organizational challenge remains identical: how to map 30 to 45 hours of weekly academic lessons into a clear, clash-free routine.
+        </p>
+        <p>
+          Our <strong>Timetable Maker</strong> was built to eliminate confusing spreadsheet templates and restrictive mobile apps:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 not-prose">
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 uppercase">Clash Prevention</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Automated Collision Detection</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              If two lectures or coaching sessions share identical hours, they render side-by-side in split lanes with alert borders.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">Flexible Weeks</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Monday–Saturday Support</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Toggle the 7-day view to map 6-day academic schedules (Mon–Sat) standard in Indian, Pakistani, and international schools.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-purple-600 dark:text-purple-400 uppercase">Zero Friction</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">100% In-Browser Privacy</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              No registration, no password creation, and no student data collected. Works completely offline on your local computer or phone.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6-Day Monday-Saturday Workaround & Guide -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          How to Create a 6-Day (Monday to Saturday) School or College Timetable
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To create a 6-day Monday to Saturday timetable, open Schedule Studio, click the '5D / 7D' toggle in the toolbar to activate weekend days, and add your classes across Monday through Saturday while leaving Sunday unassigned. This accurately models secondary school and university timetables common in India, Pakistan, and the UK.
+        </p>
+        <p>
+          Because many academic institutions in South Asia and the Commonwealth operate on a 6-day week (with half-days or extra practical labs on Saturday morning), standard Western 5-day calendar tools fall short. Here is how to configure your 6-day schedule efficiently:
+        </p>
+        <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Activate 7-Day Matrix:</strong> In the top navigation bar or left sidebar, toggle the <strong>7D</strong> button. The canvas expands from Monday through Sunday.</li>
+          <li><strong>Enter Periods as Course Codes:</strong> Enter period numbers directly into the course code input, such as <code>P1: English</code>, <code>P2: Mathematics</code>, or <code>P3: Physics Lab</code>.</li>
+          <li><strong>Assign Monday–Saturday Days:</strong> Use the day selector pills to check <code>Mon, Tue, Wed, Thu, Fri, Sat</code>. For classes that only meet on Saturday morning, select solely the <code>Sat</code> pill.</li>
+          <li><strong>Leave Sunday Open for Revision:</strong> Leave Sunday blank or use our dedicated <a href="/study-schedule-maker/" class="text-zinc-900 dark:text-white font-semibold underline">Study Schedule Maker</a> techniques to plan weekend exam preparation.</li>
+        </ol>
+      </section>
+
+      <!-- Period-Based vs Clock-Based Timetables Table -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample 8-Period Daily School Timetable Conversion Chart
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A standard 8-period school timetable maps 40 to 50-minute teaching intervals between 08:30 AM and 03:30 PM, incorporating a morning recess and a 45-minute midday lunch break.
+        </p>
+        <p>
+          If your institution issues a timetable based on period numbers rather than clock times, use the reference conversion below:
+        </p>
+
+        <div class="w-full overflow-x-auto not-prose">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215]">
+            <thead class="bg-zinc-100/70 dark:bg-zinc-850/80 border-b border-zinc-200 dark:border-zinc-800 font-mono text-[11px] uppercase text-zinc-500">
+              <tr>
+                <th class="py-3 px-4">Period</th>
+                <th class="py-3 px-4">Clock Interval</th>
+                <th class="py-3 px-4">Duration</th>
+                <th class="py-3 px-4">Typical Academic Focus</th>
+                <th class="py-3 px-4">Notes</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-sans">
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 1</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">08:30 – 09:15 AM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Mathematics / Quantitative</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Peak morning cognitive focus</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 2</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">09:20 – 10:05 AM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">English Language &amp; Literature</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Core curriculum</td>
+              </tr>
+              <tr class="bg-amber-50/50 dark:bg-amber-950/20">
+                <td class="py-3.5 px-4 font-mono font-bold text-amber-600 dark:text-amber-400">Recess</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">10:05 – 10:25 AM</td>
+                <td class="py-3.5 px-4 font-mono">20 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Morning Break / Snack</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Hallway rest interval</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 3</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">10:30 – 11:15 AM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Science (Biology / Chemistry)</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Theory instruction</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 4</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">11:20 – 12:05 PM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Social Studies / History</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Humanities focus</td>
+              </tr>
+              <tr class="bg-zinc-50 dark:bg-zinc-900">
+                <td class="py-3.5 px-4 font-mono font-bold text-zinc-500">Lunch</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">12:05 – 12:50 PM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Midday Lunch Break</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Nutritional rest</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 5</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">12:55 – 01:40 PM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Computer Science / Coding</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">IT Lab session</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 6</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">01:45 – 02:30 PM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Foreign Language / Second Language</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Oral / conversational practice</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">Period 7</td>
+                <td class="py-3.5 px-4 font-mono text-zinc-600 dark:text-zinc-400">02:35 – 03:20 PM</td>
+                <td class="py-3.5 px-4 font-mono">45 mins</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Physical Education / Art</td>
+                <td class="py-3.5 px-4 text-zinc-500 text-xs">Kinesthetic / creative release</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Connecting Other Specialized Tools -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Related Timetable Creators &amp; Academic Scheduling Solutions
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          Depending on your academic grade and institutional structure, explore our dedicated timetable modules:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>K-12 Schools:</strong> Visit our <a href="/school-schedule-maker/" class="text-zinc-900 dark:text-white font-semibold underline">School Schedule Maker</a> for standard bell periods, advisory blocks, and teacher planning schedules.</li>
+          <li><strong>Revision &amp; Exams:</strong> Use our <a href="/study-schedule-maker/" class="text-zinc-900 dark:text-white font-semibold underline">Study Schedule Maker</a> for 90-minute ultradian cognitive blocks, spaced repetition routines, and exam preparation.</li>
+          <li><strong>Printable Templates:</strong> Download customizable grid layouts in PDF, Excel, and phone wallpaper formats from our <a href="/class-schedule-template/" class="text-zinc-900 dark:text-white font-semibold underline">Class Schedule Template Hub</a>.</li>
+          <li><strong>Higher Education:</strong> College and university students can optimize MWF vs TTh lecture loads with our <a href="/college-schedule-maker/" class="text-zinc-900 dark:text-white font-semibold underline">College Schedule Maker</a>.</li>
+        </ul>
+      </section>
+
+      <!-- Printing and Sharing -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Exporting and Printing Your Weekly Timetable
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To export and print your weekly timetable, plot your periods in Schedule Studio, click 'Export Hub', and choose between a print-ready vector PDF for wall hanging or notebook pasting, a universal iCal (.ICS) calendar file for phone alarms, or a high-resolution smartphone lockscreen wallpaper.
+        </p>
+        <p>
+          You can also generate a shareable web link via <strong>Share / Copy Link</strong> to send your exact timetable to classmates, revision partners, or teachers with one click.
+        </p>
+      </section>
+
+    </article>
+
+    <!-- FAQ Section with Schema Support -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Student &amp; Teacher Questions</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Timetable Maker &amp; Time Table Creation FAQ
+        </h2>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400">
+          Answers to common questions about period numbering, 6-day timetables, clash resolution, and PDF exports.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map((faq) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-bold text-zinc-950 dark:text-white select-none">
+              <span>{faq.q}</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200 text-xs">
+                ▼
+              </span>
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom Conversion CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your Weekly Timetable in Seconds
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        100% free, private, and running entirely in your browser. Organize your school periods, college lectures, and revision routines today.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 font-bold text-sm inline-flex items-center justify-center gap-2 transition shadow-sm"
+        >
+          <span>Open Timetable Studio Now &rarr;</span>
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>
+

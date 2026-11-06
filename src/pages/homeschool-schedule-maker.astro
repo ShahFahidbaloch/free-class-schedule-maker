@@ -1,0 +1,383 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  Home, 
+  ArrowRight, 
+  Clock, 
+  CalendarDays, 
+  Sparkles, 
+  Users, 
+  Printer, 
+  Heart,
+  BookOpen,
+  CheckCircle2,
+  Calendar
+} from 'lucide-react';
+
+const pageTitle = "Homeschool Schedule Maker — Free Daily & Weekly Routine Planner for Families";
+const pageDescription = "Free homeschool schedule maker for parents. Build flexible daily routines, 4-day school weeks, multi-child lesson blocks, and printable refrigerator wall charts.";
+const pageKeywords = "homeschool schedule maker, homeschool daily routine planner, homeschool timetable, homeschool lesson planner, 4-day homeschool schedule, family homeschool planner";
+
+const faqs = [
+  {
+    q: "How do homeschool parents schedule multiple children of different grade levels?",
+    a: "Homeschool parents schedule multiple children by staggering one-on-one teaching blocks with independent work times. While you teach direct math concepts to your younger child for 30 minutes, your older child works on independent silent reading or science lab notebooks. Group communal subjects like history read-alouds, nature study, and art appreciation into shared family morning basket blocks."
+  },
+  {
+    q: "Can I create a 4-day homeschool week schedule (Monday through Thursday)?",
+    a: "Yes. In Schedule Studio (/app), you can easily customize a 4-day homeschool week from Monday to Thursday, leaving Friday open for community homeschool co-ops, park days, library visits, or experiential field trips. Simply leave Friday unassigned on the interactive matrix and your printable exports will reflect your 4-day family rhythm."
+  },
+  {
+    q: "How do I include Saturday activities and weekend co-ops on our homeschool schedule?",
+    a: "Click the '5D / 7D' toggle button in the Schedule Studio toolbar to expand the calendar into a full 7-day Monday through Sunday view. This allows homeschooling families to schedule Saturday morning co-op robotics, community sports leagues, music lessons, or Sunday family nature walks alongside weekday academic subjects."
+  },
+  {
+    q: "What is the best way to print a homeschool schedule for the family refrigerator or classroom wall?",
+    a: "Once your family's weekly rhythm is arranged in Schedule Studio, open the Export Hub and select 'Print / Save as PDF'. The tool generates a clean, ink-friendly vector chart formatted for standard 8.5x11 inch or A4 paper. Hang the printed chart in your homeschool room, laminate it for dry-erase checklists, or place it on the family refrigerator."
+  },
+  {
+    q: "Does Free Class Schedule Maker collect data about my children or family?",
+    a: "No. Free Class Schedule Maker is 100% private and runs entirely inside your web browser. We do not require account sign-ups, email addresses, or student names. All lesson plans, family schedules, and notes remain securely on your local device and never touch an external server."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/homeschool-schedule-maker/#webapp",
+      "name": "Homeschool Schedule Maker",
+      "url": "https://freeclassschedule.com/homeschool-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/homeschool-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/homeschool-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Homeschool Schedule Maker",
+          "item": "https://freeclassschedule.com/homeschool-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Homeschool Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900 shadow-2xs">
+        <Home class="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        <span>Family Life &bull; Flexible Home Education &amp; Routine Planning</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Homeschool Schedule Maker: Gentle, Flexible Daily Routines for Your Family
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Homeschooling should feel like a life well-lived, not a stressful imitation of a rigid school bell. Design calm daily rhythms, balance multiple children of different ages, support 4-day school weeks, and print beautiful refrigerator charts without creating an account.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/class-schedule-template" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Printable Family Wall Charts</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual Interactive Timetable Preview -->
+    <figure class="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-2 sm:p-3 my-6">
+      <img 
+        src="/images/studio-preview.svg" 
+        alt="Homeschool schedule maker interface showing morning basket reading, math blocks, nature study, and Friday co-op activities" 
+        width="1200" 
+        height="700" 
+        loading="lazy" 
+        class="w-full h-auto rounded-xl shadow-xs"
+      />
+      <figcaption class="text-[11px] font-mono text-zinc-500 text-center py-2">
+        Figure 1: FreeClassSchedule.com Studio multi-day weekly matrix with custom lesson intervals and family morning blocks.
+      </figcaption>
+    </figure>
+
+    <!-- Article Content -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Homeschooling Families Need Rhythm Over Rigid Timetables
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A homeschool schedule maker is a flexible family routine planner that organizes homeschool lessons by subject blocks and natural daily rhythms rather than rigid school bells. It allows parents to coordinate multiple grade levels, schedule 4-day school weeks, plan community co-ops and nature walks, and generate printable refrigerator charts without signing up for complex software.
+        </p>
+        <p>
+          New homeschool parents often make the mistake of attempting to replicate a public school classroom at their kitchen table: scheduling seven 45-minute periods starting sharply at 8:00 AM with five-minute passing times. Within three weeks, tears, toddler interruptions, and schedule derailments leave everyone exhausted.
+        </p>
+        <p>
+          Experienced home educators know that <strong>rhythm beats rigid clock-watching</strong> every single time. Instead of panicking when a phonics lesson takes 15 minutes longer or a baby needs feeding, an effective homeschool schedule anchors your family's day around consistent sequential milestones:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 not-prose">
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase">Communal Gathering</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Morning Basket (08:30–09:30 AM)</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Family-wide poetry recitation, classical literature read-alouds, character study, and gentle discussion for all ages together.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 uppercase">Individual Core Work</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Focused Skill Sprints (09:45–11:45 AM)</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Staggered one-on-one parent instruction in mathematics, phonics, and grammar while siblings complete independent reading.
+            </p>
+          </div>
+          <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
+            <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">Afternoon Exploration</span>
+            <h3 class="font-bold text-sm text-zinc-950 dark:text-white">Nature &amp; Hands-On Study (01:00–02:30 PM)</h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Outdoor botanical sketches, science experiments, art history, baking, library trips, and community homeschool co-op classes.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sample Homeschool Week Blueprint -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample 4-Day Homeschool Family Blueprint with Friday Co-op
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          A 4-day homeschool week concentrates rigorous core academics from Monday through Thursday, leaving Friday completely free for community co-op classes, park days, and library exploration. This 4-day rhythm prevents caregiver burnout and accommodates family travel without sacrificing academic progress.
+        </p>
+        <p>
+          The table below demonstrates how a parent teaching two elementary and middle school children can structure a balanced weekly rhythm:
+        </p>
+
+        <div class="w-full overflow-x-auto not-prose">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215]">
+            <thead class="bg-zinc-100/70 dark:bg-zinc-850/80 border-b border-zinc-200 dark:border-zinc-800 font-mono text-[11px] uppercase text-zinc-500">
+              <tr>
+                <th class="py-3 px-4">Time Window</th>
+                <th class="py-3 px-4">Subject Focus</th>
+                <th class="py-3 px-4">Child A (Grade 4)</th>
+                <th class="py-3 px-4">Child B (Grade 1)</th>
+                <th class="py-3 px-4">Days</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-sans">
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-amber-600 dark:text-amber-400">08:30 – 09:30 AM</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Morning Gathering &amp; Read-Aloud</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">History &amp; Poetry Read-Aloud</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Nature Lore &amp; Art Appreciation</td>
+                <td class="py-3.5 px-4 font-mono">Mon–Thu</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">09:45 – 10:30 AM</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Mathematics Instruction</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Independent Fraction Practice</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400 font-bold text-emerald-600 dark:text-emerald-400">Parent 1-on-1 Addition Sprints</td>
+                <td class="py-3.5 px-4 font-mono">Mon–Thu</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">10:35 – 11:20 AM</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Language Arts &amp; Phonics</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400 font-bold text-emerald-600 dark:text-emerald-400">Parent 1-on-1 Grammar &amp; Writing</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Phonics Tiles &amp; Handwriting</td>
+                <td class="py-3.5 px-4 font-mono">Mon–Thu</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-zinc-500">11:30 – 12:45 PM</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Lunch &amp; Free Outdoor Play</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Backyard Play &amp; Free Exploration</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Sensory Sand &amp; Free Play</td>
+                <td class="py-3.5 px-4 font-mono">Mon–Thu</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">01:00 – 02:15 PM</td>
+                <td class="py-3.5 px-4 font-semibold text-zinc-900 dark:text-white">Science &amp; Nature Exploration</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Microscope Biology Lab</td>
+                <td class="py-3.5 px-4 text-zinc-600 dark:text-zinc-400">Leaf &amp; Insect Nature Journal</td>
+                <td class="py-3.5 px-4 font-mono">Mon–Thu</td>
+              </tr>
+              <tr class="bg-amber-50/60 dark:bg-amber-950/20 font-bold border-t border-amber-200 dark:border-amber-800">
+                <td class="py-3.5 px-4 font-mono text-amber-700 dark:text-amber-300">09:00 AM – 01:00 PM</td>
+                <td class="py-3.5 px-4 text-zinc-950 dark:text-white">Community Homeschool Co-op Day</td>
+                <td colspan="2" class="py-3.5 px-4 text-zinc-700 dark:text-zinc-300">Group Choir, Drama, STEM Club &amp; Playground Gathering</td>
+                <td class="py-3.5 px-4 font-mono text-amber-700 dark:text-amber-300">Friday Only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Practical Guidelines for Multi-Child Homeschool Scheduling -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Four Secrets to Smooth Multi-Child Homeschool Days
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To manage smooth homeschool days with multiple children, alternate parent-intensive subjects so only one child requires your direct attention at any given time, combine family history and science into unified read-alouds, schedule daily quiet reading hours, and print clean visual schedules for refrigerator posting.
+        </p>
+
+        <div class="space-y-3 pt-2">
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>1. Stagger Direct Instruction with "Independent Bins"</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              When teaching math to a 1st grader, supply your 4th grader with a self-directed activity box containing audiobooks, geometry puzzles, typing software, or educational reading. Never try to teach new concepts to two children simultaneously.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>2. Combine Family Subjects Around One Living Book</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              You do not need separate history or science curricula for each grade level. Read rich literature aloud together during Morning Basket: older students can write narrations or map historical trade routes, while younger siblings draw pictures of the story.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>3. Protect the Afternoon "Rest &amp; Reset" Hour</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Homeschooling parents need midday rejuvenation to sustain patience. Set a non-negotiable 60-minute quiet hour after lunch: younger children take naps, older children read silently in their rooms, and parents enjoy uninterrupted tea, planning, or personal rest.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] space-y-1.5">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>4. Post a Visible Wall Chart so Children Direct Themselves</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              When children ask "What do we do next?" twenty times a day, parent fatigue peaks. Export a clean PDF from Schedule Studio, print it out, and hang it at child eye-level. Children gain autonomy and pride as they check off their daily routine independently.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Printing and Customizing -->
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Printing and Sharing Your Family Routine Chart
+        </h2>
+        <p class="font-medium text-zinc-900 dark:text-zinc-100">
+          To print and share your homeschool family routine, organize your daily blocks in Schedule Studio, click 'Export Hub', and download a printer-ready vector PDF for refrigerator wall hanging. You can also generate a universal iCal file to synchronize family field trips and co-op commitments directly with spouse or co-parent smartphone calendars.
+        </p>
+        <p>
+          Furthermore, our <strong>Share / Copy Link</strong> feature lets you generate a one-click link of your entire curriculum schedule to share with homeschool mentors, co-op leaders, or local umbrella school advisors—all without requiring accounts or logins.
+        </p>
+      </section>
+
+    </article>
+
+    <!-- FAQ Section with Schema Support -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Homeschool Parent Inquiries</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Homeschool Routine &amp; Scheduling FAQ
+        </h2>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400">
+          Practical advice for homeschooling parents on routine structure, multi-grade lessons, and schedule flexibility.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map((faq) => (
+          <details class="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 transition-all [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between text-xs sm:text-sm font-bold text-zinc-950 dark:text-white select-none">
+              <span>{faq.q}</span>
+              <span class="ml-4 shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200 text-xs">
+                ▼
+              </span>
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-3">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom Conversion CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Design Your Family's Homeschool Routine for Free
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        100% free, private, and customizable in your browser. Create a peaceful, calm rhythm for your children today.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 font-bold text-sm inline-flex items-center justify-center gap-2 transition shadow-sm"
+        >
+          <span>Open Schedule Studio Now &rarr;</span>
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>
+
