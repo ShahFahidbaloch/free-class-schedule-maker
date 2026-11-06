@@ -94,3 +94,4 @@ To ensure a seamless, panic-free registration appointment:
 4. **Copy CRNs to a Clean Document:** On registration morning, keep your 5-digit CRNs neatly formatted so you can paste them into your portal's quick-add boxes with zero delay.
 
 Mastering the language of the course catalog empowers you to take control of your academic destiny. Use our free, private [Schedule Studio](/app) to test your sections and build a balanced semester today.
+

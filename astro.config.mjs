@@ -20,7 +20,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => !page.includes('/editor') && !page.includes('/templates')
+      filter: (page) => !page.includes('/editor')
     })
   ]
 });

@@ -1,8 +1,7 @@
 ---
 title: "How Student Feedback Shapes Free Class Schedule Maker: Our 24-Hour Commitment to Better Timetables"
-description: "Discover how student feedback shapes Free Class Schedule Maker. See how our team fixes issues in 24 hours and builds intuitive tools for conflict-free terms."
+description: "Discover how student feedback directly drives Free Class Schedule Maker. Learn how our engineering team resolves issues within 24 hours and designs intuitive visual guides for every new feature."
 publishDate: 2026-11-02
-updatedDate: 2026-11-06
 author: "Engineering & Student Community Team"
 readTime: "5 min read"
 category: "Product & Community"

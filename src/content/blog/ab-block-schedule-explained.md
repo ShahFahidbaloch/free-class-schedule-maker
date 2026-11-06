@@ -102,3 +102,4 @@ Organizing your alternating schedule is simple with our free [Block Schedule Mak
 6. Click **"Export Hub"** to download a customized smartphone wallpaper or printable PDF.
 
 Whether your school operates on an A/B block, a 4x4 schedule, or a hybrid rotation, deliberate planning is the key to thriving. Use our free, private [Schedule Studio](/app) to build your perfect timetable today.
+

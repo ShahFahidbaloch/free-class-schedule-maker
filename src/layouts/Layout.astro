@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import { SUPPORTED_LANGUAGES } from '../data/i18nData';
-import AdPlacementPlaceholder from '../components/AdPlacementPlaceholder.astro';
 
 interface Props {
   title: string;
@@ -30,10 +29,6 @@ const rawPath = currentPath || Astro.url.pathname;
 const normalizedPath = rawPath.replace(/^\/(es|tl|ja|fr|de|pt|ko|it)(\/|$)/, '$2') || '';
 const cleanPath = normalizedPath.startsWith('/') ? normalizedPath : (normalizedPath ? `/${normalizedPath}` : '');
 
-const isHomeRoute = cleanPath === '' || cleanPath === '/' || cleanPath === '/index';
-const isAppRoute = cleanPath === '/app' || cleanPath === '/app/';
-const isMultilingualRoute = isHomeRoute || isAppRoute;
-
 const siteName = "Class Schedule Maker";
 const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPORTED_LANGUAGES[0];
 const langPrefix = lang === 'en' ? '' : `/${lang}`;
@@ -51,30 +46,14 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Hreflang Alternates for Multilingual SEO -->
-    {isHomeRoute && (
-      <>
-        <link rel="alternate" hreflang="x-default" href="https://freeclassschedule.com/" />
-        {SUPPORTED_LANGUAGES.map((locale) => (
-          <link 
-            rel="alternate" 
-            hreflang={locale.code} 
-            href={`https://freeclassschedule.com${locale.code === 'en' ? '/' : `/${locale.code}/`}`} 
-          />
-        ))}
-      </>
-    )}
-    {isAppRoute && (
-      <>
-        <link rel="alternate" hreflang="x-default" href="https://freeclassschedule.com/app/" />
-        {SUPPORTED_LANGUAGES.map((locale) => (
-          <link 
-            rel="alternate" 
-            hreflang={locale.code} 
-            href={`https://freeclassschedule.com${locale.code === 'en' ? '/app/' : `/${locale.code}/app/`}`} 
-          />
-        ))}
-      </>
-    )}
+    <link rel="alternate" hreflang="x-default" href={`https://freeclassschedule.com${cleanPath || '/'}`} />
+    {SUPPORTED_LANGUAGES.map((locale) => (
+      <link 
+        rel="alternate" 
+        hreflang={locale.code} 
+        href={`https://freeclassschedule.com${locale.code === 'en' ? (cleanPath || '/') : `/${locale.code}${cleanPath}`}`} 
+      />
+    ))}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -350,10 +329,6 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
     <!-- Global Clean Footer -->
     <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b] text-xs text-zinc-500 dark:text-zinc-400 py-8 mt-12">
-      <div class="max-w-[1536px] mx-auto px-4 sm:px-6 mb-6">
-        <!-- Disabled AdSense Placement Area (Footer) -->
-        <AdPlacementPlaceholder slotId="layout-footer" />
-      </div>
       <div class="max-w-[1536px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px]">
         <div class="flex flex-wrap items-center gap-3">
           <img src="/logo.svg" alt="Class Schedule" class="w-5 h-5 rounded" />

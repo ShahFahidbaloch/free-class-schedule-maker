@@ -115,3 +115,4 @@ Rather than guessing how an 18-credit semester will feel, model it visually befo
 - **Sophomores & Juniors:** Take **15 to 16 credits** to clear degree requirements and foundational prerequisites.
 - **Graduating Seniors:** Take only what is required to graduate, often allowing a relaxed **12-credit final semester** to focus on career job interviews and graduate school applications.
 - **Working Students:** Protect your health and GPA by capping your schedule at **12 to 13 credits**.
+

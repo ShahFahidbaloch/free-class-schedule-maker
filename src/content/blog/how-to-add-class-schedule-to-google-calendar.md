@@ -135,3 +135,4 @@ If you swap a section on your university registrar portal, simply open **[Schedu
 - [x] Set 15-minute campus departure alarms on your mobile device
 
 Building a balanced, conflict-free schedule is the foundation of academic success. Use our free, private [Schedule Studio](/app) to plan your upcoming semester and stay organized all year long.
+

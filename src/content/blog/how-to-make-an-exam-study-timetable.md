@@ -87,3 +87,4 @@ During the final 48 hours before your exam, reading your Error Log is 10x more v
 6. Click **"Export Hub"** to download a high-contrast printable PDF or sync with Google Calendar for smartphone reminder chimes.
 
 Transform your exam preparation from a chaotic sprint into a calm, methodical victory. Use our free, private [Schedule Studio](/app) to build your study timetable today.
+

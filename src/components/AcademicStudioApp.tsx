@@ -315,20 +315,8 @@ const MOBILE_NAV_LABELS: Record<SupportedLocale, { tasks: string; optimize: stri
 };
 
 export default function AcademicStudioApp() {
-  const isLoadedRef = useRef(false);
-
-  const STORAGE_KEY = 'class_schedule_optimizer_state_v2';
-  const LEGACY_STORAGE_KEY_COURSES = 'academic_planner_courses_v1';
-  const LEGACY_STORAGE_KEY_TASKS = 'academic_planner_tasks_v1';
-
-  // Initialize with DEFAULT_SAMPLE_COURSES so the server HTML pre-renders the full grid
-  // This guarantees zero Cumulative Layout Shift (CLS) and zero SSR/client hydration mismatch (#418)
-  const [courses, setCourses] = useState<Course[]>(DEFAULT_SAMPLE_COURSES);
-  const [tasks, setTasks] = useState<TaskItem[]>([
-    { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
-    { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
-  ]);
-
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [includeWeekend, setIncludeWeekend] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
@@ -467,8 +455,13 @@ export default function AcademicStudioApp() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const timetableRef = useRef<HTMLDivElement>(null);
+  const isLoadedRef = useRef(false);
 
-  // Restore custom schedule from LocalStorage after initial mount
+  const STORAGE_KEY = 'class_schedule_optimizer_state_v2';
+  const LEGACY_STORAGE_KEY_COURSES = 'academic_planner_courses_v1';
+  const LEGACY_STORAGE_KEY_TASKS = 'academic_planner_tasks_v1';
+
+  // Load from LocalStorage
   useEffect(() => {
     try {
       const savedV2 = localStorage.getItem(STORAGE_KEY);
@@ -476,6 +469,8 @@ export default function AcademicStudioApp() {
         const parsed = JSON.parse(savedV2);
         if (parsed.courses && Array.isArray(parsed.courses)) {
           setCourses(parsed.courses);
+        } else {
+          setCourses(DEFAULT_SAMPLE_COURSES);
         }
         if (parsed.tasks && Array.isArray(parsed.tasks)) {
           setTasks(parsed.tasks);
@@ -486,15 +481,25 @@ export default function AcademicStudioApp() {
           const parsed = JSON.parse(legacyCourses);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setCourses(parsed);
+          } else {
+            setCourses(DEFAULT_SAMPLE_COURSES);
           }
+        } else {
+          setCourses(DEFAULT_SAMPLE_COURSES);
         }
+
         const legacyTasks = localStorage.getItem(LEGACY_STORAGE_KEY_TASKS);
         if (legacyTasks) {
-          const parsed = JSON.parse(legacyTasks);
-          if (Array.isArray(parsed)) setTasks(parsed);
+          setTasks(JSON.parse(legacyTasks));
+        } else {
+          setTasks([
+            { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
+            { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
+          ]);
         }
       }
     } catch (e) {
+      setCourses(DEFAULT_SAMPLE_COURSES);
     } finally {
       isLoadedRef.current = true;
     }
@@ -1485,20 +1490,20 @@ export default function AcademicStudioApp() {
             <button
               onClick={() => window.print()}
               className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
-              title={t.actions.print}
+              title={t.actions.printPdf}
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>{t.actions.print}</span>
+              <span>{t.actions.printPdf}</span>
             </button>
 
             {/* Export (Desktop only) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
               className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
-              title={t.actions.export}
+              title={t.actions.exportHub}
             >
               <Download className="w-3.5 h-3.5" />
-              <span>{t.actions.export}</span>
+              <span>{t.actions.exportHub}</span>
             </button>
 
             {/* Guide & Instructions (Desktop/Tablet) */}
@@ -1701,7 +1706,7 @@ export default function AcademicStudioApp() {
                   {t.days.full[mobileDay] || DAY_LABELS[mobileDay].full}
                 </span>
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-zinc-200/70 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                  {(placedEventsByDay[mobileDay] || []).length} {t.metrics.enrolledClasses || 'Classes'}
+                  {(placedEventsByDay[mobileDay] || []).length} {t.metrics.classesEnrolled || 'Classes'}
                 </span>
               </div>
               <button
@@ -2323,7 +2328,7 @@ export default function AcademicStudioApp() {
             <div className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 mx-auto -mt-1 mb-2 sm:hidden shrink-0" />
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
-                <h3 className="text-base font-bold text-zinc-950 dark:text-white">{t.actions.export}</h3>
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white">{t.actions.exportHub}</h3>
                 <p className="text-xs text-zinc-500">Apple Calendar (.ICS), PNG, PDF</p>
               </div>
               <button onClick={() => setIsExportModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
