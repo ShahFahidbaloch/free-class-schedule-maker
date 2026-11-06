@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SUPPORTED_LANGUAGES } from '../data/i18nData';
+import AdPlacementPlaceholder from '../components/AdPlacementPlaceholder.astro';
 
 interface Props {
   title: string;
@@ -29,6 +30,10 @@ const rawPath = currentPath || Astro.url.pathname;
 const normalizedPath = rawPath.replace(/^\/(es|tl|ja|fr|de|pt|ko|it)(\/|$)/, '$2') || '';
 const cleanPath = normalizedPath.startsWith('/') ? normalizedPath : (normalizedPath ? `/${normalizedPath}` : '');
 
+const isHomeRoute = cleanPath === '' || cleanPath === '/' || cleanPath === '/index';
+const isAppRoute = cleanPath === '/app' || cleanPath === '/app/';
+const isMultilingualRoute = isHomeRoute || isAppRoute;
+
 const siteName = "Class Schedule Maker";
 const currentLangMeta = SUPPORTED_LANGUAGES.find(l => l.code === lang) || SUPPORTED_LANGUAGES[0];
 const langPrefix = lang === 'en' ? '' : `/${lang}`;
@@ -46,14 +51,30 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Hreflang Alternates for Multilingual SEO -->
-    <link rel="alternate" hreflang="x-default" href={`https://freeclassschedule.com${cleanPath || '/'}`} />
-    {SUPPORTED_LANGUAGES.map((locale) => (
-      <link 
-        rel="alternate" 
-        hreflang={locale.code} 
-        href={`https://freeclassschedule.com${locale.code === 'en' ? (cleanPath || '/') : `/${locale.code}${cleanPath}`}`} 
-      />
-    ))}
+    {isHomeRoute && (
+      <>
+        <link rel="alternate" hreflang="x-default" href="https://freeclassschedule.com/" />
+        {SUPPORTED_LANGUAGES.map((locale) => (
+          <link 
+            rel="alternate" 
+            hreflang={locale.code} 
+            href={`https://freeclassschedule.com${locale.code === 'en' ? '/' : `/${locale.code}/`}`} 
+          />
+        ))}
+      </>
+    )}
+    {isAppRoute && (
+      <>
+        <link rel="alternate" hreflang="x-default" href="https://freeclassschedule.com/app/" />
+        {SUPPORTED_LANGUAGES.map((locale) => (
+          <link 
+            rel="alternate" 
+            hreflang={locale.code} 
+            href={`https://freeclassschedule.com${locale.code === 'en' ? '/app/' : `/${locale.code}/app/`}`} 
+          />
+        ))}
+      </>
+    )}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -180,7 +201,7 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
           <!-- Launch Studio CTA -->
           <a
-            href={lang === 'en' ? '/editor' : `/${lang}/app`}
+            href={lang === 'en' ? '/app' : `/${lang}/app`}
             class="h-8.5 px-3 rounded-lg bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs"
           >
             <span class="hidden sm:inline">Launch Studio</span>
@@ -252,7 +273,7 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
           <!-- Drawer Primary CTA -->
           <a
-            href={lang === 'en' ? '/editor' : `/${lang}/app`}
+            href={lang === 'en' ? '/app' : `/${lang}/app`}
             class="w-full h-12 px-4 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
           >
             <span>Launch Schedule Studio</span>
@@ -261,7 +282,7 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
           <!-- Page Links -->
           <nav class="flex flex-col space-y-1">
-            <a href={lang === 'en' ? '/editor' : `/${lang}/app`} class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-semibold text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850">
+            <a href={lang === 'en' ? '/app' : `/${lang}/app`} class="mobile-nav-link flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-semibold text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-855">
               <span>Schedule Studio</span>
               <span class="text-xs text-zinc-400">&rarr;</span>
             </a>
@@ -329,18 +350,22 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
     <!-- Global Clean Footer -->
     <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b] text-xs text-zinc-500 dark:text-zinc-400 py-8 mt-12">
+      <div class="max-w-[1536px] mx-auto px-4 sm:px-6 mb-6">
+        <!-- Disabled AdSense Placement Area (Footer) -->
+        <AdPlacementPlaceholder slotId="layout-footer" />
+      </div>
       <div class="max-w-[1536px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px]">
         <div class="flex flex-wrap items-center gap-3">
           <img src="/logo.svg" alt="Class Schedule" class="w-5 h-5 rounded" />
           <span class="font-bold text-zinc-900 dark:text-white">Class Schedule</span>
           <span>•</span>
-          <a href="/editor" class="hover:underline font-bold text-zinc-900 dark:text-white">Schedule Studio</a>
+          <a href="/app" class="hover:underline font-bold text-zinc-900 dark:text-white">Schedule Studio</a>
           <a href="/about" class="hover:underline">About</a>
           <a href="/contact" class="hover:underline">Contact</a>
           <a href="/privacy-policy" class="hover:underline">Privacy Policy</a>
           <a href="/terms-of-service" class="hover:underline">Terms of Service</a>
           <span>•</span>
-          <a href="/editor#feedback" class="hover:underline text-zinc-800 dark:text-zinc-200 font-semibold">Student Feedback</a>
+          <a href="/app#feedback" class="hover:underline text-zinc-800 dark:text-zinc-200 font-semibold">Student Feedback</a>
         </div>
         <div class="flex items-center gap-3 text-zinc-400">
           <span>Client-Side Privacy Architecture</span>

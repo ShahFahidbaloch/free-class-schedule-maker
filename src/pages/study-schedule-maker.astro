@@ -1,0 +1,376 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  BookOpen, 
+  ArrowRight, 
+  Clock, 
+  Brain, 
+  CheckCircle2, 
+  Flame, 
+  Layers, 
+  Target, 
+  Sparkles, 
+  FileText 
+} from 'lucide-react';
+
+const pageTitle = "Study Schedule Maker — Free Exam & Revision Timetable Planner";
+const pageDescription = "Build a scientifically optimized study schedule online. Plan Pomodoro focus blocks, balance finals revision, and eliminate procrastination for free.";
+const pageKeywords = "study schedule maker, revision timetable planner, exam study schedule, study planner online, pomodoro study timetable, finals study schedule";
+
+const faqs = [
+  {
+    q: "How many hours a day should I schedule for university study sessions?",
+    a: "Cognitive science research indicates that 4 to 5 hours of deep, high-intensity focused study per day represents the realistic upper threshold for peak retention in human brains. Scheduling 10-hour marathon cramming sessions leads to severe cognitive fatigue, declining focus, and poor recall on test day. Quality and focus rhythm vastly outperform raw seated hours."
+  },
+  {
+    q: "How does the Pomodoro Technique integrate into a weekly study timetable?",
+    a: "The standard Pomodoro Technique divides work into 25-minute undistracted focus intervals followed by 5-minute cognitive breaks (or 50-minute work blocks with 10-minute breaks for complex mathematical derivation). In our Schedule Studio, you can map out dedicated 60-to-90 minute study blocks containing two Pomodoro cycles, ensuring predictable pacing."
+  },
+  {
+    q: "What is spaced repetition and interleaving in study scheduling?",
+    a: "Spaced repetition involves reviewing material at increasing temporal intervals (e.g., Day 1, Day 3, Day 7) rather than cramming once. Interleaving means rotating between related subjects (e.g., studying Calculus for 60 minutes, then Organic Chemistry for 60 minutes) instead of blocking one subject for 6 straight hours. Interleaving forces the brain to continually retrieve distinct conceptual frameworks, boosting exam performance by over 25%."
+  },
+  {
+    q: "How do I balance exam study blocks around mandatory college lectures?",
+    a: "In Schedule Studio, first input your non-negotiable class times, lab recitations, and campus job hours. Our tool's gap optimizer immediately calculates and highlights open daylight intervals between lectures. Convert those 90-minute gaps into structured revision blocks so your evenings remain relaxed."
+  },
+  {
+    q: "Can I export my study timetable to my phone calendar?",
+    a: "Yes. Click 'Export Hub' in Schedule Studio to download an .ICS calendar file or export a high-resolution PNG wallpaper. You can sync the calendar file with Google Calendar to receive automated reminder alerts 10 minutes before each study block begins."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/study-schedule-maker/#webapp",
+      "name": "Study Schedule Maker",
+      "url": "https://freeclassschedule.com/study-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/study-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/study-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Study Schedule Maker",
+          "item": "https://freeclassschedule.com/study-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Study Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <Brain class="w-4 h-4" />
+        <span>Cognitive Science &bull; Exam Preparation & Focus Blocks</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Study Schedule Maker: Build a High-Retention Revision Timetable
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Stop chaotic last-minute cramming. Design structured, Pomodoro-driven study timetables based on active recall, spaced repetition, and interleaving to master finals with zero burnout.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/blog/how-to-make-an-exam-study-timetable" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Read Exam Strategy Guide</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual Pomodoro Focus Block Architecture -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white dark:bg-zinc-900/90 border border-zinc-800 space-y-6">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase text-zinc-400 tracking-wider">The Ultradian Rhythm Focus Cycle</span>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">How to Structure a 90-Minute Cognitive Study Block</h2>
+        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          Human attention operates in 90-minute ultradian cycles. Rather than staring at a computer screen for four unbroken hours, divide your revision blocks into high-intensity focus sprints:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-blue-400">STAGE 1</span>
+            <span class="text-[11px] text-zinc-400">Minutes 00–50</span>
+          </div>
+          <h3 class="text-sm font-bold text-white">Active Retrieval Sprint</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Zero multitasking. Close social media tabs. Solve practice exam problems, complete flashcard decks, or write summary proofs without looking at solutions.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-emerald-400">STAGE 2</span>
+            <span class="text-[11px] text-emerald-300/80">Minutes 50–60</span>
+          </div>
+          <h3 class="text-sm font-bold text-emerald-200">Neural Consolidation</h3>
+          <p class="text-xs text-zinc-300 leading-relaxed">
+            Stand up, walk away from all screens, hydrate, and look out a window. Unfocused downtime allows the hippocampus to synthesize new memory pathways.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-purple-400">STAGE 3</span>
+            <span class="text-[11px] text-zinc-400">Minutes 60–90</span>
+          </div>
+          <h3 class="text-sm font-bold text-white">Error Analysis & Synthesis</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Diagnose failed problems. Write down why the mistake occurred in an error log. Formulate one core takeaway rule before concluding the session.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Unscheduled Study Time Leads to Chronic Procrastination
+        </h2>
+        <p>
+          Ask any university student when they plan to study, and the typical answer is: <em>"Sometime this afternoon after class."</em> Unfortunately, vague intentions trigger Parkinson's Law—work expands to fill the time available for its completion. Without concrete start and end boundaries, simple 30-minute reading assignments drag on for four hours amidst smartphone distractions, leaving students exhausted without feeling productive.
+        </p>
+        <p>
+          A dedicated <strong>study schedule maker</strong> resolves this behavioral friction through <em>implementation intentions</em>—a well-established psychological mechanism where scheduling the exact time, location, and subject in advance reduces the willpower required to sit down and begin.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Three Scientifically Proven Scheduling Techniques
+        </h2>
+
+        <div class="space-y-4 not-prose">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">1</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">Interleaving vs Blocked Mass Practice</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Most students practice "blocking"—spending all of Tuesday on Calculus, all of Wednesday on Chemistry, and all of Thursday on History. While blocked practice produces a temporary feeling of fluency, controlled studies reveal that <em>interleaving</em> (mixing 60-minute blocks of different subjects with similar cognitive demands) increases long-term exam retention by over 30%. In Schedule Studio, alternate subject tags across your daily schedule.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">2</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">The Expanding Spaced Retrieval Interval</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Hermann Ebbinghaus's famous Forgetting Curve demonstrates that 70% of newly learned lecture material decays within 48 hours without active review. Schedule a quick 20-minute "flash review" the evening of a lecture, followed by a deeper problem-solving block 3 days later, and a final cumulative review 10 days later. This spaced calendar approach encodes knowledge into permanent memory.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">3</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">Anchor High-Focus Blocks to Biological Energy Peaks</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Do not schedule difficult problem sets at 9:00 PM when prefrontal cortex glucose is depleted from an entire day of lectures. Reserve your biological morning peak (9:00 AM – 12:00 PM) for deep conceptual understanding and quantitative derivation. Place administrative tasks, flashcard reviews, and reading summaries during the late afternoon dip (2:00 PM – 4:00 PM).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample 7-Day Exam Week Revision Matrix
+        </h2>
+        <p>
+          Below is a high-yield exam revision plan balancing two quantitative STEM subjects with one reading-intensive course over a 7-day period:
+        </p>
+
+        <!-- Markdown Table -->
+        <div class="not-prose overflow-x-auto pb-2">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            <thead class="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-white font-bold">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Day / Date</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Morning Session (9–11 AM)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Afternoon Session (2–4 PM)</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Evening Review (7–8 PM)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">Monday</td>
+                <td class="p-3">Calculus: Integration by Parts (Practice Exam 1)</td>
+                <td class="p-3">Physics: Newton's Laws & Vector Statics</td>
+                <td class="p-3">Flashcard Vocabulary / Formula Check</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">Tuesday</td>
+                <td class="p-3">Physics: Energy Conservation & Work Theorems</td>
+                <td class="p-3">History: Primary Source Analysis & Essays</td>
+                <td class="p-3">Calculus Formula Flashcards (20 min)</td>
+              </tr>
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">Wednesday</td>
+                <td class="p-3">Calculus: Series & Sequences Convergence</td>
+                <td class="p-3">Physics: Rotational Dynamics & Torque</td>
+                <td class="p-3">History Essay Outlines & Key Dates</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">Thursday</td>
+                <td class="p-3">History: Timed Practice Essay Simulation</td>
+                <td class="p-3">Calculus: Comprehensive Midterm Redo</td>
+                <td class="p-3">Physics Concept Mapping & Error Log</td>
+              </tr>
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">Friday</td>
+                <td class="p-3">Full Timed Mock Exam: Calculus (2.5 hrs)</td>
+                <td class="p-3">Active Rest & Light Review Walk</td>
+                <td class="p-3">Sleep Hygiene & Nutrition Prep</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          How to Build Your Study Schedule in Schedule Studio
+        </h2>
+        <p>
+          Building a custom study timetable takes under three minutes using our free browser studio:
+        </p>
+        <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Input Core Commitments:</strong> Add your classes and work shifts so you can visualize true open hours.</li>
+          <li><strong>Add Study Blocks:</strong> Click <em>"+ Add New Class"</em> and type the subject (e.g. <code>MATH 141 Study Block</code>). Assign your target days and hours.</li>
+          <li><strong>Tag Locations:</strong> Specify the physical library, quiet floor, or desk to eliminate environmental decision fatigue.</li>
+          <li><strong>Export to Calendar:</strong> Download the <code>.ICS</code> file and import into Google Calendar or Apple Calendar for mobile alarms.</li>
+        </ol>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Student Strategy Inquiries</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Study & Revision Timetable FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Explore More Planning Resources</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/college-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">College Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/weekly-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Weekly Planner Studio</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Revision PDF Templates</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>From our Academic Productivity Guides:</span>
+        <a href="/blog/how-to-make-an-exam-study-timetable" class="hover:underline text-zinc-700 dark:text-zinc-300">Exam Study Timetable Blueprint</a>
+        <span>&bull;</span>
+        <a href="/blog/how-to-optimize-college-schedule" class="hover:underline text-zinc-700 dark:text-zinc-300">Eliminating Dead Campus Gaps</a>
+        <span>&bull;</span>
+        <a href="/blog/how-many-credits-per-semester" class="hover:underline text-zinc-700 dark:text-zinc-300">Credit Hour Workload Rules</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your Revision Schedule Now
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Start mapping your focus blocks in our free browser studio. Eliminate exam anxiety with a clear, visual study roadmap.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

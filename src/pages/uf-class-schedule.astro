@@ -1,0 +1,388 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  GraduationCap, 
+  ArrowRight, 
+  Clock, 
+  MapPin, 
+  CheckCircle2, 
+  CalendarDays, 
+  AlertTriangle, 
+  Sparkles, 
+  Layers, 
+  Compass 
+} from 'lucide-react';
+
+const pageTitle = "UF Class Schedule Maker — University of Florida & ONE.UF Planner";
+const pageDescription = "Build your UF class schedule for the University of Florida. Convert ONE.UF 11-period times, calculate Gainesville walking distances, and master Drop/Add week.";
+const pageKeywords = "uf class schedule, university of florida schedule, one.uf schedule maker, uf bell periods, one uf schedule planner, uf class schedule maker";
+
+const faqs = [
+  {
+    q: "How does the University of Florida 11-period bell schedule work on ONE.UF?",
+    a: "Unlike most universities that schedule courses by standard clock times, UF uses an official 11-period bell system on ONE.UF. Period 1 begins at 7:25 AM, Period 2 at 8:30 AM, Period 3 at 9:35 AM, Period 4 at 10:40 AM, through Period 11 ending at 8:10 PM (with additional evening periods E1–E3). Each regular period lasts 50 minutes with a standardized 15-minute passing window."
+  },
+  {
+    q: "How long does it take to walk between buildings on the UF Gainesville campus?",
+    a: "The main UF campus in Gainesville spans over 2,000 acres. Walking from Turlington Hall or the Plaza of the Americas to the Wertheim College of Engineering or the Health Science Center / Shands area takes 12 to 15 minutes at a brisk pace. When building your UF timetable, never schedule back-to-back classes across these zones without verifying walking distances."
+  },
+  {
+    q: "How should UF students handle the chaos of Drop/Add week?",
+    a: "During the first five days of each semester (Drop/Add week), course seats open and close in seconds on ONE.UF as thousands of students swap sections. In Schedule Studio, build your current schedule alongside your desired target sections. The visual split-lane collision engine lets you immediately see if an open discussion section clashes with your core lectures before you hit swap on ONE.UF."
+  },
+  {
+    q: "What are UF double-period classes?",
+    a: "Some courses at UF, particularly 3-credit Tuesday/Thursday seminars or STEM laboratory sections, meet across two consecutive periods (e.g. Periods 2–3 or Periods 4–5). On TTh, a 75-minute class typically occupies a period plus part of the passing buffer, or two full periods. Always convert ONE.UF period numbers to exact clock minutes in Schedule Studio."
+  },
+  {
+    q: "Can I export my UF schedule to Google Calendar or Apple Calendar?",
+    a: "Yes. Once you input your UF periods and room locations into Schedule Studio, click 'Export Hub' and choose 'Export .ICS'. You can import the file directly into Google Calendar, Apple Calendar, or Outlook for recurring semester reminders and building directions."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/uf-class-schedule/#webapp",
+      "name": "UF Class Schedule Maker",
+      "url": "https://freeclassschedule.com/uf-class-schedule",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/uf-class-schedule/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/uf-class-schedule/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "UF Class Schedule Maker",
+          "item": "https://freeclassschedule.com/uf-class-schedule"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">UF Class Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <GraduationCap class="w-4 h-4" />
+        <span>Gators Timetable Engineering &bull; ONE.UF Period System</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        UF Class Schedule Maker: Convert ONE.UF Periods & Master Drop/Add Week
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        University of Florida course registration can be tricky with its 11-period system and 2,000-acre Gainesville campus. Convert ONE.UF periods to clock times, verify walking buffers, and plan conflict-free schedules for free.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="#uf-period-chart" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>View ONE.UF Period Chart</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ONE.UF Official 11-Period Conversion Matrix -->
+    <section id="uf-period-chart" class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white dark:bg-zinc-900/90 border border-zinc-800 space-y-6">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase text-zinc-400 tracking-wider">Official Registrar Timing Standard</span>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">University of Florida Official Period-to-Clock Conversion Chart</h2>
+        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          When viewing course listings on ONE.UF, classes are designated by period numbers. Use this official table to enter exact clock times into Schedule Studio:
+        </p>
+      </div>
+
+      <!-- UF Period Conversion Table -->
+      <div class="overflow-x-auto pb-2">
+        <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-zinc-800">
+          <thead class="bg-zinc-950 text-white font-bold">
+            <tr>
+              <th class="p-3 border-b border-zinc-800">UF Period</th>
+              <th class="p-3 border-b border-zinc-800">Clock Start</th>
+              <th class="p-3 border-b border-zinc-800">Clock End</th>
+              <th class="p-3 border-b border-zinc-800">Duration & Passing Window</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-800 text-zinc-300">
+            <tr class="bg-zinc-900/60">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 1</td>
+              <td class="p-2.5 font-mono">07:25 AM</td>
+              <td class="p-2.5 font-mono">08:15 AM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-950/40">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 2</td>
+              <td class="p-2.5 font-mono">08:30 AM</td>
+              <td class="p-2.5 font-mono">09:20 AM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-900/60">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 3</td>
+              <td class="p-2.5 font-mono">09:35 AM</td>
+              <td class="p-2.5 font-mono">10:25 AM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-950/40">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 4</td>
+              <td class="p-2.5 font-mono">10:40 AM</td>
+              <td class="p-2.5 font-mono">11:30 AM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-900/60">
+              <td class="p-2.5 font-mono font-bold text-emerald-400">Period 5</td>
+              <td class="p-2.5 font-mono">11:45 AM</td>
+              <td class="p-2.5 font-mono">12:35 PM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-950/40">
+              <td class="p-2.5 font-mono font-bold text-emerald-400">Period 6</td>
+              <td class="p-2.5 font-mono">12:50 PM</td>
+              <td class="p-2.5 font-mono">01:40 PM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-900/60">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 7</td>
+              <td class="p-2.5 font-mono">01:55 PM</td>
+              <td class="p-2.5 font-mono">02:45 PM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-950/40">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 8</td>
+              <td class="p-2.5 font-mono">03:00 PM</td>
+              <td class="p-2.5 font-mono">03:50 PM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-900/60">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 9</td>
+              <td class="p-2.5 font-mono">04:05 PM</td>
+              <td class="p-2.5 font-mono">04:55 PM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-950/40">
+              <td class="p-2.5 font-mono font-bold text-blue-400">Period 10</td>
+              <td class="p-2.5 font-mono">05:10 PM</td>
+              <td class="p-2.5 font-mono">06:00 PM</td>
+              <td class="p-2.5 text-zinc-400">50 min lecture + 15 min passing</td>
+            </tr>
+            <tr class="bg-zinc-900/60">
+              <td class="p-2.5 font-mono font-bold text-purple-400">Period 11</td>
+              <td class="p-2.5 font-mono">06:15 PM</td>
+              <td class="p-2.5 font-mono">07:05 PM</td>
+              <td class="p-2.5 text-zinc-400">Evening lecture period</td>
+            </tr>
+            <tr class="bg-zinc-950/40">
+              <td class="p-2.5 font-mono font-bold text-purple-400">Period E1–E3</td>
+              <td class="p-2.5 font-mono">07:20 PM</td>
+              <td class="p-2.5 font-mono">10:10 PM</td>
+              <td class="p-2.5 text-zinc-400">Evening exams & graduate seminars</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Anatomy of UF Course Registration on ONE.UF
+        </h2>
+        <p>
+          At the University of Florida in Gainesville, over 55,000 students register for courses through the ONE.UF portal. Because UF standardizes all courses onto its proprietary 11-period bell schedule, first-year and transfer Gators often encounter scheduling confusion. Many students assume classes begin on the hour (e.g., 9:00 AM or 10:00 AM). In reality, arriving at 9:00 AM means you have already missed 25 minutes of Period 3!
+        </p>
+        <p>
+          Our <strong>UF Class Schedule Maker</strong> translates ONE.UF periods into clean, readable clock times. By visualizing your entire week on an interactive matrix, you can verify that each period slot aligns with your study rhythms and housing location.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Navigating Campus Geography: Walking Distance Benchmarks
+        </h2>
+        <p>
+          The main campus of the University of Florida covers 2,000 rolling acres. While UF's 15-minute passing period sounds generous, crossing from the historic north campus to the southern science facilities can test even the most athletic Gators:
+        </p>
+
+        <div class="space-y-3 not-prose">
+          <div class="p-4 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-1">
+            <h4 class="font-bold text-sm text-zinc-950 dark:text-white flex items-center justify-between">
+              <span>Turlington Hall &rarr; Wertheim College of Engineering</span>
+              <span class="text-xs font-mono text-amber-600 dark:text-amber-400">11–13 Minutes Walk</span>
+            </h4>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Navigating from Turlington Plaza past the French Fries sculpture to the engineering quad requires a brisk pace. If your professor holds class even 2 minutes over, you will be sprint-walking.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-1">
+            <h4 class="font-bold text-sm text-zinc-950 dark:text-white flex items-center justify-between">
+              <span>Plaza of the Americas &rarr; Health Science Center (Shands)</span>
+              <span class="text-xs font-mono text-rose-600 dark:text-rose-400">18–22 Minutes Walk</span>
+            </h4>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Physically impossible in a standard 15-minute passing window without a bicycle, scooter, or RTS bus route 126/127. Never schedule back-to-back classes between these two zones.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-1">
+            <h4 class="font-bold text-sm text-zinc-950 dark:text-white flex items-center justify-between">
+              <span>Little Hall &rarr; Heavener Hall (Warrington Business)</span>
+              <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400">6–8 Minutes Walk</span>
+            </h4>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              An easy, comfortable walk across University Avenue. Provides ample buffer time to grab a coffee at Starbucks in Heavener.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Drop/Add Week Survival Guide for UF Students
+        </h2>
+        <p>
+          The first five days of the UF semester—officially known as Drop/Add week—are legendary for rapid schedule turnover. At 11:59 PM on the final Friday of Drop/Add, your schedule becomes finalized and tuition liability is locked in.
+        </p>
+        <p>
+          To win during Drop/Add:
+        </p>
+        <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Map All Target Sections in Studio:</strong> Input the 5-digit ONE.UF class numbers for all backup sections of high-demand prerequisites (such as MAC 2311 Calculus or CHM 2045 General Chemistry).</li>
+          <li><strong>Watch for Discussion Overlaps:</strong> Many UF courses feature a 3-period Monday/Wednesday/Friday lecture accompanied by a mandatory 1-period Tuesday or Thursday discussion section led by a Teaching Assistant. Always ensure open discussion sections don't conflict with your other classes.</li>
+          <li><strong>Use Split-Lane Collision Detection:</strong> Our Schedule Studio renders overlapping sections in side-by-side lanes with high-contrast borders so you can instantly evaluate trade-offs before clicking "Swap" on ONE.UF.</li>
+        </ol>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Syncing Your UF Schedule to Smartphone & Google Calendar
+        </h2>
+        <p>
+          Once your ONE.UF registration is confirmed, click <strong>"Export .ICS"</strong> in Schedule Studio. You can upload this file into Google Calendar or Apple Calendar with one click. Your classes will appear with recurring 15-week dates, building codes (e.g. <code>TUR L011</code> or <code>WEIM 1064</code>), and automatic 10-minute warning chimes on your phone.
+        </p>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Gators Registration FAQ</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          University of Florida Scheduling FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Explore Related Student Tools</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/college-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">College Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/pcc-class-schedule" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">PCC Schedule Planner</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Printable Schedule Hub</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>From our Academic Editorial:</span>
+        <a href="/blog/mwf-vs-tth-classes-guide" class="hover:underline text-zinc-700 dark:text-zinc-300">MWF vs TTh Lecture Breakdown</a>
+        <span>&bull;</span>
+        <a href="/blog/how-to-read-course-catalog-and-crn" class="hover:underline text-zinc-700 dark:text-zinc-300">Understanding Course Numbers</a>
+        <span>&bull;</span>
+        <a href="/study-schedule-maker" class="hover:underline text-zinc-700 dark:text-zinc-300">Study Schedule Planner</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your UF Class Schedule Now
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Convert your ONE.UF periods, test walking buffers, and export clean calendar files in Schedule Studio. 100% free with zero pop-ups.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

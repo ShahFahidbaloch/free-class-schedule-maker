@@ -1,3 +1,5 @@
 # Cloudflare Pages 301 Redirects
 /editor    /app    301
+/templates /class-schedule-template 301
+
 

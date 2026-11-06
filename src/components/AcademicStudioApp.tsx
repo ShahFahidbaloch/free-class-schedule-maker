@@ -315,8 +315,20 @@ const MOBILE_NAV_LABELS: Record<SupportedLocale, { tasks: string; optimize: stri
 };
 
 export default function AcademicStudioApp() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const isLoadedRef = useRef(false);
+
+  const STORAGE_KEY = 'class_schedule_optimizer_state_v2';
+  const LEGACY_STORAGE_KEY_COURSES = 'academic_planner_courses_v1';
+  const LEGACY_STORAGE_KEY_TASKS = 'academic_planner_tasks_v1';
+
+  // Initialize with DEFAULT_SAMPLE_COURSES so the server HTML pre-renders the full grid
+  // This guarantees zero Cumulative Layout Shift (CLS) and zero SSR/client hydration mismatch (#418)
+  const [courses, setCourses] = useState<Course[]>(DEFAULT_SAMPLE_COURSES);
+  const [tasks, setTasks] = useState<TaskItem[]>([
+    { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
+    { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
+  ]);
+
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [includeWeekend, setIncludeWeekend] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
@@ -455,13 +467,8 @@ export default function AcademicStudioApp() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const timetableRef = useRef<HTMLDivElement>(null);
-  const isLoadedRef = useRef(false);
 
-  const STORAGE_KEY = 'class_schedule_optimizer_state_v2';
-  const LEGACY_STORAGE_KEY_COURSES = 'academic_planner_courses_v1';
-  const LEGACY_STORAGE_KEY_TASKS = 'academic_planner_tasks_v1';
-
-  // Load from LocalStorage
+  // Restore custom schedule from LocalStorage after initial mount
   useEffect(() => {
     try {
       const savedV2 = localStorage.getItem(STORAGE_KEY);
@@ -469,8 +476,6 @@ export default function AcademicStudioApp() {
         const parsed = JSON.parse(savedV2);
         if (parsed.courses && Array.isArray(parsed.courses)) {
           setCourses(parsed.courses);
-        } else {
-          setCourses(DEFAULT_SAMPLE_COURSES);
         }
         if (parsed.tasks && Array.isArray(parsed.tasks)) {
           setTasks(parsed.tasks);
@@ -481,25 +486,15 @@ export default function AcademicStudioApp() {
           const parsed = JSON.parse(legacyCourses);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setCourses(parsed);
-          } else {
-            setCourses(DEFAULT_SAMPLE_COURSES);
           }
-        } else {
-          setCourses(DEFAULT_SAMPLE_COURSES);
         }
-
         const legacyTasks = localStorage.getItem(LEGACY_STORAGE_KEY_TASKS);
         if (legacyTasks) {
-          setTasks(JSON.parse(legacyTasks));
-        } else {
-          setTasks([
-            { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
-            { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
-          ]);
+          const parsed = JSON.parse(legacyTasks);
+          if (Array.isArray(parsed)) setTasks(parsed);
         }
       }
     } catch (e) {
-      setCourses(DEFAULT_SAMPLE_COURSES);
     } finally {
       isLoadedRef.current = true;
     }

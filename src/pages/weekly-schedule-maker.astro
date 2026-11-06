@@ -1,0 +1,375 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  CalendarDays, 
+  ArrowRight, 
+  Clock, 
+  Calendar, 
+  CheckCircle2, 
+  Sparkles, 
+  Layers, 
+  Sliders, 
+  Zap, 
+  Share2 
+} from 'lucide-react';
+
+const pageTitle = "Weekly Schedule Maker — Free 5-Day & 7-Day Timetable Planner";
+const pageDescription = "Free weekly schedule maker online. Effortlessly organize 5-day and 7-day college timetables, work shifts, and study blocks with instant calendar export.";
+const pageKeywords = "weekly schedule maker, free weekly timetable planner, 7 day schedule maker, 5 day weekly planner, college weekly schedule, student calendar maker";
+
+const faqs = [
+  {
+    q: "Can I use this weekly schedule maker for both classes and part-time job shifts?",
+    a: "Yes. In Schedule Studio, you can add any type of recurring weekly block—including college lectures, discussion sections, laboratory periods, campus work-study shifts, club meetings, and gym workouts. By color-coding academic courses differently from work commitments, you can clearly see your daily balance."
+  },
+  {
+    q: "How do I switch between a 5-day and a 7-day weekly schedule?",
+    a: "At the top of the Schedule Studio grid, click the days toggle to instantly switch between a standard 5-day academic week (Monday through Friday) and a full 7-day weekly view (Sunday through Saturday). The 7-day view is ideal for balancing weekend study sessions and work shifts."
+  },
+  {
+    q: "Does this weekly planner support 12-hour AM/PM and 24-hour military time?",
+    a: "Yes. You can input class and event times using standard 12-hour format (e.g., 09:30 AM to 10:45 AM). The visual matrix maps all time blocks seamlessly from 08:00 AM to 08:00 PM."
+  },
+  {
+    q: "Can I export my weekly schedule to Google Calendar or Apple Calendar?",
+    a: "Yes. Click 'Export Hub' and choose 'Export .ICS'. You can import this file into Google Calendar, Apple Calendar, or Outlook in seconds to create recurring weekly events with automatic alarms on all your synced devices."
+  },
+  {
+    q: "Is my personal weekly schedule stored on your servers?",
+    a: "No. Our Schedule Studio operates with a 100% client-side privacy architecture. All course names, meeting times, and personal schedules are saved strictly in your device's browser localStorage. We never collect, track, or sell your schedule data."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/weekly-schedule-maker/#webapp",
+      "name": "Weekly Schedule Maker",
+      "url": "https://freeclassschedule.com/weekly-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/weekly-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/weekly-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Weekly Schedule Maker",
+          "item": "https://freeclassschedule.com/weekly-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Weekly Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <CalendarDays class="w-4 h-4" />
+        <span>Time Architecture &bull; 5-Day & 7-Day Visual Matrix</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Weekly Schedule Maker: Map Classes, Work, and Life in One Visual Timetable
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Eliminate scheduling chaos. Balance university courses, part-time jobs, revision blocks, and personal commitments in a clean, interactive weekly grid with automatic collision detection.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/college-schedule-maker" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>College Course Planner</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual 7-Day Architecture Overview -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white dark:bg-zinc-900/90 border border-zinc-800 space-y-6">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase text-zinc-400 tracking-wider">Holistic Time Management Matrix</span>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">The Power of the 168-Hour Weekly Perspective</h2>
+        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          Every human has exactly 168 hours in a week. When students view their days in isolated 24-hour slices, they overlook hidden time sinks and double-book conflicting obligations:
+        </p>
+      </div>
+
+      <!-- 3 Pillar Time Allocation -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-blue-400">PILLAR 1</span>
+            <span class="text-[11px] text-zinc-400">~15–18 hrs / wk</span>
+          </div>
+          <h3 class="text-sm font-bold text-white">Academic Contact Hours</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            In-person lectures, discussion recitations, and laboratory sessions. Fixed, non-negotiable temporal anchors.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-emerald-400">PILLAR 2</span>
+            <span class="text-[11px] text-zinc-400">~25–30 hrs / wk</span>
+          </div>
+          <h3 class="text-sm font-bold text-white">Independent Deep Work</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Problem sets, essay drafts, exam preparation, and reading. Must be scheduled into concrete daytime blocks to avoid late-night burnout.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-purple-400">PILLAR 3</span>
+            <span class="text-[11px] text-zinc-400">~15–20 hrs / wk</span>
+          </div>
+          <h3 class="text-sm font-bold text-white">Work, Fitness & Life</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            Campus employment, commuter transit, gym sessions, and social downtime. Protecting these blocks ensures sustained mental health.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Standard To-Do Lists Fail Without a Weekly Schedule
+        </h2>
+        <p>
+          Millions of college students and professionals begin their week with an ambitious to-do list scribbled on a notepad or typed into a task manager. Yet by Thursday afternoon, half the tasks remain untouched, leading to guilt and stress. Why? Because a to-do list lacks <em>temporal dimensions</em>—it tells you <strong>what</strong> to do, but completely ignores <strong>when</strong> you will do it and how long each task will realistically take.
+        </p>
+        <p>
+          A visual <strong>weekly schedule maker</strong> transforms an abstract task list into a concrete commitment. By mapping your responsibilities onto a 5-day or 7-day grid, you immediately confront the physical laws of time. If you only have 2 free hours between your Organic Chemistry lecture and your dining hall shift, you cannot realistically write a 10-page research paper during that window.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Time-Blocking Method for College & Work Synchronization
+        </h2>
+        <p>
+          Popularized by computer science professor Cal Newport and productivity experts worldwide, <em>time blocking</em> involves treating every hour of your work week like an intentional appointment. Here is how to apply it in Schedule Studio:
+        </p>
+
+        <div class="space-y-4 not-prose">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">Step 1: Anchor Non-Negotiable Commitments First</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Begin by locking in external commitments you cannot move: course lecture times, laboratory recitations, paid work shifts, and athletic practices. These form the fixed framework of your weekly calendar.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">Step 2: Eliminate Campus Dead-Time Gaps</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Examine the spaces between your classes. If you have an awkward 75-minute break on Tuesdays between 10:45 AM and 12:00 PM, do not wander aimlessly to the student union. Assign that exact slot as a "Library Study Block" to knock out your weekly reading before noon.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">Step 3: Schedule Reactive "Buffer Blocks"</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              No academic week goes 100% according to plan. Unexpected professor office hours, traffic delays, or difficult calculus problems will inevitably eat into your schedule. Dedicate 90 minutes on Friday afternoon as a "Overflow Buffer" to catch up on unfinished tasks before the weekend begins.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          5-Day Academic vs 7-Day Holistic Weekly Matrix
+        </h2>
+        <p>
+          Our Schedule Studio supports two flexible visual perspectives depending on your lifestyle:
+        </p>
+
+        <div class="not-prose overflow-x-auto pb-2">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            <thead class="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-white font-bold">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Mode</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Active Days</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Ideal User Profile</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Key Advantage</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-bold text-zinc-950 dark:text-white">5-Day Mode</td>
+                <td class="p-3">Monday – Friday</td>
+                <td class="p-3">Full-time traditional students, K-12 teachers</td>
+                <td class="p-3">Maximizes screen width per day; perfect for classroom printing</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-bold text-zinc-950 dark:text-white">7-Day Mode</td>
+                <td class="p-3">Sunday – Saturday</td>
+                <td class="p-3">Working college students, weekend shift workers, exam preppers</td>
+                <td class="p-3">Integrates weekend revision blocks and job schedules seamlessly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Sunday Evening Weekly Review: An Essential High-Performance Habit
+        </h2>
+        <p>
+          The most successful students and professionals don't wait until Monday morning at 8:00 AM to figure out what their week looks like. Instead, they reserve 20 minutes every Sunday evening to conduct an intentional <em>Weekly Alignment Review</em>.
+        </p>
+        <p>
+          During this review, open Schedule Studio and cross-reference your course syllabi, upcoming project deadlines, and work shifts. Adjust your study blocks to account for upcoming midterms or lab presentations. Having your weekly roadmap pre-visualized eliminates Sunday-night anxiety and primes your nervous system for an organized, low-stress week.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Managing Commutes, Work Shifts, and Campus Employment
+        </h2>
+        <p>
+          According to recent collegiate surveys, over 65% of undergraduates work part-time jobs during the academic term. Balancing a 15-hour weekly shift schedule with 16 credits of rigorous coursework requires strict temporal boundaries.
+        </p>
+        <p>
+          When building your weekly matrix, treat work shifts with the same visual gravity as lecture hours. Input your employer's scheduled hours with distinctive location tags. This highlights whether you have adequate transit windows to travel between your off-campus workplace and university lecture halls, preventing chronic tardiness and academic stress.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Instant Calendar Synchronization & Printing
+        </h2>
+        <p>
+          Once your weekly timetable is structured, keeping it accessible is essential:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>One-Click .ICS Export:</strong> Sync your weekly timetable with Google Calendar, Apple Calendar, or Outlook for automated phone alarms.</li>
+          <li><strong>Clean Printable PDF:</strong> Generates a printer-optimized black-and-white grid without menus or banner clutter.</li>
+          <li><strong>Phone Wallpaper:</strong> Export a 2x Retina PNG to check your next meeting directly on your phone lockscreen without unlocking.</li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Weekly Planning Inquiries</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Weekly Schedule FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Explore Sibling Timetable Tools</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/college-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">College Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/study-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Study Schedule Planner</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Schedule Templates Hub</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>From our Academic Editorial:</span>
+        <a href="/blog/how-to-optimize-college-schedule" class="hover:underline text-zinc-700 dark:text-zinc-300">Eliminating Awkward Class Gaps</a>
+        <span>&bull;</span>
+        <a href="/blog/how-to-add-class-schedule-to-google-calendar" class="hover:underline text-zinc-700 dark:text-zinc-300">Syncing with Google Calendar</a>
+        <span>&bull;</span>
+        <a href="/block-schedule-maker" class="hover:underline text-zinc-700 dark:text-zinc-300">A/B Block Schedule Maker</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your Weekly Schedule for Free
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Join thousands of students and teachers organizing their semester. Private, fast, and completely free in our modern browser studio.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

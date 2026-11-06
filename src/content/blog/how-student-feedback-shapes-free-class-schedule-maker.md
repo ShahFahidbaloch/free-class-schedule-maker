@@ -1,7 +1,8 @@
 ---
 title: "How Student Feedback Shapes Free Class Schedule Maker: Our 24-Hour Commitment to Better Timetables"
-description: "Discover how student feedback directly drives Free Class Schedule Maker. Learn how our engineering team resolves issues within 24 hours and designs intuitive visual guides for every new feature."
+description: "Discover how student feedback shapes Free Class Schedule Maker. See how our team fixes issues in 24 hours and builds intuitive tools for conflict-free terms."
 publishDate: 2026-11-02
+updatedDate: 2026-11-06
 author: "Engineering & Student Community Team"
 readTime: "5 min read"
 category: "Product & Community"
@@ -86,7 +87,7 @@ Once you dismiss the guide, it remembers your preference and stays out of your w
 
 ## 4. Built for Students, Always 100% Free and Private
 
-In an academic tech landscape dominated by subscription paywalls, forced logins, and invasive advertising, our philosophy remains unchanged:
+In an academic tech landscape dominated by subscription paywalls, forced logins, and intrusive pop-ups, our philosophy remains unchanged:
 
 - **No Logins or Accounts Required:** You will never be asked to sign up with an email or connect social profiles just to build a timetable.
 - **Local-First Privacy:** Your schedule, course numbers, and custom notes stay stored securely on your own device. We do not harvest or sell student data.

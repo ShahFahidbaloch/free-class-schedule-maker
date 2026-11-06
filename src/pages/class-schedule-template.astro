@@ -1,0 +1,392 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  FileText, 
+  ArrowRight, 
+  FileSpreadsheet, 
+  Smartphone, 
+  Download, 
+  Printer, 
+  CheckCircle2, 
+  CalendarDays, 
+  Layers, 
+  Sparkles 
+} from 'lucide-react';
+
+const pageTitle = "Class Schedule Template — Free Printable PDF, Excel & Wallpapers";
+const pageDescription = "Download free editable class schedule templates. Export printable PDF, Excel/Google Sheets, and smartphone wallpapers directly from our Schedule Studio.";
+const pageKeywords = "class schedule template, printable class schedule, class schedule template excel, class schedule template pdf, free schedule template, college schedule template";
+
+const faqs = [
+  {
+    q: "Are the class schedule templates really 100% free?",
+    a: "Yes. All templates generated in our Schedule Studio are completely free to customize, download, and print. There are no watermarks, subscription paywalls, or mandatory email registrations required."
+  },
+  {
+    q: "What file formats can I download from the Class Schedule Template Hub?",
+    a: "You can export three distinct template formats: (1) Vector-sharp Printable PDF formatted for US Letter and A4 printing; (2) Universal .ICS calendar files compatible with Google Calendar, Apple Calendar, and Outlook; and (3) High-resolution 2x Retina PNG images sized for iPhone and Android lock-screen wallpapers."
+  },
+  {
+    q: "How do I print a class schedule template without browser headers or margins?",
+    a: "In Schedule Studio, click 'Export Hub' and choose 'Print / PDF'. Our software applies dedicated CSS print stylesheets that automatically hide browser navigation, sidebars, buttons, and dark background fills, outputting a crisp black-and-white grid centered on standard 8.5x11 inch or A4 paper."
+  },
+  {
+    q: "Can I use these schedule templates in Microsoft Excel or Google Sheets?",
+    a: "Yes. You can import your schedule matrix into Microsoft Excel, Apple Numbers, or Google Sheets. The grid layout maps hours to rows and days (Monday through Friday or Sunday through Saturday) to columns, allowing you to add custom study formulas and conditional formatting."
+  },
+  {
+    q: "Can I make a 7-day class schedule template including weekend study blocks?",
+    a: "Yes. In the Schedule Studio, you can toggle between a standard 5-day academic week (Monday–Friday) and a full 7-day calendar (Sunday–Saturday). This allows college students and working professionals to map weekend study blocks, lab sessions, and part-time jobs."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/class-schedule-template/#webapp",
+      "name": "Class Schedule Template Hub",
+      "url": "https://freeclassschedule.com/class-schedule-template",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/class-schedule-template/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/class-schedule-template/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Class Schedule Template",
+          "item": "https://freeclassschedule.com/class-schedule-template"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Class Schedule Template Hub</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <FileText class="w-4 h-4" />
+        <span>Downloadable Formats &bull; Free Printable Templates Hub</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Class Schedule Templates: Free Printable PDF, Excel & Mobile Formats
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Looking for a clean, editable weekly timetable template? Customize your courses in our free browser studio and export instantly to print-ready PDF, spreadsheet formats, or high-res phone wallpapers.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Customize & Download in Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="#template-formats" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Compare Template Formats</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Template Format Feature Cards -->
+    <section id="template-formats" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+      
+      <!-- Card 1: Printable PDF -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between space-y-5 shadow-xs">
+        <div class="space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-850 flex items-center justify-center text-zinc-900 dark:text-white">
+            <Printer class="w-6 h-6" />
+          </div>
+          <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold">Printable Vector PDF</span>
+          <h2 class="text-lg font-bold text-zinc-950 dark:text-white">Printable Timetable (US Letter & A4)</h2>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Engineered with high-contrast monochrome styles. Prints cleanly on any standard home or university printer without wasting ink on dark backgrounds or menus.
+          </p>
+          <ul class="text-xs text-zinc-500 space-y-1 list-disc pl-4">
+            <li>Zero browser URL/date headers</li>
+            <li>Landscape and portrait support</li>
+            <li>Perfect for bulletin boards & lockers</li>
+          </ul>
+        </div>
+        <a href="/app" class="h-10 px-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-semibold text-xs inline-flex items-center justify-center gap-1.5 transition">
+          <span>Create PDF Template &rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 2: Excel / Spreadsheet -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between space-y-5 shadow-xs">
+        <div class="space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-850 flex items-center justify-center text-zinc-900 dark:text-white">
+            <FileSpreadsheet class="w-6 h-6" />
+          </div>
+          <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold">Spreadsheet Compatible</span>
+          <h2 class="text-lg font-bold text-zinc-950 dark:text-white">Excel & Google Sheets Grid</h2>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Standard 5-day and 7-day tabular matrices compatible with Microsoft Excel, Google Sheets, and Numbers. Easily add custom calculations and credits.
+          </p>
+          <ul class="text-xs text-zinc-500 space-y-1 list-disc pl-4">
+            <li>Structured rows (08:00 to 20:00)</li>
+            <li>Customizable section formulas</li>
+            <li>Seamless copy-paste integration</li>
+          </ul>
+        </div>
+        <a href="/app" class="h-10 px-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-semibold text-xs inline-flex items-center justify-center gap-1.5 transition">
+          <span>Build Spreadsheet &rarr;</span>
+        </a>
+      </div>
+
+      <!-- Card 3: Mobile Phone Wallpaper -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between space-y-5 shadow-xs">
+        <div class="space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-850 flex items-center justify-center text-zinc-900 dark:text-white">
+            <Smartphone class="w-6 h-6" />
+          </div>
+          <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold">2X Retina PNG Graphic</span>
+          <h2 class="text-lg font-bold text-zinc-950 dark:text-white">Smartphone Lockscreen Wallpaper</h2>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            High-resolution PNG formatted to fit iOS and Android display dimensions. View your next room number and class period directly on your lock screen.
+          </p>
+          <ul class="text-xs text-zinc-500 space-y-1 list-disc pl-4">
+            <li>Clear room and building tags</li>
+            <li>Works offline anywhere on campus</li>
+            <li>Zero battery drain, always visible</li>
+          </ul>
+        </div>
+        <a href="/app" class="h-10 px-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white font-semibold text-xs inline-flex items-center justify-center gap-1.5 transition">
+          <span>Export Lockscreen &rarr;</span>
+        </a>
+      </div>
+
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Interactive Schedule Builders Outperform Static PDF Downloads
+        </h2>
+        <p>
+          If you have ever downloaded a generic "blank weekly schedule PDF" from the web, you know the frustration: the time intervals are fixed to rigid 1-hour increments (ignoring common 50-minute college lectures or 75-minute seminars), the margins are misaligned for modern printers, and if your course registration changes during Drop/Add week, you have to throw the entire printed sheet away and start over with pen and white-out.
+        </p>
+        <p>
+          Our <strong>Class Schedule Template Hub</strong> bridges the gap between digital agility and physical utility. Rather than handwriting repetitive class names on a blank sheet, you type your course codes, instructors, and room numbers into our browser-based studio. The software mathematically formats the grid, detects overlapping sections, and exports a perfectly styled, customized template in seconds.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Choosing the Right Class Schedule Template for Your Academic Setup
+        </h2>
+        <p>
+          Different academic routines require tailored schedule formats. Consider how and where you review your timetable throughout the day:
+        </p>
+
+        <div class="space-y-4 not-prose">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">The Desk Bulletin & Dorm Planner (Printable PDF)</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Tactile, physical schedules pinned above your desk provide constant environmental cues. Whenever you sit down to study, having a clean vector printout of your weekly lecture blocks prevents you from accidentally opening distracting smartphone apps under the guise of "checking what class is tomorrow."
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">The Transit Lockscreen (High-Res PNG Wallpaper)</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              When dashing between campus buildings with minutes to spare, logging into a university portal to find which hall room your recitation is located in wastes precious transit time. Saving a customized timetable wallpaper to your phone lock screen allows you to glance at your room code in half a second, even without campus Wi-Fi.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">The Active Device Sync (iCalendar / .ICS Format)</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              For students who live by automated notifications, importing an <code>.ics</code> file directly into Google Calendar, Apple Calendar, or Outlook provides automated 15-minute departure chimes and syncs across laptops, tablets, and smartwatches seamlessly.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Step-by-Step: How to Customize and Export Your Template
+        </h2>
+        <ol class="list-decimal pl-5 space-y-3 text-xs sm:text-sm">
+          <li>
+            <strong>Open Schedule Studio:</strong> Navigate to <a href="/app" class="text-zinc-900 dark:text-white font-semibold underline">Schedule Studio (/app)</a> in any browser. No login or signup is required.
+          </li>
+          <li>
+            <strong>Add Your Classes:</strong> Click <em>"+ Add New Class"</em>. Enter course title (e.g. <code>MATH 141</code>), instructor, room number, credits, and meeting days (e.g. <code>MWF</code>).
+          </li>
+          <li>
+            <strong>Select Time Blocks:</strong> Enter your exact start and end times (e.g. <code>10:00 AM – 10:50 AM</code>). The interactive visual grid renders your classes dynamically.
+          </li>
+          <li>
+            <strong>Review Overlaps & Gaps:</strong> Check the header metrics for total credits and idle hours between lectures to ensure a balanced workload.
+          </li>
+          <li>
+            <strong>Choose Your Export Format:</strong> Click <em>"Export Hub"</em> in the toolbar. Select <strong>Print / PDF</strong> for physical printing, <strong>Export Image</strong> for phone wallpapers, or <strong>Export .ICS</strong> for Google Calendar.
+          </li>
+        </ol>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Comparing Class Schedule Template Formats
+        </h2>
+        <div class="not-prose overflow-x-auto pb-2">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            <thead class="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-white font-bold">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Format</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Primary Use Case</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Offline Access</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Customizable After Export</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-bold text-zinc-950 dark:text-white">Printable PDF</td>
+                <td class="p-3">Physical binders, desk bulletin boards, dorm walls</td>
+                <td class="p-3 text-emerald-600 font-semibold">100% (Physical)</td>
+                <td class="p-3">Pen annotation / Re-export in 1-click</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-bold text-zinc-950 dark:text-white">Phone Wallpaper (PNG)</td>
+                <td class="p-3">Mobile lockscreen for fast room code glance</td>
+                <td class="p-3 text-emerald-600 font-semibold">100% (Photos app)</td>
+                <td class="p-3">Photos editor / Re-export in 1-click</td>
+              </tr>
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-bold text-zinc-950 dark:text-white">iCalendar (.ICS)</td>
+                <td class="p-3">Google Calendar, Apple iCal, Outlook reminders</td>
+                <td class="p-3 text-emerald-600 font-semibold">Yes (Cached locally)</td>
+                <td class="p-3">Fully editable inside calendar apps</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-bold text-zinc-950 dark:text-white">Spreadsheet (Excel)</td>
+                <td class="p-3">Academic study tracking, homework formulas</td>
+                <td class="p-3 text-emerald-600 font-semibold">Yes (Local file)</td>
+                <td class="p-3">Fully editable formulas and cell styling</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Template Questions</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Class Schedule Template FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">More Scheduling Tools & Walkthroughs</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/college-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">College Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/school-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">School Bell Planner</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/study-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Study Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>Recommended Reading:</span>
+        <a href="/blog/how-to-add-class-schedule-to-google-calendar" class="hover:underline text-zinc-700 dark:text-zinc-300">How to Sync .ICS with Google Calendar</a>
+        <span>&bull;</span>
+        <a href="/blog/mwf-vs-tth-classes-guide" class="hover:underline text-zinc-700 dark:text-zinc-300">MWF vs TTh Planning</a>
+        <span>&bull;</span>
+        <a href="/weekly-schedule-maker" class="hover:underline text-zinc-700 dark:text-zinc-300">Weekly Schedule Maker</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Customize Your Printable Schedule Template
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Input your courses and download your tailored printable PDF or lockscreen image in under three minutes. Zero login required.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

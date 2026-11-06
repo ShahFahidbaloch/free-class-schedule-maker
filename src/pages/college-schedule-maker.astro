@@ -1,0 +1,404 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  GraduationCap, 
+  ArrowRight, 
+  Clock, 
+  Layers, 
+  CheckCircle2, 
+  CalendarDays, 
+  Sparkles, 
+  Zap, 
+  BookOpen, 
+  AlertTriangle 
+} from 'lucide-react';
+
+const pageTitle = "College Schedule Maker — Free University Timetable Planner";
+const pageDescription = "Plan your ideal college class schedule online. Balance 12-18 credit semesters, MWF vs TTh lecture blocks, 3-hour labs, and export to Google Calendar.";
+const pageKeywords = "college schedule maker, university schedule planner, college class schedule, free college schedule maker, mwf schedule, tth schedule, credit hour planner";
+
+const faqs = [
+  {
+    q: "How many credits should a typical college student take per semester?",
+    a: "Most full-time undergraduate students take between 12 and 18 credit hours per semester, with 15 credits being the average benchmark to graduate in four years (120 credits total). Taking 12 credits is the standard minimum for full-time financial aid and housing eligibility, while 18 credits represents an intensive, high-workload semester requiring advisor approval at many universities."
+  },
+  {
+    q: "What is the difference between MWF and TTh class schedules in college?",
+    a: "MWF (Monday, Wednesday, Friday) courses meet three times a week for 50 minutes each, totaling 150 instructional minutes. TTh (Tuesday, Thursday) classes meet twice a week for 75 minutes each. MWF schedules offer shorter, frequent touchpoints suitable for quantitative subjects like calculus and foreign languages, while TTh blocks give you extended discussions and full days on Monday and Wednesday for campus jobs or research."
+  },
+  {
+    q: "How should STEM majors schedule 3-hour science laboratory sections?",
+    a: "STEM majors should anchor their weekly schedule around multi-hour labs first before choosing general education electives. Avoid placing 3-hour afternoon wet labs directly following two consecutive 75-minute lectures, as cognitive fatigue can lead to lab errors. When possible, place heavy labs on mid-week afternoons (Wednesday or Thursday) so you have Tuesday evening to prepare lab pre-reports."
+  },
+  {
+    q: "How do I prevent schedule conflicts during college course registration?",
+    a: "Before your registration portal opens, enter all primary and alternate course reference numbers (CRNs) into our free College Schedule Maker. Our interactive studio automatically checks for overlapping minutes, renders conflicting sections in side-by-side split lanes, and tallies your total weekly idle gap time so you can adjust before classes fill up."
+  },
+  {
+    q: "Can I export my college schedule to Google Calendar or Apple Calendar?",
+    a: "Yes. Once you finish organizing your weekly course matrix in Schedule Studio, click 'Export Hub' and download the standardized .ICS calendar file. You can import this single file into Google Calendar, Apple Calendar, or Microsoft Outlook in under 30 seconds to populate all recurring semester lectures with automatic reminder notifications."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/college-schedule-maker/#webapp",
+      "name": "College Class Schedule Maker",
+      "url": "https://freeclassschedule.com/college-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/college-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/college-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "College Schedule Maker",
+          "item": "https://freeclassschedule.com/college-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">College Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <GraduationCap class="w-4 h-4" />
+        <span>Higher Education &bull; University Timetable Engineering</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        College Schedule Maker: Design a Balanced, Conflict-Free Semester Timetable
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Building a university class schedule is a complex optimization problem. Balance rigorous 15-credit terms, laboratory recitations, and campus walking routes without wasting hours in awkward dead gaps.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/class-schedule-template" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>View Printable Templates</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual Interactive Timetable Architecture Overview -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white dark:bg-zinc-900/90 border border-zinc-800 space-y-6">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase text-zinc-400 tracking-wider">Visual Schedule Matrix Blueprint</span>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">How Modern College Schedules Are Structured</h2>
+        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          Unlike secondary school timetables where every day follows identical bell periods from 8:00 AM to 3:00 PM, college schedules interlock two distinct weekly rhythms: MWF (Monday/Wednesday/Friday) 50-minute lectures and TTh (Tuesday/Thursday) 75-minute sessions.
+        </p>
+      </div>
+
+      <!-- Schedule Comparison Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        <div class="p-5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-md bg-blue-500/20 text-blue-300 text-xs font-bold font-mono">MWF CADENCE</span>
+            <span class="text-xs text-zinc-400">3 x 50 min / week</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Monday, Wednesday, Friday Lectures</h3>
+          <p class="text-xs text-zinc-300 leading-relaxed">
+            Ideal for math, engineering fundamentals, and foreign languages where cognitive retention requires daily spaced repetition. Shorter class lengths prevent attention degradation.
+          </p>
+          <ul class="text-xs text-zinc-400 space-y-1.5 list-disc pl-4">
+            <li>Standard slots: 09:00–09:50, 10:00–10:50, 11:00–11:50</li>
+            <li>10-minute campus passing intervals between buildings</li>
+            <li>Leaves Friday afternoon open for library study blocks</li>
+          </ul>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-bold font-mono">TTH CADENCE</span>
+            <span class="text-xs text-zinc-400">2 x 75 min / week</span>
+          </div>
+          <h3 class="text-base font-bold text-white">Tuesday & Thursday Seminar Blocks</h3>
+          <p class="text-xs text-zinc-300 leading-relaxed">
+            Best suited for humanities seminars, group case discussions, literature reviews, and design critiques requiring deep conversational momentum.
+          </p>
+          <ul class="text-xs text-zinc-400 space-y-1.5 list-disc pl-4">
+            <li>Standard slots: 09:30–10:45, 11:00–12:15, 14:00–15:15</li>
+            <li>15-minute passing windows to cross larger campus zones</li>
+            <li>Enables dedicated 2-day off-campus internships</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Hidden Mathematical Challenge of University Course Registration
+        </h2>
+        <p>
+          Course registration is often described as a rite of passage, but in reality, it is a combinatorial puzzle. A university undergraduate attempting to schedule 5 courses from a catalog offering multiple section times, recitation periods, and laboratory blocks must navigate thousands of mathematical combinations. One conflicting section can trigger a cascading failure across your entire semester plan, forcing you into undesirable 8:00 AM slots or stranding you on campus with 3-hour dead gaps.
+        </p>
+        <p>
+          Our <strong>free college schedule maker</strong> was built to replace static paper scratchpads and clunky registrar interfaces with an agile, real-time visual environment. By dragging, dropping, and adjusting sections in an interactive 5-day grid, you can stress-test multiple scheduling hypotheses weeks before your enrollment appointment begins.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Five Core Rules for Building a Sustainable University Timetable
+        </h2>
+
+        <div class="space-y-4 not-prose">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">1</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">Respect Your Chronotype: The 8:00 AM Reality Check</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              In high school, waking up at 6:30 AM was non-negotiable. In college, managing your own sleep schedule and late-night study sessions drastically alters your cognitive alertness. Unless you are naturally an early-morning lark who consistently sleeps before 10:00 PM, avoid 8:00 AM lectures. Attendance records show that 8:00 AM classes suffer 35% higher absenteeism and lower average exam scores compared to 10:00 AM or 11:00 AM sections.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">2</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">Calculate Geographic Walking Buffers Between Campus Buildings</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Registrar software only checks whether class minutes overlap on the clock; it never checks if human bodies can traverse physical campus topography. If your Chemistry lecture ends in the science quad at 10:50 AM and your Economics seminar starts at 11:00 AM on the opposite side of campus, a 10-minute passing window is a recipe for chronic tardiness and elevated cortisol. Use our tool's building tag fields to verify reasonable transit buffers.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">3</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">The 2:1 Study-Hour Rule for Credit Load Calibration</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Higher education accreditation boards formulate credit hours based on the standard ratio: for every 1 credit hour spent in class per week, expect 2 to 3 hours of independent reading, problem sets, and revision. A 15-credit schedule implies 15 contact hours plus 30 hours of homework—amounting to a full-time 45-hour work week. Don't overload 18 or 20 credits unless your extracurricular commitments are minimal.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">4</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">Consolidate Dead Gaps Into Actionable Study Blocks</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              A 45-minute gap between classes is cognitive dead time: too short to walk back to your dorm or start a deep research paper, yet long enough to drain mental energy scrolling on your phone. Contrast that with a consolidated 3-hour afternoon block where you can complete an entire weekly lab report in the library. Our Schedule Studio tracks total idle hours in real time to help you compress your day.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center text-xs font-bold">5</span>
+              <h3 class="text-base font-bold text-zinc-950 dark:text-white">Prepare Primary and Fallback CRN Contingency Trees</h3>
+            </div>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Never enter registration day with only one ideal timetable. When high-demand prerequisites fill up in seconds, panicked students make rash decisions that ruin their semester balance. In Schedule Studio, build your Plan A, then toggle alternative section times to create Plan B and Plan C. Keep backup 5-digit Course Reference Numbers (CRNs) copied to your clipboard.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample Undergraduate Timetable: 15-Credit Balanced Blueprint
+        </h2>
+        <p>
+          Here is an example of an expertly engineered semester timetable balancing general education requirements, major coursework, and a STEM laboratory:
+        </p>
+
+        <!-- Markdown / HTML Table -->
+        <div class="not-prose overflow-x-auto pb-2">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            <thead class="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-white font-bold">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Course Code</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Course Title</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Credits</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Days</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Time Slot</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">CS 101</td>
+                <td class="p-3">Intro to Computer Science</td>
+                <td class="p-3 font-mono">3.0</td>
+                <td class="p-3 font-semibold">MWF</td>
+                <td class="p-3">10:00 AM – 10:50 AM</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">MATH 141</td>
+                <td class="p-3">Calculus I</td>
+                <td class="p-3 font-mono">4.0</td>
+                <td class="p-3 font-semibold">MWF</td>
+                <td class="p-3">11:15 AM – 12:20 PM</td>
+              </tr>
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">PHYS 201</td>
+                <td class="p-3">General Physics I</td>
+                <td class="p-3 font-mono">3.0</td>
+                <td class="p-3 font-semibold">TTh</td>
+                <td class="p-3">09:30 AM – 10:45 AM</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">PHYS 201L</td>
+                <td class="p-3">Physics Laboratory</td>
+                <td class="p-3 font-mono">1.0</td>
+                <td class="p-3 font-semibold">Thu</td>
+                <td class="p-3">01:30 PM – 04:20 PM</td>
+              </tr>
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">ENG 102</td>
+                <td class="p-3">Academic Writing & Rhetoric</td>
+                <td class="p-3 font-mono">3.0</td>
+                <td class="p-3 font-semibold">TTh</td>
+                <td class="p-3">11:15 AM – 12:30 PM</td>
+              </tr>
+              <tr class="bg-zinc-100/60 dark:bg-zinc-800/40 font-bold text-zinc-950 dark:text-white">
+                <td class="p-3" colspan="2">Total Term Academic Load</td>
+                <td class="p-3 font-mono">14.0 Credits</td>
+                <td class="p-3" colspan="2">Zero Conflict Split-Lanes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Synchronizing Your Academic Timetable with Real-World Calendars
+        </h2>
+        <p>
+          Having your schedule locked in a web tool is only the first step. To ensure you never miss an early quiz or lab recitation, you need your timetable integrated into the calendar application you check every morning on your smartphone.
+        </p>
+        <p>
+          Our <strong>Schedule Studio</strong> generates clean, universal <code>.ics</code> (iCalendar) exports formatted specifically for Google Calendar, Apple iCal, and Outlook. With one click, your entire 15-week class sequence is populated with recurring event rules, classroom locations, and 15-minute departure alarms. For more tips on calendar workflows, read our detailed guide on <a href="/blog/how-to-add-class-schedule-to-google-calendar" class="text-zinc-900 dark:text-white font-semibold underline">How to Add Your Class Schedule to Google Calendar</a>.
+        </p>
+      </section>
+    </article>
+
+    <!-- FAQ Section with Schema Support -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Frequently Asked Questions</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          College Course Scheduling FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub (Sibling Pages + Related Guides) -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Explore Sibling Scheduling Tools & Guides</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/study-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Study Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Class Schedule Templates</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/block-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Block Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>From our Academic Blog:</span>
+        <a href="/blog/how-many-credits-per-semester" class="hover:underline text-zinc-700 dark:text-zinc-300">How Many Credits Per Semester?</a>
+        <span>&bull;</span>
+        <a href="/blog/mwf-vs-tth-classes-guide" class="hover:underline text-zinc-700 dark:text-zinc-300">MWF vs TTh Explained</a>
+        <span>&bull;</span>
+        <a href="/blog/engineering-majors-guide-to-conflict-free-timetables" class="hover:underline text-zinc-700 dark:text-zinc-300">Engineering Major Guide</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Ready to Build Your College Schedule?
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Jump straight into our free Schedule Studio. No login, no credit cards, zero intrusive ads. Plan your lectures, spot section clashes, and export to iCal in seconds.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

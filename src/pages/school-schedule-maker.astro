@@ -1,0 +1,370 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  School, 
+  ArrowRight, 
+  Clock, 
+  CheckCircle2, 
+  CalendarDays, 
+  Users, 
+  Layers, 
+  BookOpen, 
+  BellRing, 
+  Share2 
+} from 'lucide-react';
+
+const pageTitle = "School Schedule Maker — Free K-12 Timetable Planner";
+const pageDescription = "Free school schedule maker for teachers and students. Design 6-8 period bell schedules, manage class sections, and print custom classroom timetables.";
+const pageKeywords = "school schedule maker, high school timetable planner, bell schedule maker, teacher schedule planner, classroom timetable maker, free school schedule";
+
+const faqs = [
+  {
+    q: "How does a standard high school bell schedule work?",
+    a: "A traditional high school bell schedule divides the school day into 6 to 8 fixed periods (typically 45 to 55 minutes each) operating from approximately 8:00 AM to 3:00 PM. Each period is separated by a 4-to-6 minute passing bell, with a dedicated 30-to-40 minute mid-day lunch block often staggered across two or three waves."
+  },
+  {
+    q: "Can teachers use this tool to manage classroom room-sharing?",
+    a: "Yes. Teachers and department heads can assign specific room numbers or lab facilities to each course block in Schedule Studio. By mapping out sections across the 5-day week, administrators can quickly verify that shared science laboratories or computer carts are never double-booked across different class periods."
+  },
+  {
+    q: "Can I print copies of the school timetable for students and parents?",
+    a: "Yes. In the Schedule Studio, click 'Export Hub' and select 'Export PDF / Print View'. The layout formats cleanly to standard US Letter or A4 dimensions without browser menus or headers, allowing you to print physical copies for student planners, bulletin boards, or parent open house nights."
+  },
+  {
+    q: "Is there any limit on the number of courses or class periods I can add?",
+    a: "There are no limits. You can add 6, 7, 8, or more class periods per day, including advisory periods, homeroom, AP classes, athletics, and after-school club meetings. The interactive timetable expands smoothly to accommodate extended school hours."
+  },
+  {
+    q: "Does this school schedule maker require an account or administrative login?",
+    a: "No. The entire tool runs completely client-side in your web browser. There are no logins, passwords, software installations, or school board data-privacy hurdles. Your timetable data is saved locally on your device in your browser's private storage."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/school-schedule-maker/#webapp",
+      "name": "School Schedule Maker",
+      "url": "https://freeclassschedule.com/school-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/school-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/school-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "School Schedule Maker",
+          "item": "https://freeclassschedule.com/school-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">School Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <School class="w-4 h-4" />
+        <span>K-12 Education &bull; Bell Schedule & Teacher Planner</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        School Schedule Maker: Fast, Clean Bell Schedules & Timetables for K-12
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Whether you are a high school student organizing daily classes or an educator coordinating period rotations, our free school schedule maker builds clean, printable bell timetables in seconds.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/class-schedule-template" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Download Printable School PDF</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual K-12 Period Grid Card -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white dark:bg-zinc-900/90 border border-zinc-800 space-y-6">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase text-zinc-400 tracking-wider">Standard 7-Period High School Blueprint</span>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">The Anatomy of a K-12 Daily Bell Schedule</h2>
+        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          Middle and high schools typically organize instructional days into 7 standardized periods. Consistent daily start times enforce student discipline, while designated passing bells prevent hallway congestion.
+        </p>
+      </div>
+
+      <!-- 7-Period Visual Timeline -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-2">
+        <div class="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-blue-400 uppercase">Period 1</span>
+          <p class="text-xs font-bold text-white">08:00 – 08:50</p>
+          <span class="text-[10px] text-zinc-400">Homeroom / Core</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-blue-400 uppercase">Period 2</span>
+          <p class="text-xs font-bold text-white">08:55 – 09:45</p>
+          <span class="text-[10px] text-zinc-400">Math / Algebra</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-blue-400 uppercase">Period 3</span>
+          <p class="text-xs font-bold text-white">09:50 – 10:40</p>
+          <span class="text-[10px] text-zinc-400">English / Lit</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase">Period 4</span>
+          <p class="text-xs font-bold text-white">10:45 – 11:35</p>
+          <span class="text-[10px] text-zinc-400">Biology / Science</span>
+        </div>
+        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-amber-300 uppercase">Lunch Wave</span>
+          <p class="text-xs font-bold text-amber-200">11:40 – 12:20</p>
+          <span class="text-[10px] text-amber-300/80">Cafeteria / Break</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-blue-400 uppercase">Period 5</span>
+          <p class="text-xs font-bold text-white">12:25 – 01:15</p>
+          <span class="text-[10px] text-zinc-400">Social Studies</span>
+        </div>
+        <div class="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-center space-y-1">
+          <span class="text-[10px] font-mono font-bold text-purple-400 uppercase">Period 6</span>
+          <p class="text-xs font-bold text-white">01:20 – 02:10</p>
+          <span class="text-[10px] text-zinc-400">Arts / Elective</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Why Traditional School Scheduling Software Fails Teachers & Students
+        </h2>
+        <p>
+          In modern secondary education, timetable scheduling is frequently managed through legacy district portals designed for institutional databases rather than human teachers and students. These administrative systems often produce rigid, unreadable dot-matrix prints or complex multi-page PDF documents where an individual student or homeroom teacher must manually track six to eight consecutive class periods across differing rotating days.
+        </p>
+        <p>
+          Our <strong>School Schedule Maker</strong> offers a lightweight, modern alternative. Built with an intuitive drag-and-drop workflow, it allows educators to input bell periods, classroom assignments, and teacher duty blocks in minutes. For middle and high school students, it provides a vibrant, clean visual grid that fits on a phone lock screen or pins directly inside a locker door.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Comparing School Schedule Models: Traditional 7-Period vs Rotating Blocks
+        </h2>
+        <p>
+          School administrators and teachers must frequently weigh the pedagogical trade-offs between fixed single-period schedules and extended block configurations:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">Traditional 7-Period Day</h3>
+            <ul class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 space-y-2 list-disc pl-4">
+              <li>Students attend all 7 classes daily for 45–50 minutes.</li>
+              <li>Predictable, uniform daily schedule reduces student confusion.</li>
+              <li>Daily touchpoints support vocabulary acquisition and math skills.</li>
+              <li>Drawback: Shorter periods limit hands-on science experiments.</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-3">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">A/B Rotating Block Day</h3>
+            <ul class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 space-y-2 list-disc pl-4">
+              <li>Students attend 4 extended classes (85–90 min) alternating days.</li>
+              <li>Fewer passing periods reduce daily hallway transitions by 50%.</li>
+              <li>Extended intervals allow full science labs and in-depth seminars.</li>
+              <li>Drawback: Students must retain materials across a 48-hour gap.</li>
+            </ul>
+          </div>
+        </div>
+        <p>
+          If your school utilizes a rotating Day 1 / Day 2 system or 90-minute periods, explore our dedicated <a href="/block-schedule-maker" class="text-zinc-900 dark:text-white font-semibold underline">Block Schedule Maker</a> for customized multi-day rotation templates.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Practical Tips for Secondary Students Building Their School Timetable
+        </h2>
+
+        <div class="space-y-3 not-prose">
+          <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+            <h4 class="font-bold text-sm text-zinc-900 dark:text-white">1. Color-Code by Subject Difficulty</h4>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Assign distinct color tones in Schedule Studio for high-stress STEM classes (red or orange) versus physical education and creative electives (green or blue). This visual mapping allows you to mentally prepare for intense class sequences.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+            <h4 class="font-bold text-sm text-zinc-900 dark:text-white">2. Include Passing Periods & Locker Stops</h4>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              In large campus schools, navigating three flights of stairs in 5 minutes with heavy textbooks is a common challenge. Note your locker visits in the room assignment fields so you know when to exchange binders between periods 2 and 4.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-1">
+            <h4 class="font-bold text-sm text-zinc-900 dark:text-white">3. Protect Study Hall & Advisory Time</h4>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+              Treat your free study hall or homeroom period with the same discipline as an academic class. Use our tool to schedule specific task blocks during study hall so homework doesn't consume your evenings.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Managing Staggered Lunch Waves & Teacher Preparation Periods
+        </h2>
+        <p>
+          In large secondary schools with enrollments exceeding 1,500 students, the physical cafeteria cannot seat the entire student body simultaneously. Administrations solve this through staggered lunch waves (commonly Lunch A, Lunch B, and Lunch C) anchored around Period 4 or Period 5.
+        </p>
+        <p>
+          For classroom teachers, tracking differing lunch waves across rotating days is one of the most frustrating aspects of legacy scheduling systems. By using our Schedule Studio to map individual grade sections and homerooms, teachers can clearly mark their duty-free lunch window alongside their contractual planning and preparation (prep) periods. Protecting designated teacher prep time ensures lesson plans, grading rubrics, and parent communications are handled during school hours rather than encroaching on personal family time.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Advisory Periods and Social-Emotional Check-Ins
+        </h2>
+        <p>
+          Modern educational frameworks increasingly integrate dedicated advisory or homeroom blocks (often 25 to 30 minutes mid-morning). These sessions provide critical touchpoints for student mental health checks, college counseling advisement, and administrative announcements. In Schedule Studio, simply add an advisory block between Period 2 and Period 3 to keep student agendas aligned with school-wide expectations.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Exporting and Printing Your School Timetable
+        </h2>
+        <p>
+          Whether you need a physical printout for your home refrigerator or a digital calendar synchronized across family devices, our <strong>Schedule Studio</strong> handles formatting automatically:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Printable PDF Export:</strong> High-resolution vector layout designed for standard 8.5x11 inch or A4 paper. Perfect for homeroom handout sheets.</li>
+          <li><strong>Smartphone Wallpaper Export:</strong> Crisp 2x Retina PNG graphic formatted with 16:9 and 19.5:9 aspect ratios so students can check their next period from their lock screen without unlocking their phone.</li>
+          <li><strong>Google / Apple Calendar Sync (.ICS):</strong> Automatically populates recurring bell periods onto student phones with customizable 10-minute warning chimes.</li>
+        </ul>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Teacher & Student Questions</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          School Timetable Planning FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Related Academic Scheduling Tools</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/block-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Block Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/weekly-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Weekly Schedule Planner</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Download School Templates</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>Curated Educational Guides:</span>
+        <a href="/blog/first-semester-freshman-schedule-guide" class="hover:underline text-zinc-700 dark:text-zinc-300">Freshman Year Transition Guide</a>
+        <span>&bull;</span>
+        <a href="/blog/how-to-make-an-exam-study-timetable" class="hover:underline text-zinc-700 dark:text-zinc-300">Exam Study Timetable Guide</a>
+        <span>&bull;</span>
+        <a href="/college-schedule-maker" class="hover:underline text-zinc-700 dark:text-zinc-300">College Schedule Maker</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your K-12 School Timetable Today
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Start creating your customized bell schedule in our clean, private Schedule Studio. No fees, no accounts, and instant PDF printing.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

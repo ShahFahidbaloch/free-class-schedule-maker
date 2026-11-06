@@ -1,7 +1,8 @@
 ---
 title: "The Engineering Major's Guide to Conflict-Free Timetables"
-description: "How STEM and engineering students can structure 16-18 credit semesters, integrate 3-hour lab blocks, and avoid overlapping exam sequences."
+description: "Master STEM scheduling: learn how engineering majors balance 16-18 credit loads, schedule 3-hour wet labs, and eliminate overlapping course conflicts easily."
 publishDate: 2026-10-18
+updatedDate: 2026-11-06
 author: "Academic Productivity Lab"
 readTime: "9 min read"
 category: "STEM Academic Planning"

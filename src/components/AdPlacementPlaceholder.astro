@@ -1,0 +1,28 @@
+---
+interface Props {
+  slotId?: string;
+  format?: 'horizontal' | 'rectangle';
+  className?: string;
+}
+
+const { 
+  slotId = "default-slot", 
+  format = "horizontal",
+  className = "" 
+} = Astro.props;
+---
+
+<!-- ========================================================================= -->
+<!-- ADSENSE PLACEHOLDER SLOT (DISABLED / PENDING APPROVAL)                     -->
+<!-- No ad code, no tracking scripts, no third-party cookies loaded             -->
+<!-- Owner: Once approved by Google AdSense, paste your verified ad unit code   -->
+<!-- ========================================================================= -->
+<aside 
+  class={`w-full mx-auto my-8 overflow-hidden transition-all ${className}`}
+  aria-label="Advertisement area"
+  data-adsense-slot={slotId}
+  data-adsense-format={format}
+>
+  <!-- Hidden comment placeholder container to reserve zero-shift layout once enabled -->
+  <div class="hidden" data-ad-status="disabled"></div>
+</aside>

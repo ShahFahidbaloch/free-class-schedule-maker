@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import AdPlacementPlaceholder from '../components/AdPlacementPlaceholder.astro';
 import { 
   ArrowRight, 
   Clock, 
@@ -23,7 +24,7 @@ import {
 } from 'lucide-react';
 
 const pageTitle = "Free Class Schedule Maker — Weekly College & School Timetable";
-const pageDescription = "Design your ideal class schedule with our free weekly class schedule maker online. Effortlessly create conflict-free college, school, PCC, and UF class schedules with zero gaps. Export to iCal, Google Calendar, and printable PDF.";
+const pageDescription = "Design your weekly schedule with our free class schedule maker online. Build conflict-free college, school, PCC, and UF timetables with easy calendar export.";
 const pageKeywords = "class schedule, class schedule maker, free class schedule maker, weekly class schedule maker, class schedule maker template, pcc class schedule, college class schedule, uf class schedule, class schedule maker online, class schedule maker free, school schedule maker";
 
 const faqList = [
@@ -37,7 +38,7 @@ const faqList = [
   },
   {
     q: "What is a free class schedule maker?",
-    a: "A free class schedule maker is a zero-cost digital tool that allows students and teachers to input course codes, meeting times, and locations to generate a visual weekly timetable. Unlike paid software or rigid university registrar systems, our free class schedule maker is 100% free with no paywalls, subscriptions, or intrusive ads, running entirely in your browser using local storage for complete privacy."
+    a: "A free class schedule maker is a zero-cost digital tool that allows students and teachers to input course codes, meeting times, and locations to generate a visual weekly timetable. Unlike paid software or rigid university registrar systems, our free class schedule maker is 100% free with no paywalls, no sign-ups, and no pop-ups, running entirely in your browser using local storage for complete privacy."
   },
   {
     q: "How to add a class schedule to Google Calendar?",
@@ -177,7 +178,7 @@ const structuredSchema = {
     <!-- Central Call To Action Button (Full-width stacked on mobile) -->
     <div class="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full sm:w-auto max-w-md sm:max-w-none mx-auto">
       <a
-        href="/editor"
+        href="/app"
         class="w-full sm:w-auto h-12 px-6 sm:px-8 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-sm sm:text-base font-bold shadow-md hover:shadow-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2"
       >
         <span>Launch Schedule Studio</span>
@@ -383,23 +384,21 @@ const structuredSchema = {
             <div class="flex items-center gap-2">
               <School class="w-5 h-5 text-zinc-900 dark:text-white" />
               <h3 class="text-base font-bold text-zinc-900 dark:text-white">
-                How to Plan Your PCC Class Schedule (Pasadena City College & Portland Community College)
+                PCC Class Schedule Planning Summary (Pasadena & Portland)
               </h3>
             </div>
-            <p>
-              Students enrolling in a <strong>PCC class schedule</strong> (at either Pasadena City College in California or Portland Community College in Oregon) face specific scheduling challenges:
+            <p class="text-xs sm:text-sm">
+              Planning a <strong>PCC class schedule</strong> requires navigating 5-digit CRN course numbers, priority enrollment windows, and multi-campus transit times (especially across Portland's Sylvania, Rock Creek, and Cascade centers). Input your section CRNs and lab blocks in our studio to test collision-free schedules before MyPCC or LancerPoint registration opens.
             </p>
-            <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
-              <li>
-                <strong>Multi-Campus Transit Windows:</strong> At Portland Community College, courses are distributed across four main campuses (Sylvania, Rock Creek, Cascade, and Southeast) plus centers. When building your <strong>pcc class schedule</strong>, never schedule back-to-back classes across different campuses without leaving at least 45 to 60 minutes for the PCC inter-campus shuttle or TriMet transit.
-              </li>
-              <li>
-                <strong>CRN Number Priority:</strong> PCC courses use 5-digit Course Reference Numbers (CRNs). Use our free schedule studio to input your desired CRNs and section times well before your priority registration date. When registration opens on MyPCC or LancerPoint, paste your verified CRNs directly into the quick-add registration box.
-              </li>
-              <li>
-                <strong>IGETC / Transfer Curriculum Alignment:</strong> PCC transfer students balancing general education requirements with STEM prerequisites must watch out for co-requisite labs (such as General Chemistry or Anatomy & Physiology). Lock in your lab times first before filling in flexible social science or humanities electives.
-              </li>
-            </ul>
+            <div class="pt-1">
+              <a 
+                href="/pcc-class-schedule" 
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-900 dark:text-white underline hover:opacity-80 transition"
+              >
+                <span>Read Full PCC Schedule Guide (CRNs, Campuses & Transfer Plans)</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
           </div>
 
           <!-- Sub-Guide 2: UF Class Schedule -->
@@ -407,23 +406,21 @@ const structuredSchema = {
             <div class="flex items-center gap-2">
               <GraduationCap class="w-5 h-5 text-zinc-900 dark:text-white" />
               <h3 class="text-base font-bold text-zinc-900 dark:text-white">
-                How to Build Your UF Class Schedule (University of Florida / ONE.UF)
+                UF Class Schedule Planning Summary (University of Florida / ONE.UF)
               </h3>
             </div>
-            <p>
-              Creating a balanced <strong>UF class schedule</strong> at the University of Florida requires mastering UF's standardized 11-period bell schedule on the ONE.UF portal:
+            <p class="text-xs sm:text-sm">
+              University of Florida students build timetables around UF's standardized 11-period bell schedule on ONE.UF (Period 1 at 7:25 AM through Period 11 at 8:10 PM). Because walking across the 2,000-acre Gainesville campus between Turlington, Reitz Union, and the engineering quad takes 12–15 minutes, visual planning is crucial to survive Drop/Add week.
             </p>
-            <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
-              <li>
-                <strong>Converting UF Periods to Clock Times:</strong> UF classes are scheduled by period numbers rather than standard clock times. Period 1 begins at 7:25 AM, Period 2 at 8:30 AM, Period 3 at 9:35 AM, Period 4 at 10:40 AM, through Period 11 concluding at 8:10 PM (with 15-minute passing periods between classes). When using our <strong>weekly class schedule maker</strong>, enter the corresponding start and end clock times to visualize your daily load accurately.
-              </li>
-              <li>
-                <strong>Campus Geography & Walking Times:</strong> The UF campus spans over 2,000 acres. Walking from Turlington Plaza or the Plaza of the Americas to the Wertheim College of Engineering or the Health Science Center easily takes 12 to 15 minutes. Our schedule maker allows you to input exact building room numbers so you can spot physically impossible back-to-back lecture leaps before Drop/Add week.
-              </li>
-              <li>
-                <strong>Double-Booking Prevention during Drop/Add Week:</strong> During the chaotic first five days of the UF semester, seats open and close in fractions of a second. Having a visual blueprint in our <strong>class schedule maker free</strong> studio lets you instantly evaluate if an open ONE.UF section will conflict with your required discussion sections.
-              </li>
-            </ul>
+            <div class="pt-1">
+              <a 
+                href="/uf-class-schedule" 
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-900 dark:text-white underline hover:opacity-80 transition"
+              >
+                <span>Read Full UF Schedule Guide (Period Conversion & Campus Map)</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
           </div>
 
         </div>
@@ -496,6 +493,15 @@ const structuredSchema = {
           <p class="text-xs text-zinc-600 dark:text-zinc-400">
             Different academic environments require different formats. Our schedule studio exports your weekly timetable into all popular media.
           </p>
+          <div class="pt-1">
+            <a 
+              href="/class-schedule-template" 
+              class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-900 dark:text-white underline hover:opacity-80 transition"
+            >
+              <span>Explore Dedicated Printable & Spreadsheet Template Hub</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
@@ -638,6 +644,9 @@ const structuredSchema = {
         </div>
       </div>
     </section>
+
+    <!-- Disabled AdSense Placement Area (Above FAQ) -->
+    <AdPlacementPlaceholder slotId="homepage-above-faq" />
 
     <!-- FAQ Accordions with JSON-LD Schema -->
     <section id="faq" class="scroll-mt-20">

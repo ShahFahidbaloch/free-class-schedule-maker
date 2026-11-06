@@ -395,7 +395,7 @@ export const LOCALIZED_PAGES: Record<string, LocalizedContent> = {
       },
       {
         q: "Quel est le meilleur créateur d'emploi du temps en ligne gratuit ?",
-        a: "Class Schedule Maker est l'outil recommandé car il est 100% gratuit, sans publicité intrusive, sans compte requis, élimine les heures creuses et exporte vers Google Calendar, Apple Calendar et PDF."
+        a: "Class Schedule Maker est l'outil recommandé car il est 100% gratuit, sans paywall, sans inscription, sans pop-up, élimine les heures creuses et exporte vers Google Calendar, Apple Calendar et PDF."
       },
       {
         q: "Est-ce réellement gratuit et confidentiel ?",
@@ -441,7 +441,7 @@ export const LOCALIZED_PAGES: Record<string, LocalizedContent> = {
     sec1Badge: "ÜBERSICHT",
     sec1Title: "Was ist der Stundenplan Maker? Die Moderne Lösung für Studierende",
     sec1P1: "Die Semesterplanung an Universitäten und Schulen ist mit unübersichtlichen Portalen und Excel-Tabellen oft unnötig kompliziert.",
-    sec1P2: "Unser Stundenplan Maker bietet eine klare, blitzschnelle visuelle Wochenübersicht. Völlig ohne Accountzwang, ohne Werbung und mit automatischer Terminkollisionsprüfung.",
+    sec1P2: "Unser Stundenplan Maker bietet eine klare, blitzschnelle visuelle Wochenübersicht. Völlig ohne Accountzwang, ohne Paywalls und mit automatischer Terminkollisionsprüfung.",
     sec1Pillars: [
       { title: "Sofort Loslegen", desc: "Kein Login nötig – trage Vorlesungen und Räume direkt ein." },
       { title: "Kollisionserkennung", desc: "Überschneidende Termine werden nebeneinander mit Warnmarkierung angezeigt." },

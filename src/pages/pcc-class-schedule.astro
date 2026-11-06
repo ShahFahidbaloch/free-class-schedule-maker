@@ -1,0 +1,367 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  School, 
+  ArrowRight, 
+  Clock, 
+  MapPin, 
+  CheckCircle2, 
+  CalendarDays, 
+  AlertTriangle, 
+  Layers, 
+  Sparkles, 
+  GraduationCap 
+} from 'lucide-react';
+
+const pageTitle = "PCC Class Schedule Maker — Pasadena & Portland Community College";
+const pageDescription = "Plan your PCC class schedule for Pasadena City College and Portland Community College. Master 5-digit CRNs, multi-campus transit, and transfer degrees.";
+const pageKeywords = "pcc class schedule, pasadena city college schedule, portland community college schedule, pcc crn planner, mypcc schedule, lancerpoint schedule";
+
+const faqs = [
+  {
+    q: "Does this tool work for both Pasadena City College (CA) and Portland Community College (OR)?",
+    a: "Yes. Both major institutions are designated as PCC and share common community college scheduling architectures, including 5-digit Course Reference Numbers (CRNs), multi-campus transit windows, and structured general education transfer pathways (IGETC for California and AAOT/OTM for Oregon)."
+  },
+  {
+    q: "How do Course Reference Numbers (CRNs) work at PCC?",
+    a: "Every course section offered in the PCC catalog is assigned a unique 5-digit Course Reference Number (CRN). During your priority registration window on LancerPoint (Pasadena) or MyPCC (Portland), you enter these exact 5-digit numbers into the registration worksheet. Using Schedule Studio to test your CRNs beforehand prevents accidental section conflicts."
+  },
+  {
+    q: "How much transit time should I leave between PCC campuses in Portland?",
+    a: "Portland Community College spans four primary campuses across the Portland metropolitan area: Sylvania, Rock Creek, Cascade, and Southeast. Traveling between Sylvania and Rock Creek can easily take 45 to 60 minutes via the PCC inter-campus shuttle or TriMet during peak rush hour. Never schedule classes across different campuses with less than a 60-minute buffer."
+  },
+  {
+    q: "How should Pasadena City College students handle IGETC transfer requirements?",
+    a: "PCC students preparing to transfer to UC or CSU campuses must complete the Intersegmental General Education Transfer Curriculum (IGETC). Anchor your schedule around required high-demand lab sciences (e.g. Chemistry 1A or Biology 11) first, as lab times are fixed and fill rapidly. Then fill in flexible General Education courses like English 1A or Speech 1."
+  },
+  {
+    q: "Can I export my PCC timetable into Google Calendar or Apple Calendar?",
+    a: "Yes. In Schedule Studio, click 'Export Hub' and download the .ICS file. Import it into Google Calendar or Apple Calendar to have your entire 16-week semester schedule on your phone with automatic 15-minute departure alarms."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/pcc-class-schedule/#webapp",
+      "name": "PCC Class Schedule Maker",
+      "url": "https://freeclassschedule.com/pcc-class-schedule",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/pcc-class-schedule/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/pcc-class-schedule/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "PCC Class Schedule Maker",
+          "item": "https://freeclassschedule.com/pcc-class-schedule"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">PCC Class Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <School class="w-4 h-4" />
+        <span>Community College Focus &bull; Pasadena (CA) & Portland (OR)</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        PCC Class Schedule Maker: Master CRNs, Multi-Campus Transit & Transfer Goals
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Building your PCC class schedule requires balancing 5-digit Course Reference Numbers, priority registration appointments, commuter traffic, and transfer degree requirements. Plan your perfect semester for free.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/blog/how-to-read-course-catalog-and-crn" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>CRN & Catalog Guide</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Campus Comparison Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+      
+      <!-- Pasadena City College Card -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-4 shadow-xs">
+        <div class="flex items-center gap-2 text-rose-600 dark:text-rose-400">
+          <MapPin class="w-5 h-5" />
+          <span class="text-xs font-mono font-bold uppercase tracking-wider">CALIFORNIA &bull; LANCERPOINT</span>
+        </div>
+        <h2 class="text-xl font-bold text-zinc-950 dark:text-white">Pasadena City College (PCC California)</h2>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Home to over 25,000 Lancers on Colorado Boulevard, PCC is consistently ranked among the top community colleges in California for transfers to UCLA, UC Berkeley, USC, and CSUs.
+        </p>
+        <ul class="text-xs text-zinc-500 space-y-2 list-disc pl-4">
+          <li><strong>Registration Portal:</strong> LancerPoint quick-add with 5-digit CRNs</li>
+          <li><strong>Curriculum Tracks:</strong> IGETC (UC transfer) & CSU GE-Breadth</li>
+          <li><strong>Campus Centers:</strong> Main Campus (Colorado Blvd), Foothill Center, Rosemead Center</li>
+        </ul>
+      </div>
+
+      <!-- Portland Community College Card -->
+      <div class="p-6 rounded-3xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-4 shadow-xs">
+        <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+          <MapPin class="w-5 h-5" />
+          <span class="text-xs font-mono font-bold uppercase tracking-wider">OREGON &bull; MYPCC</span>
+        </div>
+        <h2 class="text-xl font-bold text-zinc-950 dark:text-white">Portland Community College (PCC Oregon)</h2>
+        <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          The largest post-secondary institution in Oregon, PCC serves over 50,000 students across four distinct metropolitan campuses and multiple specialized workforce centers.
+        </p>
+        <ul class="text-xs text-zinc-500 space-y-2 list-disc pl-4">
+          <li><strong>Registration Portal:</strong> MyPCC Banweb registration matrix</li>
+          <li><strong>Curriculum Tracks:</strong> Associate of Arts Oregon Transfer (AAOT) & OTM</li>
+          <li><strong>Main Campuses:</strong> Sylvania, Rock Creek, Cascade, and Southeast</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Tactical Challenges of Community College Course Registration
+        </h2>
+        <p>
+          Community college students face a scheduling reality vastly different from residential university students. Over 70% of community college students balance their academic load with outside commitments: part-time employment, family caregiving, or lengthy transit commutes across metropolitan regions. In this high-stakes environment, an inefficient schedule containing three scattered 90-minute gaps is not merely inconvenient—it can make holding a steady job impossible.
+        </p>
+        <p>
+          Furthermore, course registration at institutions like PCC is notoriously cutthroat. General education courses that satisfy transfer requirements (such as English 1A, Statistics, or General Psychology) often fill within ten minutes of priority registration opening. Having your primary and backup 5-digit CRNs pre-tested in our <strong>PCC Class Schedule Maker</strong> gives you a massive advantage when the registration server opens.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Navigating Portland Community College: Multi-Campus Transit Reality
+        </h2>
+        <p>
+          At Portland Community College, courses are distributed across four main campuses separated by Portland highway traffic:
+        </p>
+        <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Sylvania Campus (SW Portland):</strong> Comprehensive sciences, nursing, and engineering labs.</li>
+          <li><strong>Rock Creek Campus (Hillsboro / Washington County):</strong> Veterinary tech, agriculture, aviation, and general education.</li>
+          <li><strong>Cascade Campus (North Portland):</strong> Urban arts, education, trades, and health sciences.</li>
+          <li><strong>Southeast Campus (SE 82nd Ave):</strong> Aviation maintenance, language, and core transfer degrees.</li>
+        </ul>
+        <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs sm:text-sm space-y-1">
+          <strong class="font-bold flex items-center gap-1.5">
+            <AlertTriangle class="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            CRITICAL TRANSIT WARNING FOR PCC STUDENTS
+          </strong>
+          <p>
+            The official PCC shuttle operates between campuses on fixed timetables, but highway congestion on Highway 217 and I-5 can turn a 25-minute drive into a 55-minute delay. Never register for a 10:00 AM class at Sylvania and an 11:30 AM class at Rock Creek without verifying physical bus schedules. Use Schedule Studio's location tags to visualize your daily campus anchors.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Navigating Pasadena City College: California Transfer Optimization
+        </h2>
+        <p>
+          For students at Pasadena City College, schedule construction is dictated by the IGETC (Intersegmental General Education Transfer Curriculum) roadmap for admission into University of California (UC) and California State University (CSU) systems:
+        </p>
+        <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Anchor Co-Requisite Labs First:</strong> Science sequences like General Chemistry (Chem 1A/1B) and Anatomy/Physiology carry mandatory 3-hour wet labs. Because lab sections are scarce, input your lab times first before choosing lecture electives.</li>
+          <li><strong>Consolidate to MW or TTh Blocks:</strong> Many PCC courses meet on a Monday/Wednesday or Tuesday/Thursday rhythm. By consolidating your schedule to two or three full days, you preserve full 8-hour blocks for off-campus internships or jobs.</li>
+          <li><strong>Prepare 3 Alternate CRN Trees:</strong> When registration opens on LancerPoint, having 3 verified CRN permutations ready ensures that if Section 1 fills up, you can copy-paste Section 2 instantly.</li>
+        </ol>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Sample Balanced 14-Credit PCC Semester Schedule
+        </h2>
+        <p>
+          Here is an example of an optimized PCC student timetable balancing core transfer prerequisites with minimal wasted campus gap hours:
+        </p>
+
+        <!-- Markdown / HTML Table -->
+        <div class="not-prose overflow-x-auto pb-2">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            <thead class="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-white font-bold">
+              <tr>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Course & CRN</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Title</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Units</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Days</th>
+                <th class="p-3 border-b border-zinc-200 dark:border-zinc-700">Time & Campus</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">ENGL 1A (CRN 71204)</td>
+                <td class="p-3">Reading & Composition</td>
+                <td class="p-3 font-mono">4.0</td>
+                <td class="p-3 font-semibold">MW</td>
+                <td class="p-3">09:30 AM – 11:35 AM (Main)</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">MATH 5A (CRN 73419)</td>
+                <td class="p-3">Single Variable Calculus I</td>
+                <td class="p-3 font-mono">5.0</td>
+                <td class="p-3 font-semibold">MW</td>
+                <td class="p-3">12:00 PM – 02:25 PM (Main)</td>
+              </tr>
+              <tr class="bg-white dark:bg-[#121215]">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">PSYC 1 (CRN 74892)</td>
+                <td class="p-3">Introductory Psychology</td>
+                <td class="p-3 font-mono">3.0</td>
+                <td class="p-3 font-semibold">TTh</td>
+                <td class="p-3">10:00 AM – 11:25 AM (Online/Remote)</td>
+              </tr>
+              <tr class="bg-zinc-50/50 dark:bg-zinc-900/30">
+                <td class="p-3 font-mono font-bold text-zinc-950 dark:text-white">ART 11 (CRN 70831)</td>
+                <td class="p-3">History of Art</td>
+                <td class="p-3 font-mono">3.0</td>
+                <td class="p-3 font-semibold">TTh</td>
+                <td class="p-3">01:00 PM – 02:25 PM (Main)</td>
+              </tr>
+              <tr class="bg-zinc-100/60 dark:bg-zinc-800/40 font-bold text-zinc-950 dark:text-white">
+                <td class="p-3" colspan="2">Term Academic Summary</td>
+                <td class="p-3 font-mono">15.0 Units</td>
+                <td class="p-3" colspan="2">Zero Campus Travel Clashes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Exporting to Your Phone Calendar
+        </h2>
+        <p>
+          Once you have verified your CRNs in Schedule Studio, click <strong>"Export .ICS"</strong> to import your entire schedule into Google Calendar, Apple Calendar, or Outlook. You'll receive automated notifications before each class so you never miss an attendance check-in.
+        </p>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">PCC Student Inquiries</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          PCC Course Registration FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Related Academic Planning Tools</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/college-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">College Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/uf-class-schedule" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">UF Schedule Planner</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Printable Schedule Hub</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>Curated Educational Guides:</span>
+        <a href="/blog/how-to-read-course-catalog-and-crn" class="hover:underline text-zinc-700 dark:text-zinc-300">How to Read CRN Numbers</a>
+        <span>&bull;</span>
+        <a href="/blog/how-many-credits-per-semester" class="hover:underline text-zinc-700 dark:text-zinc-300">Community College Credit Workloads</a>
+        <span>&bull;</span>
+        <a href="/study-schedule-maker" class="hover:underline text-zinc-700 dark:text-zinc-300">Study Schedule Planner</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your PCC Class Schedule Now
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Test your CRNs, check campus travel times, and print clean timetables before registration opens. Free forever.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

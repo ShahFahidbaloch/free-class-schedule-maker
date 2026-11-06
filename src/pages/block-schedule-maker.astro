@@ -1,0 +1,352 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { 
+  Layers, 
+  ArrowRight, 
+  Clock, 
+  Calendar, 
+  CheckCircle2, 
+  Sparkles, 
+  Zap, 
+  BookOpen, 
+  CalendarDays, 
+  Sliders 
+} from 'lucide-react';
+
+const pageTitle = "Block Schedule Maker — Free A/B & 4x4 Timetable Planner";
+const pageDescription = "Free block schedule maker for students and teachers. Build alternating A/B days, 90-minute periods, 4x4 block systems, and export custom timetables.";
+const pageKeywords = "block schedule maker, ab block schedule, 4x4 block schedule, 90 minute block schedule, alternating day schedule, school block timetable";
+
+const faqs = [
+  {
+    q: "What is an A/B block schedule?",
+    a: "An A/B block schedule (also called an alternating-day block schedule) divides a student's full 8-course curriculum across two alternating days: Day A and Day B. Students take four 85-to-90 minute classes on Day A (e.g. Periods 1, 3, 5, 7) and their other four classes on Day B (Periods 2, 4, 6, 8), repeating the cycle throughout the entire academic year."
+  },
+  {
+    q: "What is the difference between an A/B block and a 4x4 accelerated block schedule?",
+    a: "Under an A/B schedule, students take 8 courses concurrently for a full 36-week academic year, alternating daily. Under a 4x4 accelerated block schedule, students take only 4 courses every single day for 90 minutes each, completing an entire year's curriculum in a single semester (18 weeks), then enrolling in 4 completely new courses the following semester."
+  },
+  {
+    q: "Why do high schools use 90-minute block periods?",
+    a: "Extended 90-minute periods provide pedagogical depth that 45-minute periods cannot match. Science classes can execute full wet-lab experiments and clean up in a single session. Humanities classes can run seminar debates and peer-review workshops without interruption. Additionally, cutting daily passing periods in half dramatically reduces hallway friction and disciplinary issues."
+  },
+  {
+    q: "How can I map an alternating A/B block schedule in this tool?",
+    a: "In Schedule Studio, you can map Day A courses to Monday and Wednesday, and Day B courses to Tuesday and Thursday, with Friday designated for alternating weekly rotations or advisory periods. Enter the 90-minute start and end times (e.g., 08:30–10:00 AM) to visualize your daily load and homework distribution."
+  },
+  {
+    q: "How does block scheduling impact student homework and stress levels?",
+    a: "Block scheduling reduces daily cognitive fragmentation. Instead of juggling homework assignments across seven or eight separate subjects every evening, students only prepare for four subjects per night. This gives them 48 hours between class meetings to complete in-depth reading, lab reports, and project revisions."
+  }
+];
+
+const structuredSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://freeclassschedule.com/block-schedule-maker/#webapp",
+      "name": "Block Schedule Maker",
+      "url": "https://freeclassschedule.com/block-schedule-maker",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "description": pageDescription,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://freeclassschedule.com/block-schedule-maker/#faq",
+      "mainEntity": faqs.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `<p>${item.a}</p>`
+        }
+      }))
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://freeclassschedule.com/block-schedule-maker/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://freeclassschedule.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Block Schedule Maker",
+          "item": "https://freeclassschedule.com/block-schedule-maker"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  schemaJson={structuredSchema}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 sm:space-y-16">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-zinc-500">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-zinc-800 dark:text-zinc-200">Block Schedule Maker</span>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="space-y-4 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-850 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+        <Layers class="w-4 h-4" />
+        <span>Alternating Timetable &bull; 90-Minute Period Architecture</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight">
+        Block Schedule Maker: Design Alternating A/B & 4x4 High School Timetables
+      </h1>
+      <p class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+        Master 90-minute block periods, alternating Day A / Day B rotations, and 4x4 semester schedules. Plan teacher lesson sequences, track assignments, and print clean visual schedules for free.
+      </p>
+
+      <!-- Primary Top CTA -->
+      <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <a 
+          href="/app" 
+          class="h-12 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 font-bold text-sm inline-flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+        <a 
+          href="/blog/ab-block-schedule-explained" 
+          class="h-12 px-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition"
+        >
+          <span>Read A/B Block Guide</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Visual A/B Block Day Comparison -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-900 text-white dark:bg-zinc-900/90 border border-zinc-800 space-y-6">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase text-zinc-400 tracking-wider">Alternating Rotation Blueprint</span>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Visualizing an A/B Block Schedule Week</h2>
+        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+          Instead of rushing through seven 45-minute classes every single afternoon, an A/B block schedule provides spacious 90-minute instructional intervals with only four classes daily:
+        </p>
+      </div>
+
+      <!-- Two-Day Schedule Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        
+        <!-- Day A -->
+        <div class="p-5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-md bg-blue-500/20 text-blue-300 text-xs font-bold font-mono">DAY A (ODD PERIODS)</span>
+            <span class="text-xs text-zinc-400">Monday / Wednesday</span>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 1:</strong> AP English Literature</div>
+              <span class="font-mono text-zinc-400">08:15 – 09:45</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 3:</strong> AP Chemistry & Lab</div>
+              <span class="font-mono text-zinc-400">09:55 – 11:25</span>
+            </div>
+            <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 text-center font-semibold">
+              Lunch & Advisory Break &bull; 11:25 – 12:15
+            </div>
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 5:</strong> US History</div>
+              <span class="font-mono text-zinc-400">12:20 – 01:50</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 7:</strong> Spanish III</div>
+              <span class="font-mono text-zinc-400">02:00 – 03:30</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day B -->
+        <div class="p-5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-bold font-mono">DAY B (EVEN PERIODS)</span>
+            <span class="text-xs text-zinc-400">Tuesday / Thursday</span>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 2:</strong> Pre-Calculus BC</div>
+              <span class="font-mono text-zinc-400">08:15 – 09:45</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 4:</strong> Computer Science Principles</div>
+              <span class="font-mono text-zinc-400">09:55 – 11:25</span>
+            </div>
+            <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 text-center font-semibold">
+              Lunch & Advisory Break &bull; 11:25 – 12:15
+            </div>
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 6:</strong> Studio Art / Design</div>
+              <span class="font-mono text-zinc-400">12:20 – 01:50</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex justify-between items-center">
+              <div><strong class="text-white">Block 8:</strong> Physical Education / Athletics</div>
+              <span class="font-mono text-zinc-400">02:00 – 03:30</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Comprehensive Content Body (800+ Words) -->
+    <article class="prose prose-zinc dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed space-y-8">
+      
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          The Pedagogical Revolution of the 90-Minute Block
+        </h2>
+        <p>
+          For over a century, American and international secondary schools relied almost exclusively on the Carnegie Unit—dividing the instructional school day into six to eight short 45-minute chunks. However, as educational curricula evolved to prioritize hands-on laboratories, coding projects, engineering design challenges, and Socratic seminars, the limitations of short periods became glaringly apparent. In a 45-minute science class, taking attendance, setting up glassware, and cleaning up safety gear leaves barely 18 minutes for actual experimentation.
+        </p>
+        <p>
+          Block scheduling transforms the learning environment. By extending each class period to 85 or 90 minutes, educators can execute a three-part pedagogical arc in every single class: a 20-minute conceptual lecture, 50 minutes of active group collaboration or laboratory execution, and 20 minutes of reflection and guided practice.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Major Types of Block Scheduling Systems
+        </h2>
+
+        <div class="space-y-4 not-prose">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">1. Alternating Day (A/B) Block Schedule</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              The most widespread configuration in high schools across North America. Students register for 8 courses per year. Monday and Wednesday feature Day A courses (Blocks 1, 3, 5, 7); Tuesday and Thursday feature Day B courses (Blocks 2, 4, 6, 8). Friday either alternates each week (A-B-A-B-A followed by B-A-B-A-B) or follows a unified 7-period compact review schedule.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">2. 4x4 Accelerated Block Schedule</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Common in vocational high schools and competitive STEM programs. Students take only 4 courses every day for an entire 18-week fall semester. Because classes meet for 90 minutes daily, students complete a full year's curriculum in half the time, taking 4 completely new courses in the spring semester. This allows advanced students to complete up to 32 credits across four years of high school.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">3. Modified / Hybrid Block Schedule</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              A hybrid model designed to accommodate music, foreign language, and math departments that require daily drill practice. Students attend all classes for 45 minutes on Monday, followed by A-Block on Tuesday/Thursday and B-Block on Wednesday/Friday.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          How to Manage Homework on an A/B Block Timetable
+        </h2>
+        <p>
+          The greatest advantage—and potential trap—of an A/B block schedule is the 48-hour homework buffer. When your English class meets on Monday morning, the homework assignment is not due until Wednesday morning.
+        </p>
+        <p>
+          Disorganized students procrastinate, waiting until Tuesday night to start Monday's assignments, creating an overwhelming workload. Successful block-schedule students practice the <strong>Same-Day Rule</strong>: complete Day A assignments on Monday afternoon while the lecture is fresh in your memory, leaving Tuesday completely free for Day B preparation.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Building Your Block Timetable in Schedule Studio
+        </h2>
+        <p>
+          Our <strong>Block Schedule Maker</strong> makes mapping 90-minute periods seamless:
+        </p>
+        <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm">
+          <li><strong>Map Day A Blocks:</strong> Add your odd-period classes and assign them to Monday and Wednesday.</li>
+          <li><strong>Map Day B Blocks:</strong> Add your even-period classes and assign them to Tuesday and Thursday.</li>
+          <li><strong>Assign Passing & Lunch Windows:</strong> Input your lunch period (e.g. 11:25 AM to 12:15 PM) to ensure conflict-free breaks.</li>
+          <li><strong>Export to Phone & PDF:</strong> Download a high-res smartphone lockscreen so you never mix up Day A and Day B rooms between classes.</li>
+        </ol>
+      </section>
+    </article>
+
+    <!-- FAQ Section -->
+    <section class="space-y-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="space-y-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-zinc-500">Curriculum & Rotation Inquiries</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Block Schedule FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3">
+        {faqs.map(item => (
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#121215] border border-zinc-200/80 dark:border-zinc-800/80 space-y-2">
+            <h3 class="text-base font-bold text-zinc-950 dark:text-white">{item.q}</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Internal Linking Hub -->
+    <section class="p-6 sm:p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 space-y-4">
+      <h3 class="text-base font-bold text-zinc-950 dark:text-white">Explore Additional Timetable Builders</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+        <a href="/school-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Standard School Schedule</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/college-schedule-maker" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">College Schedule Maker</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="/class-schedule-template" class="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition flex items-center justify-between">
+          <span class="font-medium">Printable Templates</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+      <div class="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+        <span>From our Educational Editorial:</span>
+        <a href="/blog/ab-block-schedule-explained" class="hover:underline text-zinc-700 dark:text-zinc-300">Complete A/B Block Explained</a>
+        <span>&bull;</span>
+        <a href="/blog/mwf-vs-tth-classes-guide" class="hover:underline text-zinc-700 dark:text-zinc-300">College MWF vs TTh Breakdown</a>
+        <span>&bull;</span>
+        <a href="/study-schedule-maker" class="hover:underline text-zinc-700 dark:text-zinc-300">Study Schedule Maker</a>
+      </div>
+    </section>
+
+    <!-- Bottom Action CTA -->
+    <footer class="p-8 sm:p-12 rounded-3xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-center space-y-4 shadow-sm">
+      <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        Build Your A/B Block Timetable Now
+      </h2>
+      <p class="text-xs sm:text-sm text-zinc-400 dark:text-zinc-600 max-w-xl mx-auto leading-relaxed">
+        Map your 90-minute blocks, prevent room conflicts, and export printable timetables in Schedule Studio. 100% free with client-side privacy.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="/app" 
+          class="h-12 px-8 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:hover:bg-black dark:text-white font-bold text-sm inline-flex items-center gap-2 transition active:scale-[0.98]"
+        >
+          <span>Open Schedule Studio</span>
+          <ArrowRight class="w-4 h-4" />
+        </a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>
