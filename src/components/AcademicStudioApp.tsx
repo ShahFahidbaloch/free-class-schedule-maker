@@ -42,6 +42,25 @@ import {
 
 export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 
+export const VALID_DAYS: DayOfWeek[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+export function normalizeDayOfWeek(d: string | null | undefined): DayOfWeek | null {
+  if (!d) return null;
+  const clean = d.trim().toLowerCase();
+  const map: Record<string, DayOfWeek> = {
+    mon: 'Mon', monday: 'Mon', m: 'Mon',
+    tue: 'Tue', tuesday: 'Tue', t: 'Tue',
+    wed: 'Wed', wednesday: 'Wed', w: 'Wed',
+    thu: 'Thu', thursday: 'Thu', th: 'Thu',
+    fri: 'Fri', friday: 'Fri', f: 'Fri',
+    sat: 'Sat', saturday: 'Sat', sa: 'Sat',
+    sun: 'Sun', sunday: 'Sun', su: 'Sun'
+  };
+  if (map[clean]) return map[clean];
+  if (VALID_DAYS.includes(d as DayOfWeek)) return d as DayOfWeek;
+  return null;
+}
+
 export interface Section {
   id: string;
   name: string;
@@ -436,52 +455,76 @@ export default function AcademicStudioApp() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const timetableRef = useRef<HTMLDivElement>(null);
+  const isLoadedRef = useRef(false);
+
+  const STORAGE_KEY = 'class_schedule_optimizer_state_v2';
+  const LEGACY_STORAGE_KEY_COURSES = 'academic_planner_courses_v1';
+  const LEGACY_STORAGE_KEY_TASKS = 'academic_planner_tasks_v1';
 
   // Load from LocalStorage
   useEffect(() => {
     try {
-      const savedCourses = localStorage.getItem('academic_planner_courses_v1');
-      if (savedCourses) {
-        const parsed = JSON.parse(savedCourses);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setCourses(parsed);
+      const savedV2 = localStorage.getItem(STORAGE_KEY);
+      if (savedV2) {
+        const parsed = JSON.parse(savedV2);
+        if (parsed.courses && Array.isArray(parsed.courses)) {
+          setCourses(parsed.courses);
         } else {
           setCourses(DEFAULT_SAMPLE_COURSES);
         }
+        if (parsed.tasks && Array.isArray(parsed.tasks)) {
+          setTasks(parsed.tasks);
+        }
       } else {
-        setCourses(DEFAULT_SAMPLE_COURSES);
-      }
+        const legacyCourses = localStorage.getItem(LEGACY_STORAGE_KEY_COURSES);
+        if (legacyCourses) {
+          const parsed = JSON.parse(legacyCourses);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setCourses(parsed);
+          } else {
+            setCourses(DEFAULT_SAMPLE_COURSES);
+          }
+        } else {
+          setCourses(DEFAULT_SAMPLE_COURSES);
+        }
 
-      const savedTasks = localStorage.getItem('academic_planner_tasks_v1');
-      if (savedTasks) {
-        setTasks(JSON.parse(savedTasks));
-      } else {
-        setTasks([
-          { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
-          { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
-        ]);
+        const legacyTasks = localStorage.getItem(LEGACY_STORAGE_KEY_TASKS);
+        if (legacyTasks) {
+          setTasks(JSON.parse(legacyTasks));
+        } else {
+          setTasks([
+            { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
+            { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
+          ]);
+        }
       }
-    } catch (e) {}
+    } catch (e) {
+      setCourses(DEFAULT_SAMPLE_COURSES);
+    } finally {
+      isLoadedRef.current = true;
+    }
 
     const isDark = document.documentElement.classList.contains('dark');
     setIsDarkTheme(isDark);
   }, []);
 
-  // Save Courses
+  // Save State (courses & tasks)
   useEffect(() => {
-    if (courses.length > 0) {
-      try {
-        localStorage.setItem('academic_planner_courses_v1', JSON.stringify(courses));
-      } catch (e) {}
-    }
-  }, [courses]);
-
-  // Save Tasks
-  useEffect(() => {
+    if (!isLoadedRef.current) return;
     try {
-      localStorage.setItem('academic_planner_tasks_v1', JSON.stringify(tasks));
-    } catch (e) {}
-  }, [tasks]);
+      const stateToSave = {
+        courses,
+        tasks,
+        version: 2,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+      localStorage.setItem(LEGACY_STORAGE_KEY_COURSES, JSON.stringify(courses));
+      localStorage.setItem(LEGACY_STORAGE_KEY_TASKS, JSON.stringify(tasks));
+    } catch (e) {
+      console.error('Failed to save schedule to localStorage:', e);
+    }
+  }, [courses, tasks]);
 
   // Theme Switcher
   const toggleTheme = () => {
@@ -501,13 +544,18 @@ export default function AcademicStudioApp() {
 
   // Toggle Day selection in Form
   const toggleFormDay = (d: DayOfWeek) => {
-    if (formDays.includes(d)) {
-      if (formDays.length > 1) {
-        setFormDays(prev => prev.filter(day => day !== d));
+    const norm = normalizeDayOfWeek(d) || d;
+    setFormDays(prev => {
+      const normalizedPrev = prev.map(p => normalizeDayOfWeek(p) || p);
+      if (normalizedPrev.includes(norm)) {
+        if (normalizedPrev.length > 1) {
+          return normalizedPrev.filter(day => day !== norm);
+        }
+        return normalizedPrev;
+      } else {
+        return [...normalizedPrev, norm];
       }
-    } else {
-      setFormDays(prev => [...prev, d]);
-    }
+    });
   };
 
   // Open Modal with clean reset
@@ -517,8 +565,12 @@ export default function AcademicStudioApp() {
     setFormRoom('');
     setFormCredits(3);
     setFormColorIndex(courses.length % APPLE_TAG_PALETTES.length);
-    if (day) setFormDays([day]);
-    else setFormDays(['mon']);
+    if (day) {
+      const norm = normalizeDayOfWeek(day);
+      setFormDays(norm ? [norm] : ['Mon']);
+    } else {
+      setFormDays(['Mon']);
+    }
 
     if (defaultStart) {
       setFormStartTime(defaultStart);
@@ -594,7 +646,11 @@ export default function AcademicStudioApp() {
       setFormError('Please enter a course code (e.g. CS101).');
       return;
     }
-    if (formDays.length === 0) {
+    const validDays = formDays
+      .map(d => normalizeDayOfWeek(d))
+      .filter((d): d is DayOfWeek => d !== null);
+
+    if (validDays.length === 0) {
       setFormError('Please select at least one day for this class.');
       return;
     }
@@ -619,7 +675,7 @@ export default function AcademicStudioApp() {
               {
                 id: selectedEventForEdit.section.id,
                 name: 'Section 01',
-                days: [...formDays],
+                days: [...validDays],
                 startTime: formStartTime.trim(),
                 endTime: formEndTime.trim(),
                 room: formRoom.trim() || 'Campus'
@@ -645,7 +701,7 @@ export default function AcademicStudioApp() {
           {
             id: secId,
             name: 'Section 01',
-            days: [...formDays],
+            days: [...validDays],
             startTime: formStartTime.trim(),
             endTime: formEndTime.trim(),
             room: formRoom.trim() || 'Campus'
@@ -677,14 +733,15 @@ export default function AcademicStudioApp() {
     const { course, section } = selectedEventForEdit;
     
     // Add targetDay to the course's section days
-    if (!section.days.includes(targetDay)) {
+    const normTarget = normalizeDayOfWeek(targetDay) || targetDay;
+    if (!section.days.some(d => normalizeDayOfWeek(d) === normTarget)) {
       setCourses(prev => prev.map(c => {
         if (c.id === course.id) {
           return {
             ...c,
             sections: c.sections.map(s => {
               if (s.id === section.id) {
-                return { ...s, days: [...s.days, targetDay] };
+                return { ...s, days: [...s.days, normTarget] };
               }
               return s;
             })
@@ -692,7 +749,7 @@ export default function AcademicStudioApp() {
         }
         return c;
       }));
-      setBanner(`Duplicated ${course.code} to ${DAY_LABELS[targetDay].full}`);
+      setBanner(`Duplicated ${course.code} to ${DAY_LABELS[normTarget].full}`);
     }
     setSelectedEventForEdit(null);
     setIsClassModalOpen(false);
@@ -703,7 +760,9 @@ export default function AcademicStudioApp() {
   const handleResetSchedule = () => {
     if (confirm('Reset timetable to sample course demonstrations?')) {
       setCourses(DEFAULT_SAMPLE_COURSES);
-      localStorage.removeItem('academic_planner_courses_v1');
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LEGACY_STORAGE_KEY_COURSES);
+      localStorage.removeItem(LEGACY_STORAGE_KEY_TASKS);
       setBanner('Schedule reset to demo courses.');
       setTimeout(() => setBanner(null), 3000);
     }
@@ -830,7 +889,10 @@ export default function AcademicStudioApp() {
       const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
       if (!activeSec) return;
 
-      activeSec.days.forEach(day => {
+      activeSec.days.forEach(rawDay => {
+        const day = normalizeDayOfWeek(rawDay);
+        if (!day || !dayMap[day]) return;
+
         const startM = parseFlexibleTime(activeSec.startTime);
         const endM = parseFlexibleTime(activeSec.endTime);
 
@@ -1039,7 +1101,10 @@ export default function AcademicStudioApp() {
       const sec = c.sections.find(s => s.id === c.selectedSectionId);
       if (!sec) return;
 
-      sec.days.forEach(day => {
+      sec.days.forEach(rawDay => {
+        const day = normalizeDayOfWeek(rawDay);
+        if (!day || !dayMap[day]) return;
+
         const offset = FULL_WEEK_DAYS.indexOf(day);
         const evDate = new Date(baseMon.getTime() + offset * 86400000);
         const y = evDate.getFullYear();
@@ -2041,7 +2106,7 @@ export default function AcademicStudioApp() {
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                   {WEEKDAY_DAYS.map(d => {
-                    const isSelected = formDays.includes(d);
+                    const isSelected = formDays.some(fd => normalizeDayOfWeek(fd) === d);
                     return (
                       <button
                         key={d}
@@ -2141,7 +2206,7 @@ export default function AcademicStudioApp() {
                     {t.form.duplicateToOtherDays}
                   </span>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    {WEEKDAY_DAYS.filter(d => !formDays.includes(d)).map(d => (
+                    {WEEKDAY_DAYS.filter(d => !formDays.some(fd => normalizeDayOfWeek(fd) === d)).map(d => (
                       <button
                         key={d}
                         type="button"
