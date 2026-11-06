@@ -27,8 +27,8 @@ import {
   Globe,
   Menu,
   HelpCircle,
-  Sparkles,
-  Zap,
+  Bookmark,
+  Layers,
   Mail,
   Code,
   Edit3
@@ -1716,7 +1716,6 @@ export default function AcademicStudioApp() {
             title="Send Student Feedback & Rating"
           >
             <MessageSquare className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-amber-500" />
           </button>
         </div>
 
@@ -1737,32 +1736,32 @@ export default function AcademicStudioApp() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         {/* Top Control Bar */}
-        <header className="relative z-40 h-14 px-3 sm:px-6 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md flex items-center justify-between gap-2 sm:gap-4 select-none shrink-0">
+        <header className="relative z-40 h-14 px-3 sm:px-6 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md flex items-center justify-between gap-3 sm:gap-4 select-none shrink-0">
           
-          {/* Left: Mobile Home / Brand Link & Title */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Left: Mobile Brand & Plan Switcher & Metrics */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <a 
               href="/"
-              className="md:hidden flex items-center p-0.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+              className="md:hidden flex items-center p-0.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition shrink-0"
               title="Return to Home"
             >
               <img src="/logo.svg" alt="Class Schedule Logo" className="w-7 h-7 rounded-lg object-contain" />
             </a>
 
-            <h1 className="text-sm sm:text-base font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
+            <h1 className="text-sm sm:text-base font-bold tracking-tight text-zinc-950 dark:text-white flex items-center gap-2 whitespace-nowrap shrink-0">
               <span className="hidden sm:inline">{t.nav?.scheduleStudio || 'Class Schedule Studio'}</span>
               <span className="sm:hidden">{t.days.full[mobileDay] || DAY_LABELS[mobileDay].full}</span>
             </h1>
 
             {/* Plan A / B / C Segmented Multi-Schedule Switcher */}
-            <div className="flex items-center bg-zinc-100 dark:bg-zinc-850 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-800 relative" ref={planMenuRef}>
+            <div className="flex items-center bg-zinc-100 dark:bg-zinc-850 p-0.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 relative shrink-0" ref={planMenuRef}>
               {plans.map(p => {
                 const isActive = p.id === activePlanId;
                 return (
                   <button
                     key={p.id}
                     onClick={() => handleSwitchPlan(p.id)}
-                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                       isActive
                         ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-2xs font-bold'
                         : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
@@ -1794,7 +1793,7 @@ export default function AcademicStudioApp() {
                         setIsPlanMenuOpen(false);
                         setIsRenamePlanModalOpen(true);
                       }}
-                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-700 dark:text-zinc-300"
+                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap"
                     >
                       <Edit3 className="w-3.5 h-3.5 text-zinc-500" />
                       <span>Rename Current Plan</span>
@@ -1809,7 +1808,7 @@ export default function AcademicStudioApp() {
                       <button
                         key={p.id}
                         onClick={() => handleDuplicateCurrentPlan(p.id)}
-                        className="w-full px-3 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300"
+                        className="w-full px-3 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300 whitespace-nowrap"
                       >
                         <Copy className="w-3.5 h-3.5 text-zinc-500" />
                         <span>Copy into {p.name}</span>
@@ -1823,9 +1822,9 @@ export default function AcademicStudioApp() {
                         setIsPlanMenuOpen(false);
                         setIsPresetModalOpen(true);
                       }}
-                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-amber-600 dark:text-amber-400"
+                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Bookmark className="w-3.5 h-3.5 text-zinc-500" />
                       <span>Load Major Preset...</span>
                     </button>
                   </div>
@@ -1833,113 +1832,106 @@ export default function AcademicStudioApp() {
               </div>
             </div>
 
-            <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">&bull;</span>
-
-            {/* Subtle Top Status Pill (Strictly Monochrome Slate - No Green Pills) */}
-            <div className="hidden sm:inline-flex items-center gap-2 text-xs font-mono font-medium px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+            {/* Schedule Status Badges - Sleek, single-line pill, no text wrap */}
+            <div className="hidden xl:flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-900/60 whitespace-nowrap shrink-0">
               <span className="text-zinc-700 dark:text-zinc-300">
-                {t.metrics.credits}: <strong className="font-bold text-zinc-900 dark:text-white">{metrics.totalCredits}</strong>
+                <strong className="font-semibold text-zinc-950 dark:text-white">{metrics.totalCredits}</strong> credits
               </span>
-              <span className="text-zinc-300 dark:text-zinc-700">|</span>
+              <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
               <span className="text-zinc-700 dark:text-zinc-300">
-                {t.metrics.idleGaps}: <strong className="font-bold text-zinc-900 dark:text-white">{metrics.gapHours} hrs</strong>
+                <strong className="font-semibold text-zinc-950 dark:text-white">{metrics.gapHours}h</strong> gaps
               </span>
+              <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
               {metrics.conflicts > 0 ? (
-                <>
-                  <span className="text-zinc-300 dark:text-zinc-700">|</span>
-                  <span className="text-rose-600 dark:text-rose-400 font-bold">
-                    {metrics.conflicts} {t.metrics.conflicts}
-                  </span>
-                </>
+                <span className="text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{metrics.conflicts} conflict{metrics.conflicts > 1 ? 's' : ''}</span>
+                </span>
               ) : (
-                <>
-                  <span className="text-zinc-300 dark:text-zinc-700">|</span>
-                  <span className="text-zinc-600 dark:text-zinc-400 font-medium">
-                    {t.metrics.conflictFree}
-                  </span>
-                </>
+                <span className="text-zinc-700 dark:text-zinc-300 font-medium flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
+                  <span>Conflict-free</span>
+                </span>
               )}
             </div>
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             
-            {/* Quick Add Button */}
+            {/* Primary Action: Add Class */}
             <button
               onClick={() => handleOpenNewClassModal(mobileDay)}
-              className="h-9 px-3 sm:px-3.5 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition active:scale-[0.98] cursor-pointer"
+              className="h-9 px-3.5 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition active:scale-[0.98] cursor-pointer whitespace-nowrap"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span className="hidden xs:inline">{t.actions.newClass}</span>
+              <span className="hidden xs:inline">{t.actions.newClass || 'Add Class'}</span>
               <span className="xs:hidden">Class</span>
             </button>
 
             {/* Share Link Button */}
             <button
               onClick={handleShareSchedule}
-              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap"
               title="Share Timetable Link"
             >
-              <Share2 className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
+              <Share2 className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               <span className="hidden sm:inline">Share</span>
             </button>
 
-            {/* Major Presets Trigger (Desktop/Tablet) */}
+            {/* Major Presets Trigger (Real Tool Icon - No AI Slop) */}
             <button
               onClick={() => setIsPresetModalOpen(true)}
-              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden lg:flex items-center gap-1.5 transition cursor-pointer"
-              title="Load College Major Preset (CS, Nursing, Pre-Med, etc.)"
+              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden md:flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap"
+              title="Load Degree Presets (CS, Pre-Med, Nursing, etc.)"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <Bookmark className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               <span>Presets</span>
             </button>
 
-            {/* Print (Desktop only) */}
-            <button
-              onClick={() => window.print()}
-              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
-              title={t.actions.printPdf}
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>{t.actions.printPdf}</span>
-            </button>
-
-            {/* Export (Desktop only) */}
+            {/* Export Hub (PDF, PNG, .ICS) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
-              title={t.actions.exportHub}
+              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap"
+              title="Export Timetable (PDF, PNG, .ICS)"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>{t.actions.exportHub}</span>
+              <Download className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
+              <span>Export</span>
             </button>
 
-            {/* Guide & Instructions (Desktop/Tablet) */}
+            {/* Quick Print Button */}
+            <button
+              onClick={() => window.print()}
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hidden md:flex items-center justify-center transition cursor-pointer shrink-0"
+              title={t.actions.printPdf || 'Print / Save PDF'}
+            >
+              <Printer className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Guide & Instructions */}
             <button
               onClick={() => setIsOnboardingOpen(true)}
-              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden sm:flex items-center gap-1.5 transition cursor-pointer"
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hidden lg:flex items-center justify-center transition cursor-pointer shrink-0"
               title="How to Use & Feature Instructions"
             >
-              <BookOpen className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="hidden xl:inline">Guide</span>
+              <HelpCircle className="w-3.5 h-3.5" />
             </button>
 
-            {/* Quick Feedback Button (Top Navigation) */}
+            {/* Feedback Button (Clean, Compact) */}
             <button
               onClick={() => setIsFeedbackModalOpen(true)}
-              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden xl:flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap shrink-0"
               title="Send Student Feedback & Rating"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="hidden xl:inline">{t.feedback.title || 'Feedback'}</span>
+              <MessageSquare className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
+              <span>Feedback</span>
             </button>
 
             {/* Language Selector Dropdown (Desktop Only) */}
-            <div className="relative hidden md:block" ref={langMenuRef}>
+            <div className="relative hidden md:block shrink-0" ref={langMenuRef}>
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap"
                 title="Select Language"
               >
                 <Globe className="w-3.5 h-3.5 text-zinc-500" />
@@ -1975,7 +1967,7 @@ export default function AcademicStudioApp() {
             {/* Reset (Desktop Only) */}
             <button
               onClick={handleResetSchedule}
-              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hidden md:flex items-center justify-center transition cursor-pointer"
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hidden md:flex items-center justify-center transition cursor-pointer shrink-0"
               title="Reset sample schedule"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -1984,7 +1976,7 @@ export default function AcademicStudioApp() {
             {/* Mobile Drawer Trigger (< 768px) */}
             <button
               onClick={() => setIsStudioMenuOpen(true)}
-              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 md:hidden flex items-center justify-center transition cursor-pointer"
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 md:hidden flex items-center justify-center transition cursor-pointer shrink-0"
               aria-label="Open Studio Menu"
             >
               <Menu className="w-4 h-4" />
@@ -2937,7 +2929,7 @@ export default function AcademicStudioApp() {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div>
                 <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <Bookmark className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                   <span>College Major Timetable Presets</span>
                 </h3>
                 <p className="text-xs text-zinc-500">Pre-built, conflict-free academic blueprints for top university degree paths.</p>
