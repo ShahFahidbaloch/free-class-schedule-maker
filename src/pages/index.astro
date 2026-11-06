@@ -230,26 +230,53 @@ const structuredSchema = {
               <div>Fri</div>
             </div>
 
-            <div class="grid grid-cols-5 gap-2 h-24">
-              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
-                <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">10:00 - 11:15 AM</span>
+            <div class="grid grid-cols-5 gap-2 min-h-[140px]">
+              <!-- Monday -->
+              <div class="flex flex-col gap-1.5">
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
+                  <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">10:00 - 11:15 AM</span>
+                </div>
+                <div class="p-2 rounded-xl bg-sky-50 dark:bg-[#0e2137] border border-sky-300 dark:border-sky-600 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-sky-950 dark:text-white truncate">MATH 21</span>
+                  <span class="text-[10px] font-mono text-sky-700 dark:text-sky-300">11:30 - 12:45 PM</span>
+                </div>
               </div>
-              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
-                <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">11:00 - 12:15 PM</span>
+              <!-- Tuesday -->
+              <div class="flex flex-col gap-1.5">
+                <div class="p-2 rounded-xl bg-emerald-50 dark:bg-[#0c261b] border border-emerald-300 dark:border-emerald-600 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-emerald-950 dark:text-white truncate">ENG 102</span>
+                  <span class="text-[10px] font-mono text-emerald-700 dark:text-emerald-300">11:00 - 12:15 PM</span>
+                </div>
               </div>
-              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
-                <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">10:00 - 11:15 AM</span>
+              <!-- Wednesday -->
+              <div class="flex flex-col gap-1.5">
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
+                  <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">10:00 - 11:15 AM</span>
+                </div>
+                <div class="p-2 rounded-xl bg-sky-50 dark:bg-[#0e2137] border border-sky-300 dark:border-sky-600 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-sky-950 dark:text-white truncate">MATH 21</span>
+                  <span class="text-[10px] font-mono text-sky-700 dark:text-sky-300">11:30 - 12:45 PM</span>
+                </div>
               </div>
-              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">MATH 21</span>
-                <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">11:00 - 12:15 PM</span>
+              <!-- Thursday -->
+              <div class="flex flex-col gap-1.5">
+                <div class="p-2 rounded-xl bg-emerald-50 dark:bg-[#0c261b] border border-emerald-300 dark:border-emerald-600 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-emerald-950 dark:text-white truncate">ENG 102</span>
+                  <span class="text-[10px] font-mono text-emerald-700 dark:text-emerald-300">11:00 - 12:15 PM</span>
+                </div>
               </div>
-              <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
-                <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
-                <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">10:00 - 11:15 AM</span>
+              <!-- Friday -->
+              <div class="flex flex-col gap-1.5">
+                <div class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-zinc-900 dark:text-white truncate">CS 301</span>
+                  <span class="text-[10px] font-mono text-zinc-600 dark:text-zinc-400">10:00 - 11:15 AM</span>
+                </div>
+                <div class="p-2 rounded-xl bg-sky-50 dark:bg-[#0e2137] border border-sky-300 dark:border-sky-600 flex flex-col justify-between">
+                  <span class="font-bold text-xs text-sky-950 dark:text-white truncate">MATH 21</span>
+                  <span class="text-[10px] font-mono text-sky-700 dark:text-sky-300">11:30 - 12:45 PM</span>
+                </div>
               </div>
             </div>
           </div>
@@ -266,8 +293,8 @@ const structuredSchema = {
     <section id="about-tool" class="scroll-mt-20">
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            OVERVIEW &bull; FREE CLASS SCHEDULE MAKER ONLINE
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Overview
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             What is the Class Schedule Maker? The Modern Solution for School and College Students
@@ -289,7 +316,7 @@ const structuredSchema = {
               <div class="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white font-bold">
                 <Zap class="w-4 h-4" />
               </div>
-              <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">
                 Zero Latency & Instant Setup
               </h3>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -301,7 +328,7 @@ const structuredSchema = {
               <div class="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white font-bold">
                 <Sliders class="w-4 h-4" />
               </div>
-              <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">
                 Clash & Overlap Collision Engine
               </h3>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -313,7 +340,7 @@ const structuredSchema = {
               <div class="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-white font-bold">
                 <Shield class="w-4 h-4" />
               </div>
-              <h3 class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-white">
                 100% Client-Side Privacy
               </h3>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -329,8 +356,8 @@ const structuredSchema = {
     <section id="dead-time" class="scroll-mt-20">
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            ACADEMIC PRODUCTIVITY &bull; TIME BLOCKING SCIENCE
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Time Blocking Science
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             The Cognitive Cost of Campus 'Dead Time' & Gap Minimization in Your Class Schedule
@@ -349,18 +376,18 @@ const structuredSchema = {
           <!-- Bento Inner Highlight Blocks -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
-              <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
-                THE REALITY OF CONTEXT SWITCHING & ATTENTION RESIDUE
-              </span>
+              <h4 class="font-bold text-sm text-zinc-900 dark:text-white">
+                Context Switching & Attention Residue
+              </h4>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
                 Switching mental gears between calculus calculations and literary analysis imposes significant cognitive friction. When your weekly schedule forces you into frequent stops and starts, your brain never enters deep focus. You end your day exhausted, yet your main homework remains unfinished.
               </p>
             </div>
 
             <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 space-y-2">
-              <span class="font-bold text-xs uppercase font-mono text-zinc-900 dark:text-white">
-                CONSOLIDATED MORNING BLOCKS (FINISH BY 1:00 PM)
-              </span>
+              <h4 class="font-bold text-sm text-zinc-900 dark:text-white">
+                Consolidated Morning Blocks
+              </h4>
               <p class="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
                 Consolidating your classes back-to-back with clean 15-minute passing walks fundamentally transforms your semester. Finishing lectures by 1:00 PM unlocks a massive, uninterrupted 4-to-5 hour afternoon block for uninterrupted studying, part-time jobs, campus research, or sports.
               </p>
@@ -380,8 +407,8 @@ const structuredSchema = {
       <div id="university-guides" class="-mt-20 pt-20 pointer-events-none"></div>
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            CAMPUS REGISTRATION &bull; PCC & UF SPECIALIZED GUIDES
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Campus Guides
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             University & College Class Schedule Guides: Planning PCC and UF Schedules
@@ -445,8 +472,8 @@ const structuredSchema = {
     <section id="step-by-step" class="scroll-mt-20">
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            TUTORIAL &bull; FAST 3-MINUTE SETUP
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Quick Walkthrough
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             Step-by-Step Guide: How to Create Your Weekly Class Schedule Online
@@ -498,8 +525,8 @@ const structuredSchema = {
     <section id="templates-hub" class="scroll-mt-20">
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            DOWNLOADABLE TEMPLATES &bull; FREE FORMATS
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Schedule Templates
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             Class Schedule Maker Template Hub: Printable PDF, Excel, and Wallpaper Formats
@@ -579,8 +606,8 @@ const structuredSchema = {
     <section id="comparison-table" class="scroll-mt-20">
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            FEATURE COMPARISON &bull; CLASS SCHEDULE MAKER ONLINE
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Feature Comparison
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             Comparing Class Schedule Maker with Traditional Timetable Software
@@ -647,6 +674,28 @@ const structuredSchema = {
             </tbody>
           </table>
         </div>
+
+        <!-- Studio Mobile & Desktop Visual Architecture -->
+        <div class="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800 grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+          <div class="sm:col-span-2 space-y-2">
+            <h3 class="text-sm sm:text-base font-bold text-zinc-950 dark:text-white">
+              Studio Responsive Architecture: Desktop Matrix to Single-Day Touch Tabs
+            </h3>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              On large screens, view your complete Monday through Friday rhythm with conflict lanes and passing time gaps. On mobile phones, Schedule Studio automatically switches to segmented touch tabs with full-width cards and sticky action buttons so your classes never get squished.
+            </p>
+          </div>
+          <div class="flex justify-center">
+            <img 
+              src="/images/studio-mobile-preview.svg" 
+              alt="Schedule Studio mobile touch interface with single day tabs and full-width timetable cards" 
+              width="390" 
+              height="700" 
+              loading="lazy" 
+              class="w-48 h-auto rounded-2xl shadow-md border border-zinc-200 dark:border-zinc-800"
+            />
+          </div>
+        </div>
       </div>
     </section>
 
@@ -654,8 +703,8 @@ const structuredSchema = {
     <section id="faq" class="scroll-mt-20">
       <div class="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] shadow-xs space-y-6">
         <div class="space-y-2">
-          <span class="text-xs font-mono font-bold tracking-wider text-zinc-600 dark:text-zinc-400 uppercase">
-            QUESTIONS & ANSWERS &bull; ON-PAGE SEO FAQ
+          <span class="text-xs font-mono font-bold tracking-wider text-zinc-500 uppercase">
+            Frequently Asked Questions
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
             Frequently Asked Questions About Class Schedule Maker

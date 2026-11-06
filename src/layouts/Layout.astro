@@ -327,25 +327,69 @@ const langPrefix = lang === 'en' ? '' : `/${lang}`;
       <slot />
     </main>
 
-    <!-- Global Clean Footer -->
-    <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b] text-xs text-zinc-500 dark:text-zinc-400 py-8 mt-12">
-      <div class="max-w-[1536px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px]">
-        <div class="flex flex-wrap items-center gap-3">
-          <img src="/logo.svg" alt="Class Schedule" class="w-5 h-5 rounded" />
-          <span class="font-bold text-zinc-900 dark:text-white">Class Schedule</span>
-          <span>•</span>
-          <a href="/app" class="hover:underline font-bold text-zinc-900 dark:text-white">Schedule Studio</a>
-          <a href="/about" class="hover:underline">About</a>
-          <a href="/contact" class="hover:underline">Contact</a>
-          <a href="/privacy-policy" class="hover:underline">Privacy Policy</a>
-          <a href="/terms-of-service" class="hover:underline">Terms of Service</a>
-          <span>•</span>
-          <a href="/app#feedback" class="hover:underline text-zinc-800 dark:text-zinc-200 font-semibold">Student Feedback</a>
+    <!-- Global Clean Grouped Footer -->
+    <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b] text-xs text-zinc-500 dark:text-zinc-400 py-12 mt-16">
+      <div class="max-w-[1536px] mx-auto px-4 sm:px-6 space-y-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <!-- Col 1: Brand Info -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="Class Schedule Logo" width="24" height="24" class="w-6 h-6 rounded-lg" />
+              <span class="font-bold text-sm text-zinc-900 dark:text-white">Class Schedule Maker</span>
+            </div>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              Fast, private, 100% free weekly timetable builder for university and school students. Runs entirely client-side in your browser.
+            </p>
+            <div class="pt-1 flex items-center gap-2 text-[11px] font-mono text-emerald-600 dark:text-emerald-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>100% Client-Side Privacy</span>
+            </div>
+          </div>
+
+          <!-- Col 2: Product & Tools -->
+          <div class="space-y-2.5 text-xs">
+            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">Product</h4>
+            <ul class="space-y-2">
+              <li><a href="/app" class="hover:text-zinc-900 dark:hover:text-white transition-colors font-semibold text-zinc-800 dark:text-zinc-200">Schedule Studio</a></li>
+              <li><a href="/college-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">College Schedule Maker</a></li>
+              <li><a href="/school-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">School Schedule Maker</a></li>
+              <li><a href="/block-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Block Schedule Maker</a></li>
+              <li><a href="/weekly-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Weekly Schedule Maker</a></li>
+              <li><a href="/class-schedule-template" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Printable & Excel Templates</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: University Guides -->
+          <div class="space-y-2.5 text-xs">
+            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">University Guides</h4>
+            <ul class="space-y-2">
+              <li><a href="/pcc-class-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">PCC Class Schedule</a></li>
+              <li><a href="/uf-class-schedule" class="hover:text-zinc-900 dark:hover:text-white transition-colors">UF Class Schedule (ONE.UF)</a></li>
+              <li><a href="/study-schedule-maker" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Study Schedule Planner</a></li>
+              <li><a href="/blog" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Guides & Articles</a></li>
+              <li><a href="/app#feedback" class="hover:text-zinc-900 dark:hover:text-white transition-colors font-medium">Student Feedback</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Company & Legal -->
+          <div class="space-y-2.5 text-xs">
+            <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-wider text-[11px] font-mono">Company & Legal</h4>
+            <ul class="space-y-2">
+              <li><a href="/about" class="hover:text-zinc-900 dark:hover:text-white transition-colors">About Us & Founder</a></li>
+              <li><a href="/contact" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Contact Support</a></li>
+              <li><a href="/privacy-policy" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms-of-service" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms of Service</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="flex items-center gap-3 text-zinc-400">
-          <span>Client-Side Privacy Architecture</span>
-          <span>•</span>
-          <span>Zero Server Tracking</span>
+
+        <div class="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-zinc-500">
+          <span>&copy; {new Date().getFullYear()} FreeClassSchedule.com &bull; Free Online Timetable Studio</span>
+          <div class="flex items-center gap-4">
+            <span>Zero Tracking Cookies</span>
+            <span>&bull;</span>
+            <span>No Accounts Required</span>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .surface { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1; }
+      .header-bg { fill: #f1f5f9; }
+      .grid-line { stroke: #e2e8f0; stroke-width: 1; }
+      .text-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; font-weight: 700; fill: #0f172a; }
+      .text-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 500; fill: #64748b; }
+      .text-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 600; fill: #64748b; }
+      .card-blue { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1; }
+      .bar-blue { fill: #3b82f6; }
+      .card-emerald { fill: #ecfdf5; stroke: #a7f3d0; stroke-width: 1; }
+      .bar-emerald { fill: #10b981; }
+      .card-purple { fill: #faf5ff; stroke: #e9d5ff; stroke-width: 1; }
+      .bar-purple { fill: #a855f7; }
+      .card-amber { fill: #fffbeb; stroke: #fde68a; stroke-width: 1; }
+      .bar-amber { fill: #f59e0b; }
+      .card-slate { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1; }
+      .bar-slate { fill: #475569; }
+      .pill { rx: 6px; ry: 6px; }
+      .btn { rx: 8px; ry: 8px; fill: #0f172a; }
+      .btn-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 600; fill: #ffffff; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" class="bg" rx="16" />
+
+  <!-- Studio Top Navigation Bar -->
+  <rect x="24" y="24" width="1152" height="64" class="surface" rx="12" />
+  <circle cx="56" cy="56" r="14" fill="#0f172a" />
+  <text x="56" y="60" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" font-weight="800" fill="#ffffff">FS</text>
+  <text x="82" y="61" class="text-title">Schedule Studio</text>
+  <rect x="206" y="44" width="60" height="24" rx="12" fill="#e2e8f0" />
+  <text x="236" y="60" class="text-mono" text-anchor="middle">Plan A</text>
+  <rect x="272" y="44" width="60" height="24" rx="12" fill="transparent" />
+  <text x="302" y="60" class="text-mono" text-anchor="middle" fill="#94a3b8">Plan B</text>
+  <rect x="338" y="44" width="60" height="24" rx="12" fill="transparent" />
+  <text x="368" y="60" class="text-mono" text-anchor="middle" fill="#94a3b8">Plan C</text>
+
+  <!-- Stat badges -->
+  <rect x="740" y="42" width="120" height="28" rx="8" fill="#f1f5f9" />
+  <text x="800" y="60" class="text-mono" text-anchor="middle">15.0 Credits</text>
+  <rect x="870" y="42" width="120" height="28" rx="8" fill="#f1f5f9" />
+  <text x="930" y="60" class="text-mono" text-anchor="middle">0 Conflicts</text>
+
+  <!-- CTA -->
+  <rect x="1004" y="38" width="150" height="36" class="btn" />
+  <text x="1079" y="61" class="btn-text">+ Add Class</text>
+
+  <!-- Timetable Matrix Container -->
+  <rect x="24" y="104" width="1152" height="572" class="surface" rx="16" />
+
+  <!-- Days Header -->
+  <path d="M 24 104 L 1176 104 L 1176 150 L 24 150 Z" class="header-bg" />
+  <line x1="24" y1="150" x2="1176" y2="150" class="grid-line" />
+
+  <!-- Time Gutter Header -->
+  <text x="68" y="132" class="text-mono" text-anchor="middle">TIME</text>
+  <line x1="112" y1="104" x2="112" y2="676" class="grid-line" />
+
+  <!-- Day Names -->
+  <!-- 5 Columns: width = (1176 - 112) / 5 = 212.8 each -->
+  <text x="218" y="132" class="text-title" text-anchor="middle">Monday</text>
+  <line x1="324" y1="104" x2="324" y2="676" class="grid-line" />
+  
+  <text x="430" y="132" class="text-title" text-anchor="middle">Tuesday</text>
+  <line x1="536" y1="104" x2="536" y2="676" class="grid-line" />
+
+  <text x="642" y="132" class="text-title" text-anchor="middle">Wednesday</text>
+  <line x1="748" y1="104" x2="748" y2="676" class="grid-line" />
+
+  <text x="854" y="132" class="text-title" text-anchor="middle">Thursday</text>
+  <line x1="960" y1="104" x2="960" y2="676" class="grid-line" />
+
+  <text x="1066" y="132" class="text-title" text-anchor="middle">Friday</text>
+
+  <!-- Horizontal Time Grid Lines (8 AM to 4 PM) -->
+  <!-- 8:00 AM -->
+  <text x="68" y="174" class="text-mono" text-anchor="middle">8:00 AM</text>
+  <line x1="24" y1="184" x2="1176" y2="184" class="grid-line" />
+  <!-- 9:00 AM -->
+  <text x="68" y="238" class="text-mono" text-anchor="middle">9:00 AM</text>
+  <line x1="24" y1="248" x2="1176" y2="248" class="grid-line" />
+  <!-- 10:00 AM -->
+  <text x="68" y="302" class="text-mono" text-anchor="middle">10:00 AM</text>
+  <line x1="24" y1="312" x2="1176" y2="312" class="grid-line" />
+  <!-- 11:00 AM -->
+  <text x="68" y="366" class="text-mono" text-anchor="middle">11:00 AM</text>
+  <line x1="24" y1="376" x2="1176" y2="376" class="grid-line" />
+  <!-- 12:00 PM -->
+  <text x="68" y="430" class="text-mono" text-anchor="middle">12:00 PM</text>
+  <line x1="24" y1="440" x2="1176" y2="440" class="grid-line" />
+  <!-- 1:00 PM -->
+  <text x="68" y="494" class="text-mono" text-anchor="middle">1:00 PM</text>
+  <line x1="24" y1="504" x2="1176" y2="504" class="grid-line" />
+  <!-- 2:00 PM -->
+  <text x="68" y="558" class="text-mono" text-anchor="middle">2:00 PM</text>
+  <line x1="24" y1="568" x2="1176" y2="568" class="grid-line" />
+  <!-- 3:00 PM -->
+  <text x="68" y="622" class="text-mono" text-anchor="middle">3:00 PM</text>
+
+  <!-- CLASS CARDS -->
+
+  <!-- CS 301 on Mon, Wed, Fri at 10:00 AM - 11:15 AM -->
+  <!-- Mon -->
+  <rect x="118" y="312" width="200" height="74" rx="10" class="card-blue" />
+  <rect x="118" y="312" width="6" height="74" rx="3" class="bar-blue" />
+  <text x="134" y="334" class="text-title" fill="#1e3a8a">CS 301</text>
+  <text x="134" y="352" class="text-sub" fill="#1e40af">Data Structures &amp; Algos</text>
+  <text x="134" y="372" class="text-mono" fill="#3b82f6">10:00 – 11:15 AM &bull; Turing 101</text>
+
+  <!-- Wed -->
+  <rect x="542" y="312" width="200" height="74" rx="10" class="card-blue" />
+  <rect x="542" y="312" width="6" height="74" rx="3" class="bar-blue" />
+  <text x="558" y="334" class="text-title" fill="#1e3a8a">CS 301</text>
+  <text x="558" y="352" class="text-sub" fill="#1e40af">Data Structures &amp; Algos</text>
+  <text x="558" y="372" class="text-mono" fill="#3b82f6">10:00 – 11:15 AM &bull; Turing 101</text>
+
+  <!-- Fri -->
+  <rect x="966" y="312" width="200" height="74" rx="10" class="card-blue" />
+  <rect x="966" y="312" width="6" height="74" rx="3" class="bar-blue" />
+  <text x="982" y="334" class="text-title" fill="#1e3a8a">CS 301</text>
+  <text x="982" y="352" class="text-sub" fill="#1e40af">Data Structures &amp; Algos</text>
+  <text x="982" y="372" class="text-mono" fill="#3b82f6">10:00 – 11:15 AM &bull; Turing 101</text>
+
+  <!-- MATH 21 on Mon, Wed, Fri at 11:30 AM - 12:45 PM -->
+  <!-- Mon -->
+  <rect x="118" y="398" width="200" height="74" rx="10" class="card-emerald" />
+  <rect x="118" y="398" width="6" height="74" rx="3" class="bar-emerald" />
+  <text x="134" y="420" class="text-title" fill="#064e3b">MATH 21</text>
+  <text x="134" y="438" class="text-sub" fill="#065f46">Multivariable Calculus</text>
+  <text x="134" y="458" class="text-mono" fill="#059669">11:30 AM – 12:45 PM &bull; Quad 304</text>
+
+  <!-- Wed -->
+  <rect x="542" y="398" width="200" height="74" rx="10" class="card-emerald" />
+  <rect x="542" y="398" width="6" height="74" rx="3" class="bar-emerald" />
+  <text x="558" y="420" class="text-title" fill="#064e3b">MATH 21</text>
+  <text x="558" y="438" class="text-sub" fill="#065f46">Multivariable Calculus</text>
+  <text x="558" y="458" class="text-mono" fill="#059669">11:30 AM – 12:45 PM &bull; Quad 304</text>
+
+  <!-- Fri -->
+  <rect x="966" y="398" width="200" height="74" rx="10" class="card-emerald" />
+  <rect x="966" y="398" width="6" height="74" rx="3" class="bar-emerald" />
+  <text x="982" y="420" class="text-title" fill="#064e3b">MATH 21</text>
+  <text x="982" y="438" class="text-sub" fill="#065f46">Multivariable Calculus</text>
+  <text x="982" y="458" class="text-mono" fill="#059669">11:30 AM – 12:45 PM &bull; Quad 304</text>
+
+  <!-- ENG 102 on Tue, Thu at 11:00 AM - 12:15 PM -->
+  <!-- Tue -->
+  <rect x="330" y="376" width="200" height="74" rx="10" class="card-purple" />
+  <rect x="330" y="376" width="6" height="74" rx="3" class="bar-purple" />
+  <text x="346" y="398" class="text-title" fill="#581c87">ENG 102</text>
+  <text x="346" y="416" class="text-sub" fill="#6b21a8">Technical Academic Writing</text>
+  <text x="346" y="436" class="text-mono" fill="#9333ea">11:00 AM – 12:15 PM &bull; Hum 202</text>
+
+  <!-- Thu -->
+  <rect x="754" y="376" width="200" height="74" rx="10" class="card-purple" />
+  <rect x="754" y="376" width="6" height="74" rx="3" class="bar-purple" />
+  <text x="770" y="398" class="text-title" fill="#581c87">ENG 102</text>
+  <text x="770" y="416" class="text-sub" fill="#6b21a8">Technical Academic Writing</text>
+  <text x="770" y="436" class="text-mono" fill="#9333ea">11:00 AM – 12:15 PM &bull; Hum 202</text>
+
+  <!-- Footer Branding -->
+  <text x="600" y="664" class="text-mono" text-anchor="middle">Made with FreeClassSchedule.com &bull; 100% Free Timetable Studio</text>
+</svg>

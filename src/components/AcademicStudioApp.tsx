@@ -29,10 +29,13 @@ import {
   HelpCircle,
   Sparkles,
   Zap,
-  Mail
+  Mail,
+  Code,
+  Edit3
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
+import { MAJOR_PRESETS } from '../data/schedulePresets';
 import { 
   TRANSLATIONS, 
   LOCALES, 
@@ -85,6 +88,75 @@ export interface TaskItem {
   title: string;
   completed: boolean;
   dueDate?: string;
+}
+
+export interface SchedulePlan {
+  id: 'plan-a' | 'plan-b' | 'plan-c';
+  name: string;
+  courses: Course[];
+  tasks: TaskItem[];
+}
+
+export function encodeScheduleToShareString(courses: Course[]): string {
+  try {
+    const compact = courses.map(c => ({
+      c: c.code,
+      t: c.title,
+      cr: c.credits,
+      cl: c.colorIndex,
+      s: (c.sections || []).map(s => ({
+        d: s.days,
+        st: s.startTime,
+        et: s.endTime,
+        r: s.room
+      }))
+    }));
+    const json = JSON.stringify(compact);
+    return encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+  } catch (e) {
+    return '';
+  }
+}
+
+export function decodeScheduleFromShareString(raw: string): Course[] | null {
+  try {
+    const json = decodeURIComponent(escape(atob(decodeURIComponent(raw))));
+    const parsed = JSON.parse(json);
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+    return parsed.map((item: any, idx: number) => {
+      const code = item.c || item.code || `CLASS ${idx + 1}`;
+      const title = item.t || item.title || '';
+      const credits = Number(item.cr ?? item.credits ?? 3);
+      const colorIndex = Number(item.cl ?? item.colorIndex ?? idx);
+      const rawSections = item.s || item.sections || [];
+      const sections = rawSections.map((s: any, sIdx: number) => ({
+        id: `sec-${idx}-${sIdx}`,
+        name: `Section 0${sIdx + 1}`,
+        days: (s.d || s.days || []).map((d: string) => normalizeDayOfWeek(d)).filter(Boolean) as DayOfWeek[],
+        startTime: s.st || s.startTime || '09:00 AM',
+        endTime: s.et || s.endTime || '10:15 AM',
+        room: s.r || s.room || 'Campus'
+      }));
+      return {
+        id: `course-${Date.now()}-${idx}`,
+        code,
+        title,
+        credits,
+        colorIndex,
+        selectedSectionId: sections[0]?.id || `sec-${idx}-0`,
+        sections: sections.length > 0 ? sections : [{
+          id: `sec-${idx}-0`,
+          name: 'Sec 01',
+          days: ['Mon', 'Wed', 'Fri'],
+          startTime: '09:00 AM',
+          endTime: '10:15 AM',
+          room: 'Hall 101'
+        }]
+      };
+    });
+  } catch (e) {
+    return null;
+  }
 }
 
 // Muted Apple Tag Color Palette (Strictly Anti-AI Slop)
@@ -346,6 +418,24 @@ export default function AcademicStudioApp() {
     { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
     { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
   ]);
+  // Multi-Plan (Plan A, Plan B, Plan C) State
+  const [plans, setPlans] = useState<SchedulePlan[]>([
+    { id: 'plan-a', name: 'Plan A', courses: DEFAULT_SAMPLE_COURSES, tasks: [
+      { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
+      { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
+    ]},
+    { id: 'plan-b', name: 'Plan B', courses: [], tasks: [] },
+    { id: 'plan-c', name: 'Plan C', courses: [], tasks: [] }
+  ]);
+  const [activePlanId, setActivePlanId] = useState<'plan-a' | 'plan-b' | 'plan-c'>('plan-a');
+  const [isRenamePlanModalOpen, setIsRenamePlanModalOpen] = useState(false);
+  const [newPlanName, setNewPlanName] = useState('Plan A');
+  const [isPresetModalOpen, setIsPresetModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [isPlanMenuOpen, setIsPlanMenuOpen] = useState(false);
+  const planMenuRef = useRef<HTMLDivElement>(null);
+
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [includeWeekend, setIncludeWeekend] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
@@ -486,47 +576,108 @@ export default function AcademicStudioApp() {
   const timetableRef = useRef<HTMLDivElement>(null);
   const isLoadedRef = useRef(false);
 
+  const STORAGE_KEY_V3 = 'class_schedule_plans_v3';
+  const STORAGE_KEY_ACTIVE_PLAN = 'class_schedule_active_plan_v3';
   const STORAGE_KEY = 'class_schedule_optimizer_state_v2';
   const LEGACY_STORAGE_KEY_COURSES = 'academic_planner_courses_v1';
   const LEGACY_STORAGE_KEY_TASKS = 'academic_planner_tasks_v1';
 
-  // Load from LocalStorage
+  // Close Plan dropdown on outside click
   useEffect(() => {
+    if (!isPlanMenuOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (planMenuRef.current && !planMenuRef.current.contains(e.target as Node)) {
+        setIsPlanMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isPlanMenuOpen]);
+
+  // Load from LocalStorage or Hash
+  useEffect(() => {
+    let loadedPlans: SchedulePlan[] = [
+      { id: 'plan-a', name: 'Plan A', courses: DEFAULT_SAMPLE_COURSES, tasks: [
+        { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
+        { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
+      ]},
+      { id: 'plan-b', name: 'Plan B', courses: [], tasks: [] },
+      { id: 'plan-c', name: 'Plan C', courses: [], tasks: [] }
+    ];
+    let loadedActiveId: 'plan-a' | 'plan-b' | 'plan-c' = 'plan-a';
+
     try {
+      // 1. Check if URL hash has a shared schedule (#plan= or #share=)
+      const hash = window.location.hash || '';
+      let rawShareCode: string | null = null;
+      if (hash.includes('plan=')) {
+        rawShareCode = hash.split('plan=')[1]?.split('&')[0];
+      } else if (hash.includes('share=')) {
+        rawShareCode = hash.split('share=')[1]?.split('&')[0];
+      }
+
+      if (rawShareCode) {
+        const decoded = decodeScheduleFromShareString(rawShareCode);
+        if (decoded && decoded.length > 0) {
+          loadedPlans[0].courses = decoded;
+          setCourses(decoded);
+          setPlans(loadedPlans);
+          setActivePlanId('plan-a');
+          setBanner("Shared schedule loaded — it's now saved on this device.");
+          setTimeout(() => setBanner(null), 5000);
+          isLoadedRef.current = true;
+          return;
+        }
+      }
+
+      // 2. Check V3 Multi-Plan Storage
+      const savedV3 = localStorage.getItem(STORAGE_KEY_V3);
+      const savedActive = localStorage.getItem(STORAGE_KEY_ACTIVE_PLAN) as 'plan-a' | 'plan-b' | 'plan-c' | null;
+      if (savedV3) {
+        const parsedV3 = JSON.parse(savedV3);
+        if (Array.isArray(parsedV3) && parsedV3.length > 0) {
+          loadedPlans = parsedV3;
+          if (savedActive && ['plan-a', 'plan-b', 'plan-c'].includes(savedActive)) {
+            loadedActiveId = savedActive;
+          }
+          const activePlan = loadedPlans.find(p => p.id === loadedActiveId) || loadedPlans[0];
+          setPlans(loadedPlans);
+          setActivePlanId(activePlan.id);
+          setCourses(activePlan.courses || []);
+          setTasks(activePlan.tasks || []);
+          isLoadedRef.current = true;
+          return;
+        }
+      }
+
+      // 3. Fallback to V2 Single Plan (Migrate to Plan A)
       const savedV2 = localStorage.getItem(STORAGE_KEY);
       if (savedV2) {
         const parsed = JSON.parse(savedV2);
         if (parsed.courses && Array.isArray(parsed.courses)) {
-          setCourses(parsed.courses);
-        } else {
-          setCourses(DEFAULT_SAMPLE_COURSES);
+          loadedPlans[0].courses = parsed.courses;
         }
         if (parsed.tasks && Array.isArray(parsed.tasks)) {
-          setTasks(parsed.tasks);
+          loadedPlans[0].tasks = parsed.tasks;
         }
       } else {
         const legacyCourses = localStorage.getItem(LEGACY_STORAGE_KEY_COURSES);
         if (legacyCourses) {
           const parsed = JSON.parse(legacyCourses);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setCourses(parsed);
-          } else {
-            setCourses(DEFAULT_SAMPLE_COURSES);
+            loadedPlans[0].courses = parsed;
           }
-        } else {
-          setCourses(DEFAULT_SAMPLE_COURSES);
         }
-
         const legacyTasks = localStorage.getItem(LEGACY_STORAGE_KEY_TASKS);
         if (legacyTasks) {
-          setTasks(JSON.parse(legacyTasks));
-        } else {
-          setTasks([
-            { id: 't1', title: 'Review CS301 Syllabus and office hours', completed: true },
-            { id: 't2', title: 'Submit MATH 21 Homework 1', completed: false }
-          ]);
+          loadedPlans[0].tasks = JSON.parse(legacyTasks);
         }
       }
+
+      setPlans(loadedPlans);
+      setActivePlanId('plan-a');
+      setCourses(loadedPlans[0].courses);
+      setTasks(loadedPlans[0].tasks);
     } catch (e) {
       setCourses(DEFAULT_SAMPLE_COURSES);
     } finally {
@@ -537,10 +688,22 @@ export default function AcademicStudioApp() {
     setIsDarkTheme(isDark);
   }, []);
 
-  // Save State (courses & tasks)
+  // Save State (courses, tasks & multi-plans)
   useEffect(() => {
     if (!isLoadedRef.current) return;
     try {
+      setPlans(prevPlans => {
+        const updated = prevPlans.map(p => 
+          p.id === activePlanId ? { ...p, courses, tasks } : p
+        );
+        try {
+          localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+          localStorage.setItem(STORAGE_KEY_ACTIVE_PLAN, activePlanId);
+        } catch (e) {}
+        return updated;
+      });
+
+      // Backward-compatible V2 & legacy storage
       const stateToSave = {
         courses,
         tasks,
@@ -553,7 +716,7 @@ export default function AcademicStudioApp() {
     } catch (e) {
       console.error('Failed to save schedule to localStorage:', e);
     }
-  }, [courses, tasks]);
+  }, [courses, tasks, activePlanId]);
 
   // Theme Switcher
   const toggleTheme = () => {
@@ -785,14 +948,124 @@ export default function AcademicStudioApp() {
     setTimeout(() => setBanner(null), 3000);
   };
 
+  // Multi-Plan Handlers (Plan A / B / C)
+  const handleSwitchPlan = (targetPlanId: 'plan-a' | 'plan-b' | 'plan-c') => {
+    if (targetPlanId === activePlanId) return;
+
+    // 1. Commit current work to active plan
+    const updatedPlans = plans.map(p => 
+      p.id === activePlanId ? { ...p, courses, tasks } : p
+    );
+    setPlans(updatedPlans);
+    try {
+      localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updatedPlans));
+      localStorage.setItem(STORAGE_KEY_ACTIVE_PLAN, targetPlanId);
+    } catch (e) {}
+
+    // 2. Switch to target plan
+    const target = updatedPlans.find(p => p.id === targetPlanId);
+    setActivePlanId(targetPlanId);
+    setIsPlanMenuOpen(false);
+    if (target) {
+      setCourses(target.courses || []);
+      setTasks(target.tasks || []);
+      setBanner(`Switched to ${target.name}${target.courses.length === 0 ? ' (empty schedule draft)' : ''}`);
+      setTimeout(() => setBanner(null), 2500);
+    }
+  };
+
+  const handleDuplicateCurrentPlan = (targetPlanId: 'plan-a' | 'plan-b' | 'plan-c') => {
+    const targetPlan = plans.find(p => p.id === targetPlanId);
+    const targetName = targetPlan?.name || (targetPlanId === 'plan-b' ? 'Plan B' : 'Plan C');
+    
+    if (confirm(`Duplicate current schedule into ${targetName}? Existing classes in ${targetName} will be replaced.`)) {
+      const clonedCourses: Course[] = JSON.parse(JSON.stringify(courses));
+      const clonedTasks: TaskItem[] = JSON.parse(JSON.stringify(tasks));
+      
+      const updated = plans.map(p => 
+        p.id === targetPlanId ? { ...p, courses: clonedCourses, tasks: clonedTasks } : p
+      );
+      setPlans(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+      } catch (e) {}
+      setIsPlanMenuOpen(false);
+      setBanner(`Current schedule duplicated into ${targetName}.`);
+      setTimeout(() => setBanner(null), 3000);
+    }
+  };
+
+  const handleRenamePlan = (name: string) => {
+    const clean = name.trim();
+    if (!clean) return;
+    const updated = plans.map(p => 
+      p.id === activePlanId ? { ...p, name: clean } : p
+    );
+    setPlans(updated);
+    try {
+      localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+    } catch (e) {}
+    setIsRenamePlanModalOpen(false);
+    setBanner(`Plan renamed to "${clean}".`);
+    setTimeout(() => setBanner(null), 2500);
+  };
+
+  const handleLoadPreset = (presetKey: string, targetPlanId?: 'plan-a' | 'plan-b' | 'plan-c') => {
+    const preset = MAJOR_PRESETS[presetKey];
+    if (!preset) return;
+
+    const targetId = targetPlanId || activePlanId;
+    const target = plans.find(p => p.id === targetId);
+    const targetName = target?.name || 'Current Plan';
+
+    const clonedCourses: Course[] = JSON.parse(JSON.stringify(preset.courses));
+    const clonedTasks: TaskItem[] = JSON.parse(JSON.stringify(preset.tasks || []));
+
+    if (targetId === activePlanId) {
+      setCourses(clonedCourses);
+      setTasks(clonedTasks);
+    }
+
+    const updated = plans.map(p => 
+      p.id === targetId ? { ...p, courses: clonedCourses, tasks: clonedTasks } : p
+    );
+    setPlans(updated);
+    if (targetId !== activePlanId) {
+      setActivePlanId(targetId);
+      setCourses(clonedCourses);
+      setTasks(clonedTasks);
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEY_ACTIVE_PLAN, targetId);
+    } catch (e) {}
+
+    setIsPresetModalOpen(false);
+    setBanner(`Loaded ${preset.name} (${preset.credits} cr) into ${targetName}!`);
+    setTimeout(() => setBanner(null), 3500);
+    try {
+      confetti({ particleCount: 50, spread: 50, origin: { y: 0.7 } });
+    } catch (e) {}
+  };
+
+  const handleShareSchedule = () => {
+    const shareCode = encodeScheduleToShareString(courses);
+    const fullUrl = `${window.location.origin}/app#plan=${shareCode}`;
+    setShareUrl(fullUrl);
+    setIsShareModalOpen(true);
+    try {
+      navigator.clipboard.writeText(fullUrl);
+      setBanner('Share link copied to clipboard! Anyone opening it can view and save this schedule.');
+      setTimeout(() => setBanner(null), 4000);
+      confetti({ particleCount: 40, spread: 45, origin: { y: 0.7 } });
+    } catch (e) {}
+  };
+
   // Reset Schedule
   const handleResetSchedule = () => {
     if (confirm('Reset timetable to sample course demonstrations?')) {
       setCourses(DEFAULT_SAMPLE_COURSES);
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(LEGACY_STORAGE_KEY_COURSES);
-      localStorage.removeItem(LEGACY_STORAGE_KEY_TASKS);
-      setBanner('Schedule reset to demo courses.');
+      setBanner('Schedule reset to demo courses successfully.');
       setTimeout(() => setBanner(null), 3000);
     }
   };
@@ -1318,7 +1591,7 @@ export default function AcademicStudioApp() {
                 </div>
 
                 {event.title && (
-                  <div className={`text-[11px] font-medium truncate ${pal.textTitle}`}>
+                  <div className={`text-[11px] font-medium line-clamp-2 break-words leading-tight ${pal.textTitle}`}>
                     {event.title}
                   </div>
                 )}
@@ -1481,6 +1754,85 @@ export default function AcademicStudioApp() {
               <span className="sm:hidden">{t.days.full[mobileDay] || DAY_LABELS[mobileDay].full}</span>
             </h1>
 
+            {/* Plan A / B / C Segmented Multi-Schedule Switcher */}
+            <div className="flex items-center bg-zinc-100 dark:bg-zinc-850 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-800 relative" ref={planMenuRef}>
+              {plans.map(p => {
+                const isActive = p.id === activePlanId;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => handleSwitchPlan(p.id)}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-2xs font-bold'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                    }`}
+                    title={`Switch to ${p.name}`}
+                  >
+                    {p.name}
+                  </button>
+                );
+              })}
+
+              {/* Plan Options Dropdown Menu Button */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsPlanMenuOpen(!isPlanMenuOpen)}
+                  className="w-6 h-6 rounded-md flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200/60 dark:hover:bg-zinc-700/60 transition cursor-pointer ml-0.5"
+                  title="Plan Options (Rename, Duplicate, Presets)"
+                >
+                  <Sliders className="w-3 h-3" />
+                </button>
+
+                {isPlanMenuOpen && (
+                  <div className="absolute left-0 mt-2 w-48 rounded-xl bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 shadow-xl py-1 z-50 text-xs">
+                    <button
+                      onClick={() => {
+                        const cur = plans.find(p => p.id === activePlanId);
+                        setNewPlanName(cur?.name || 'Plan A');
+                        setIsPlanMenuOpen(false);
+                        setIsRenamePlanModalOpen(true);
+                      }}
+                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-700 dark:text-zinc-300"
+                    >
+                      <Edit3 className="w-3.5 h-3.5 text-zinc-500" />
+                      <span>Rename Current Plan</span>
+                    </button>
+
+                    <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
+
+                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                      Duplicate Schedule To
+                    </div>
+                    {plans.filter(p => p.id !== activePlanId).map(p => (
+                      <button
+                        key={p.id}
+                        onClick={() => handleDuplicateCurrentPlan(p.id)}
+                        className="w-full px-3 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer text-zinc-700 dark:text-zinc-300"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-zinc-500" />
+                        <span>Copy into {p.name}</span>
+                      </button>
+                    ))}
+
+                    <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
+
+                    <button
+                      onClick={() => {
+                        setIsPlanMenuOpen(false);
+                        setIsPresetModalOpen(true);
+                      }}
+                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-amber-600 dark:text-amber-400"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Load Major Preset...</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">&bull;</span>
 
             {/* Subtle Top Status Pill (Strictly Monochrome Slate - No Green Pills) */}
@@ -1521,6 +1873,26 @@ export default function AcademicStudioApp() {
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span className="hidden xs:inline">{t.actions.newClass}</span>
               <span className="xs:hidden">Class</span>
+            </button>
+
+            {/* Share Link Button */}
+            <button
+              onClick={handleShareSchedule}
+              className="h-9 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+              title="Share Timetable Link"
+            >
+              <Share2 className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
+              <span className="hidden sm:inline">Share</span>
+            </button>
+
+            {/* Major Presets Trigger (Desktop/Tablet) */}
+            <button
+              onClick={() => setIsPresetModalOpen(true)}
+              className="h-9 px-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium hidden lg:flex items-center gap-1.5 transition cursor-pointer"
+              title="Load College Major Preset (CS, Nursing, Pre-Med, etc.)"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Presets</span>
             </button>
 
             {/* Print (Desktop only) */}
@@ -1727,6 +2099,18 @@ export default function AcademicStudioApp() {
 
               </div>
 
+            </div>
+
+            {/* Export Branding & Watermark Footer */}
+            <div className="py-2.5 px-4 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-[11px] text-zinc-500 font-mono">
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-zinc-800 dark:text-zinc-200">FreeClassSchedule.com</span>
+                <span>&bull;</span>
+                <span>100% Free Timetable Studio</span>
+              </div>
+              <div className="hidden sm:block">
+                <span>Made with FreeClassSchedule.com</span>
+              </div>
             </div>
 
           </div>
@@ -2276,8 +2660,8 @@ export default function AcademicStudioApp() {
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between gap-3 pt-3">
+              {/* Action Buttons (Sticky at bottom on mobile) */}
+              <div className="sticky bottom-0 bg-white dark:bg-[#121215] pt-3 pb-1 border-t border-zinc-100 dark:border-zinc-800 -mx-5 sm:-mx-6 px-5 sm:px-6 z-10 flex items-center justify-between gap-3">
                 {selectedEventForEdit ? (
                   <button
                     type="button"
@@ -2443,7 +2827,223 @@ export default function AcademicStudioApp() {
                 </div>
                 <ChevronRight className="w-4 h-4 text-zinc-400" />
               </button>
+
+              <div className="border-t border-zinc-200 dark:border-zinc-800 my-2 pt-2" />
+
+              <button
+                onClick={() => {
+                  setIsExportModalOpen(false);
+                  handleShareSchedule();
+                }}
+                className="w-full p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-zinc-50/50 dark:bg-zinc-900/50 flex items-center justify-between transition cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
+                    <Share2 className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-zinc-900 dark:text-white block">Shareable Web Link &amp; Embed</span>
+                    <span className="text-[11px] text-zinc-500">Generate URL or responsive iframe embed</span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-400" />
+              </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share & Embed Modal */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+                  <Share2 className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+                  <span>Share Schedule &amp; Embed Widget</span>
+                </h3>
+                <p className="text-xs text-zinc-500">100% Client-Side. No registration, no server database required.</p>
+              </div>
+              <button onClick={() => setIsShareModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Share Link Section */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">
+                Direct Shareable Link
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={shareUrl || `${typeof window !== 'undefined' ? window.location.origin : ''}/app#plan=${encodeScheduleToShareString(courses)}`}
+                  className="flex-1 h-10 px-3 text-xs font-mono rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-850 text-zinc-700 dark:text-zinc-300 select-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = shareUrl || `${window.location.origin}/app#plan=${encodeScheduleToShareString(courses)}`;
+                    navigator.clipboard.writeText(url);
+                    setBanner('Share link copied to clipboard!');
+                    setTimeout(() => setBanner(null), 3000);
+                  }}
+                  className="h-10 px-4 rounded-xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-xs font-bold hover:bg-black dark:hover:bg-zinc-100 transition cursor-pointer shrink-0"
+                >
+                  Copy Link
+                </button>
+              </div>
+              <p className="text-[11px] text-zinc-500">
+                Opening this link on a classmate's phone or computer loads your exact schedule with one click and saves it locally.
+              </p>
+            </div>
+
+            {/* Embed Widget Section */}
+            <div className="space-y-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300 block flex items-center justify-between">
+                <span>Website / Blog Embed Code (iFrame)</span>
+                <span className="text-[10px] font-mono text-zinc-400">Responsive &bull; Noindex</span>
+              </label>
+              <textarea
+                readOnly
+                rows={3}
+                value={`<iframe src="https://freeclassschedule.com/embed#plan=${encodeScheduleToShareString(courses)}" width="100%" height="620" frameborder="0" style="border:1px solid #e4e4e7; border-radius:16px;"></iframe>\n<p style="font-size:12px;color:#71717a;text-align:center;margin-top:8px;">Powered by <a href="https://freeclassschedule.com" target="_blank" rel="noopener">FreeClassSchedule.com</a></p>`}
+                className="w-full p-2.5 text-[11px] font-mono rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-850 text-zinc-700 dark:text-zinc-300 select-all resize-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const code = `<iframe src="https://freeclassschedule.com/embed#plan=${encodeScheduleToShareString(courses)}" width="100%" height="620" frameborder="0" style="border:1px solid #e4e4e7; border-radius:16px;"></iframe>\n<p style="font-size:12px;color:#71717a;text-align:center;margin-top:8px;">Powered by <a href="https://freeclassschedule.com" target="_blank" rel="noopener">FreeClassSchedule.com</a></p>`;
+                  navigator.clipboard.writeText(code);
+                  setBanner('Embed snippet copied! Paste into any HTML, Notion, or blog page.');
+                  setTimeout(() => setBanner(null), 3000);
+                }}
+                className="h-9 px-4 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <Code className="w-3.5 h-3.5" />
+                <span>Copy Embed Code</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Major Presets Modal */}
+      {isPresetModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>College Major Timetable Presets</span>
+                </h3>
+                <p className="text-xs text-zinc-500">Pre-built, conflict-free academic blueprints for top university degree paths.</p>
+              </div>
+              <button onClick={() => setIsPresetModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {Object.entries(MAJOR_PRESETS).map(([key, preset]) => (
+                <div
+                  key={key}
+                  className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-2.5"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-sm text-zinc-950 dark:text-white">{preset.name}</h4>
+                        <span className="px-2 py-0.5 rounded-md bg-zinc-200/70 dark:bg-zinc-800 text-[11px] font-mono font-bold text-zinc-700 dark:text-zinc-300">
+                          {preset.credits} Credits
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-500 mt-0.5">{preset.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    {preset.courses.map(c => (
+                      <span key={c.id} className="px-2 py-0.5 rounded text-[10px] font-mono bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
+                        {c.code}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
+                    <button
+                      type="button"
+                      onClick={() => handleLoadPreset(key, activePlanId)}
+                      className="h-8 px-3 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 text-xs font-semibold hover:bg-black dark:hover:bg-zinc-100 transition cursor-pointer"
+                    >
+                      Load into {plans.find(p => p.id === activePlanId)?.name || 'Current'}
+                    </button>
+                    {plans.filter(p => p.id !== activePlanId).map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => handleLoadPreset(key, p.id)}
+                        className="h-8 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-xs font-medium transition cursor-pointer"
+                      >
+                        Load into {p.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rename Plan Modal */}
+      {isRenamePlanModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-sm p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-sm font-bold text-zinc-950 dark:text-white">Rename Schedule Plan</h3>
+              <button onClick={() => setIsRenamePlanModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              handleRenamePlan(newPlanName);
+            }} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Plan Name
+                </label>
+                <input
+                  type="text"
+                  value={newPlanName}
+                  onChange={(e) => setNewPlanName(e.target.value)}
+                  placeholder="e.g. Plan A: Morning Classes"
+                  className="w-full h-10 px-3 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white placeholder:text-zinc-400"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsRenamePlanModalOpen(false)}
+                  className="h-9 px-3 text-xs font-medium text-zinc-600 dark:text-zinc-400 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="h-9 px-4 rounded-xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-xs font-bold hover:bg-black dark:hover:bg-zinc-100 transition cursor-pointer"
+                >
+                  Save Name
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
