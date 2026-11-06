@@ -83,6 +83,7 @@ export interface TranslationDictionary {
     courseTitle: string;
     courseTitlePlaceholder: string;
     credits: string;
+    creditHours?: string;
     classDays: string;
     startTime: string;
     endTime: string;
@@ -92,6 +93,7 @@ export interface TranslationDictionary {
     saveClass: string;
     updateClass: string;
     duplicateClass: string;
+    duplicateToOtherDays?: string;
     deleteClass: string;
     cancel: string;
     errorRequiredCode: string;

@@ -2072,7 +2072,7 @@ export default function AcademicStudioApp() {
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
-                    {t.form.creditHours}
+                    {t.form.credits}
                   </label>
                   <select
                     value={formCredits}
@@ -2203,7 +2203,7 @@ export default function AcademicStudioApp() {
               {selectedEventForEdit && (
                 <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
                   <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 block mb-1.5">
-                    {t.form.duplicateToOtherDays}
+                    {t.form.duplicateToOtherDays || 'Duplicate to other days'}
                   </span>
                   <div className="flex flex-wrap items-center gap-1.5">
                     {WEEKDAY_DAYS.filter(d => !formDays.some(fd => normalizeDayOfWeek(fd) === d)).map(d => (
