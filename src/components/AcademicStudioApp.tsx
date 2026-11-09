@@ -423,6 +423,37 @@ export function calculateScheduleIdleGaps(coursesList: Course[], activeDays: Day
   return totalGapMins;
 }
 
+
+// 12-hour <-> 24-hour time format utilities for native <input type="time"> (S1)
+export function time24To12(t24: string): string {
+  if (!t24) return '09:00 AM';
+  const clean = t24.trim();
+  if (clean.includes('AM') || clean.includes('PM')) return clean;
+  const [hStr, mStr] = clean.split(':');
+  const h = parseInt(hStr, 10) || 0;
+  const m = parseInt(mStr, 10) || 0;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const displayH = h % 12 === 0 ? 12 : h % 12;
+  const hh = displayH < 10 ? `0${displayH}` : `${displayH}`;
+  const mm = m < 10 ? `0${m}` : `${m}`;
+  return `${hh}:${mm} ${ampm}`;
+}
+
+export function time12To24(t12: string): string {
+  if (!t12) return '09:00';
+  const clean = t12.trim();
+  if (!clean.includes('AM') && !clean.includes('PM') && clean.includes(':')) {
+    const parts = clean.split(':');
+    const h = parseInt(parts[0], 10) || 0;
+    const m = parseInt(parts[1], 10) || 0;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+  const mins = parseFlexibleTime(clean);
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
 export const DEFAULT_SAMPLE_COURSES: Course[] = [
   {
     id: 'course-cs301',
@@ -493,7 +524,62 @@ const MOBILE_NAV_LABELS: Record<SupportedLocale, { tasks: string; optimize: stri
   tl: { tasks: 'Gawain', optimize: 'Ayusin', export: 'I-export' },
 };
 
+// Recoverable React Error Boundary (S1)
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+export class StudioErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('StudioErrorBoundary caught error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-[#FBFBFD] dark:bg-[#09090b] p-6 text-center">
+          <div className="max-w-md w-full bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 shadow-2xl space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto text-xl font-bold">
+              ⚠️
+            </div>
+            <h2 className="text-lg font-bold text-zinc-950 dark:text-white">
+              Something went wrong
+            </h2>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Something went wrong — your schedule is saved. Reload the studio to continue.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="h-10 px-6 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-bold transition shadow-xs cursor-pointer"
+            >
+              Reload Studio
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function AcademicStudioApp() {
+  return (
+    <StudioErrorBoundary>
+      <AcademicStudioAppInner />
+    </StudioErrorBoundary>
+  );
+}
+
+function AcademicStudioAppInner() {
   // Initialize with DEFAULT_SAMPLE_COURSES so the first paint & SSR pre-render already contain
   // the full sample schedule with zero empty-grid pop-in and zero Cumulative Layout Shift
   const [courses, setCourses] = useState<Course[]>(DEFAULT_SAMPLE_COURSES);
@@ -730,8 +816,8 @@ export default function AcademicStudioApp() {
   const [formTitle, setFormTitle] = useState('');
   const [formCredits, setFormCredits] = useState(3);
   const [formDays, setFormDays] = useState<DayOfWeek[]>(['Mon', 'Wed', 'Fri']);
-  const [formStartTime, setFormStartTime] = useState('09:00 AM');
-  const [formEndTime, setFormEndTime] = useState('10:15 AM');
+  const [formStartTime, setFormStartTime] = useState('09:00');
+  const [formEndTime, setFormEndTime] = useState('10:15');
   const [formRoom, setFormRoom] = useState('Hall 101');
   const [formColorIndex, setFormColorIndex] = useState(0);
 
@@ -790,6 +876,23 @@ export default function AcademicStudioApp() {
     ];
     let loadedActiveId: 'plan-a' | 'plan-b' | 'plan-c' = 'plan-a';
 
+        // 0. Restore Undo history & 5D/7D view preference across reload BEFORE any early return (S3 & S6)
+    try {
+      const savedUndo = localStorage.getItem('class_schedule_undo_snapshot_v1');
+      if (savedUndo) {
+        const parsedUndo = JSON.parse(savedUndo);
+        if (parsedUndo && Array.isArray(parsedUndo.courses)) {
+          historyStackRef.current = [parsedUndo];
+          setCanUndo(true);
+        }
+      }
+    } catch (e) {}
+    try {
+      const savedWeekend = localStorage.getItem('class_schedule_include_weekend_v1');
+      if (savedWeekend === 'true') {
+        setIncludeWeekend(true);
+      }
+    } catch (e) {}
     try {
       // 1. Check if URL hash has a shared schedule (#plan= or #share=)
       const hash = window.location.hash || '';
@@ -871,25 +974,7 @@ export default function AcademicStudioApp() {
       isLoadedRef.current = true;
     }
 
-    // Restore Undo history across reload (R4)
-    try {
-      const savedUndo = localStorage.getItem('class_schedule_undo_snapshot_v1');
-      if (savedUndo) {
-        const parsedUndo = JSON.parse(savedUndo);
-        if (parsedUndo && Array.isArray(parsedUndo.courses)) {
-          historyStackRef.current = [parsedUndo];
-          setCanUndo(true);
-        }
-      }
-    } catch (e) {}
 
-    // Restore 5D/7D view preference across reload (R6)
-    try {
-      const savedWeekend = localStorage.getItem('class_schedule_include_weekend_v1');
-      if (savedWeekend === 'true') {
-        setIncludeWeekend(true);
-      }
-    } catch (e) {}
 
     const isDark = document.documentElement.classList.contains('dark');
     setIsDarkTheme(isDark);
@@ -947,10 +1032,7 @@ export default function AcademicStudioApp() {
     setFormDays(prev => {
       const normalizedPrev = prev.map(p => normalizeDayOfWeek(p) || p);
       if (normalizedPrev.includes(norm)) {
-        if (normalizedPrev.length > 1) {
-          return normalizedPrev.filter(day => day !== norm);
-        }
-        return normalizedPrev;
+        return normalizedPrev.filter(day => day !== norm);
       } else {
         return [...normalizedPrev, norm];
       }
@@ -972,18 +1054,15 @@ export default function AcademicStudioApp() {
     }
 
     if (defaultStart) {
-      setFormStartTime(defaultStart);
+      setFormStartTime(time12To24(defaultStart));
       const startM = parseFlexibleTime(defaultStart);
-      const endM = startM + 75; // default 1h 15m
+      const endM = startM + 75;
       const h = Math.floor(endM / 60);
       const m = endM % 60;
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      const displayH = h % 12 === 0 ? 12 : h % 12;
-      const displayM = m < 10 ? `0${m}` : m;
-      setFormEndTime(`${displayH}:${displayM} ${ampm}`);
+      setFormEndTime(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
     } else {
-      setFormStartTime('09:00 AM');
-      setFormEndTime('10:15 AM');
+      setFormStartTime('09:00');
+      setFormEndTime('10:15');
     }
     setSelectedEventForEdit(null);
     setFormError(null);
@@ -1054,8 +1133,8 @@ export default function AcademicStudioApp() {
       setFormError('Please select at least one day for this class.');
       return;
     }
-    const startM = parseFlexibleTime(formStartTime);
-    const endM = parseFlexibleTime(formEndTime);
+    const startM = parseFlexibleTime(time24To12(formStartTime));
+    const endM = parseFlexibleTime(time24To12(formEndTime));
     if (endM <= startM) {
       setFormError('End time must be later than start time.');
       return;
@@ -1083,8 +1162,8 @@ export default function AcademicStudioApp() {
                 id: selectedEventForEdit.section.id,
                 name: 'Section 01',
                 days: [...validDays],
-                startTime: formStartTime.trim(),
-                endTime: formEndTime.trim(),
+                startTime: time24To12(formStartTime),
+                endTime: time24To12(formEndTime),
                 room: formRoom.trim() || 'Campus'
               }
             ]
@@ -1109,8 +1188,8 @@ export default function AcademicStudioApp() {
             id: secId,
             name: 'Section 01',
             days: [...validDays],
-            startTime: formStartTime.trim(),
-            endTime: formEndTime.trim(),
+            startTime: time24To12(formStartTime),
+            endTime: time24To12(formEndTime),
             room: formRoom.trim() || 'Campus'
           }
         ]
@@ -1674,7 +1753,7 @@ export default function AcademicStudioApp() {
       if (newTotalGaps < currentTotalGaps) {
         const currentHours = (currentTotalGaps / 60).toFixed(1);
         const proposedHours = (newTotalGaps / 60).toFixed(1);
-        const savedHours = (Math.max(0, currentTotalGaps - newTotalGaps) / 60).toFixed(1);
+        const savedHours = Math.max(0, parseFloat(currentHours) - parseFloat(proposedHours)).toFixed(1);
         setOptimizerProposal({
           isOpen: true,
           currentGapHours: currentHours,
@@ -1773,9 +1852,17 @@ export default function AcademicStudioApp() {
     a.click();
     URL.revokeObjectURL(url);
     setIsExportModalOpen(false);
+    setBanner('.ICS calendar file downloaded — import into Google Calendar or Apple Calendar.');
+    setTimeout(() => setBanner(null), 3500);
   };
 
   // Export PNG Image
+    const handlePrint = () => {
+    setBanner('PDF / Print dialog opened.');
+    setTimeout(() => setBanner(null), 3500);
+    window.print();
+  };
+
   const handleExportPNG = async () => {
     if (!timetableRef.current) return;
     setIsExporting(true);
@@ -1789,6 +1876,8 @@ export default function AcademicStudioApp() {
       a.download = 'weekly-class-schedule.png';
       a.href = dataUrl;
       a.click();
+      setBanner('PNG exported — downloaded successfully.');
+      setTimeout(() => setBanner(null), 3500);
     } catch (e) {
       console.error(e);
     } finally {
@@ -1874,8 +1963,8 @@ export default function AcademicStudioApp() {
                 setFormTitle(event.rawCourse.title);
                 setFormCredits(event.rawCourse.credits);
                 setFormDays(event.rawSection.days);
-                setFormStartTime(event.rawSection.startTime);
-                setFormEndTime(event.rawSection.endTime);
+                setFormStartTime(time12To24(event.rawSection.startTime));
+                setFormEndTime(time12To24(event.rawSection.endTime));
                 setFormRoom(event.rawSection.room || '');
                 setFormColorIndex(event.rawCourse.colorIndex);
                 setFormError(null);
@@ -2247,7 +2336,7 @@ export default function AcademicStudioApp() {
 
             {/* Quick Print Button */}
             <button
-              onClick={() => window.print()}
+              onClick={handlePrint}
               className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hidden md:flex items-center justify-center transition cursor-pointer shrink-0"
               title={t.actions.printPdf || 'Print / Save PDF'}
             >
@@ -2921,32 +3010,20 @@ export default function AcademicStudioApp() {
                 </div>
               </div>
 
-              {/* Start & End Times + Room */}
+              {/* Start & End Times + Room (S1: Native <input type="time" step="900"> per platform standard) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-start">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     {t.form.startTime}
                   </label>
                   <input
-                    type="text"
+                    type="time"
+                    step="900"
                     value={formStartTime}
-                    onChange={e => setFormStartTime(prev => handleTimeInput(e.target.value, prev))}
-                    onKeyDown={e => {
-                      if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        setFormStartTime(prev => stepTimeMinutes(prev, 'down', 30));
-                      } else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        setFormStartTime(prev => stepTimeMinutes(prev, 'up', 30));
-                      }
-                    }}
-                    placeholder="09:00 AM"
-                    list="modal-times-start"
-                    className="w-full h-10 px-3 text-xs font-mono font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white"
+                    onChange={(e) => setFormStartTime(e.target.value)}
+                    required
+                    className="w-full h-10 px-3 text-xs font-mono font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition scheme-light dark:scheme-dark"
                   />
-                  <datalist id="modal-times-start">
-                    {COMMON_START_TIMES.map(t => <option key={t} value={t} />)}
-                  </datalist>
                 </div>
 
                 <div>
@@ -2954,25 +3031,13 @@ export default function AcademicStudioApp() {
                     {t.form.endTime}
                   </label>
                   <input
-                    type="text"
+                    type="time"
+                    step="900"
                     value={formEndTime}
-                    onChange={e => setFormEndTime(prev => handleTimeInput(e.target.value, prev))}
-                    onKeyDown={e => {
-                      if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        setFormEndTime(prev => stepTimeMinutes(prev, 'down', 30));
-                      } else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        setFormEndTime(prev => stepTimeMinutes(prev, 'up', 30));
-                      }
-                    }}
-                    placeholder="10:15 AM"
-                    list="modal-times-end"
-                    className="w-full h-10 px-3 text-xs font-mono font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white"
+                    onChange={(e) => setFormEndTime(e.target.value)}
+                    required
+                    className="w-full h-10 px-3 text-xs font-mono font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition scheme-light dark:scheme-dark"
                   />
-                  <datalist id="modal-times-end">
-                    {COMMON_END_TIMES.map(t => <option key={t} value={t} />)}
-                  </datalist>
                 </div>
 
                 <div>
@@ -3187,7 +3252,7 @@ export default function AcademicStudioApp() {
               <button
                 onClick={() => {
                   setIsExportModalOpen(false);
-                  window.print();
+                  handlePrint();
                 }}
                 className="w-full p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-zinc-50/50 dark:bg-zinc-900/50 flex items-center justify-between transition cursor-pointer text-left"
               >
@@ -3782,4 +3847,3 @@ export default function AcademicStudioApp() {
     </div>
   );
 }
-

@@ -69,3 +69,4 @@ if (brokenRefs.length > 0) {
 } else {
   console.log(`\n✅ PASS: 0 broken images found across all ${htmlFiles.length} pages.`);
 }
+
