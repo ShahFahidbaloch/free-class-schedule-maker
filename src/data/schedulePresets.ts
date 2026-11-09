@@ -120,13 +120,13 @@ export const MAJOR_PRESETS: Record<string, SchedulePreset> = {
     name: 'Nursing Student',
     major: 'B.S. Nursing (BSN Clinical Track)',
     credits: 15,
-    description: 'Foundations of Clinical Nursing, Anatomy & Physiology with dissection lab, and Psychology.',
+    description: 'Foundations of Clinical Nursing, Pharmacology, Simulation Lab, Holistic Health Assessment, and Hospital Rotation.',
     courses: [
       {
         id: 'nurs-210',
         code: 'NURS 210',
-        title: 'Foundations of Clinical Nursing',
-        credits: 4,
+        title: 'Foundations of Clinical Nursing Practice',
+        credits: 3,
         colorIndex: 0,
         selectedSectionId: 'sec-nurs210',
         sections: [
@@ -141,81 +141,81 @@ export const MAJOR_PRESETS: Record<string, SchedulePreset> = {
         ]
       },
       {
-        id: 'nurs-210c',
-        code: 'NURS 210C',
-        title: 'Hospital Clinical Practicum',
+        id: 'nurs-220',
+        code: 'NURS 220',
+        title: 'Pharmacology for Nursing Practice',
         credits: 3,
         colorIndex: 1,
-        selectedSectionId: 'sec-nurs210c',
+        selectedSectionId: 'sec-nurs220',
         sections: [
           {
-            id: 'sec-nurs210c',
-            name: 'Clinical Fri',
-            days: ['Fri'],
-            startTime: '08:00 AM',
-            endTime: '02:00 PM',
+            id: 'sec-nurs220',
+            name: 'Lecture MW',
+            days: ['Mon', 'Wed'],
+            startTime: '10:30 AM',
+            endTime: '12:00 PM',
+            room: 'Pharmacy Hall 202'
+          }
+        ]
+      },
+      {
+        id: 'nurs-240c',
+        code: 'NURS 240C',
+        title: 'Medical-Surgical Hospital Rotation',
+        credits: 4,
+        colorIndex: 2,
+        selectedSectionId: 'sec-nurs240c',
+        sections: [
+          {
+            id: 'sec-nurs240c',
+            name: 'Clinical Tue',
+            days: ['Tue'],
+            startTime: '06:30 AM',
+            endTime: '06:45 PM',
             room: 'Memorial Hospital Ward 4B'
           }
         ]
       },
       {
-        id: 'biol-240',
-        code: 'BIOL 240',
-        title: 'Human Anatomy & Physiology',
-        credits: 4,
-        colorIndex: 2,
-        selectedSectionId: 'sec-biol240',
-        sections: [
-          {
-            id: 'sec-biol240',
-            name: 'Lecture TTh',
-            days: ['Tue', 'Thu'],
-            startTime: '10:00 AM',
-            endTime: '11:15 AM',
-            room: 'BioMedical Hall 201'
-          }
-        ]
-      },
-      {
-        id: 'biol-240l',
-        code: 'BIOL 240L',
-        title: 'Anatomy Cadaver Lab',
-        credits: 1,
+        id: 'nurs-230l',
+        code: 'NURS 230L',
+        title: 'Simulation Skills Practicum Lab',
+        credits: 2,
         colorIndex: 3,
-        selectedSectionId: 'sec-biol240l',
+        selectedSectionId: 'sec-nurs230l',
         sections: [
           {
-            id: 'sec-biol240l',
-            name: 'Lab Thu',
-            days: ['Thu'],
-            startTime: '01:30 PM',
-            endTime: '04:20 PM',
-            room: 'Cadaver Lab A'
+            id: 'sec-nurs230l',
+            name: 'Lab Fri',
+            days: ['Fri'],
+            startTime: '08:30 AM',
+            endTime: '12:30 PM',
+            room: 'Sim Center Lab 3'
           }
         ]
       },
       {
-        id: 'psyc-101',
-        code: 'PSYC 101',
-        title: 'Developmental Psychology',
+        id: 'nurs-250',
+        code: 'NURS 250',
+        title: 'Holistic Health Assessment',
         credits: 3,
         colorIndex: 4,
-        selectedSectionId: 'sec-psyc101',
+        selectedSectionId: 'sec-nurs250',
         sections: [
           {
-            id: 'sec-psyc101',
-            name: 'Lecture MW',
-            days: ['Mon', 'Wed'],
-            startTime: '11:30 AM',
-            endTime: '12:45 PM',
-            room: 'Social Sciences 312'
+            id: 'sec-nurs250',
+            name: 'Lecture Fri',
+            days: ['Fri'],
+            startTime: '01:30 PM',
+            endTime: '03:30 PM',
+            room: 'Clinical Skills 108'
           }
         ]
       }
     ],
     tasks: [
       { id: 't-nur1', title: 'Prepare clinical pharmacology drug cards', completed: false },
-      { id: 't-nur2', title: 'Review cardiac conduction system diagrams', completed: true }
+      { id: 't-nur2', title: 'Complete medical-surgical pre-shift assessment chart', completed: true }
     ]
   },
 

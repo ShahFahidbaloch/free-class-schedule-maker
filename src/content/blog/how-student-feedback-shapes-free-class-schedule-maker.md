@@ -45,7 +45,7 @@ Here are four real examples of features that came straight from student messages
 ### "Can I Just Have This on My Phone?"
 > *"I don't want to carry a paper printout everywhere. Can I get my schedule into my phone's calendar app?"*
 
-**What we built:** 1-Click `.ICS` Export and High-Res PDFs. You can download an universal `.ics` file and import your entire 15-week semester directly into Google Calendar, Apple Calendar, or Microsoft Outlook with automatic recurring weekly reminders.
+**What we built:** Universal `.ICS` Export and High-Res PDFs. You can download an universal `.ics` file and import your entire 15-week semester directly into Google Calendar, Apple Calendar, or Microsoft Outlook with automatic recurring weekly reminders.
 
 ---
 
@@ -77,7 +77,7 @@ That is why we introduced the **60-Second Studio Walkthrough**:
   - **⚠️ Conflict Detection:** Overlaps instantly split into clear parallel lanes.
   - **⏳ Gap Optimization:** Monitor idle campus intervals in real time.
   - **✅ Live Task Tracker:** Keep assignments and exam dates right beside your timetable.
-  - **📅 1-Click Sync:** Export directly to Google Calendar or crisp printable PDFs.
+  - **📅 Fast Calendar Sync:** Download an `.ICS` file to import into Google Calendar, Apple Calendar, or print crisp PDFs.
   - **💬 Direct Feedback:** Quick access anytime you want to share an idea or request a feature.
 
 Once you dismiss the guide, it remembers your preference and stays out of your way—though you can reopen it whenever you want via the **Guide** button in the top bar.

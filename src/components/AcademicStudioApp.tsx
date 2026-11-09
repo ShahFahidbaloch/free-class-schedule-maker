@@ -31,7 +31,9 @@ import {
   Layers,
   Mail,
   Code,
-  Edit3
+  Edit3,
+  CheckCircle2,
+  Undo2
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import confetti from 'canvas-confetti';
@@ -232,22 +234,24 @@ const DAY_LABELS: Record<DayOfWeek, { short: string; full: string; pill: string 
 };
 
 const COMMON_START_TIMES = [
-  '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', 
+  '06:00 AM', '06:30 AM', '07:00 AM', '07:30 AM', '07:35 AM', '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', 
   '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', 
   '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', 
-  '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM'
+  '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM',
+  '06:30 PM', '07:00 PM', '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM'
 ];
 
 const COMMON_END_TIMES = [
-  '08:50 AM', '09:15 AM', '09:30 AM', '10:15 AM', '10:30 AM', 
+  '06:45 AM', '07:15 AM', '07:45 AM', '08:15 AM', '08:50 AM', '09:15 AM', '09:30 AM', '10:15 AM', '10:30 AM', 
   '11:15 AM', '11:30 AM', '12:15 PM', '12:30 PM', '01:15 PM', 
   '01:45 PM', '02:00 PM', '02:15 PM', '02:45 PM', '03:15 PM', 
-  '03:30 PM', '04:15 PM', '04:45 PM', '05:15 PM', '06:00 PM', '07:00 PM'
+  '03:30 PM', '04:15 PM', '04:45 PM', '05:15 PM', '06:00 PM', '06:45 PM', '07:00 PM',
+  '07:30 PM', '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM', '10:00 PM'
 ];
 
-const CALENDAR_START_HOUR = 8;  // 8:00 AM
-const CALENDAR_END_HOUR = 20;   // 8:00 PM (12 Hours)
-const HOUR_ROW_HEIGHT = 74;     // 74px per hour -> very clean & legible
+const DEFAULT_GRID_START_HOUR = 6;  // 6:00 AM (covers 06:30 clinical shifts and 07:35 duty)
+const DEFAULT_GRID_END_HOUR = 22;   // 10:00 PM (covers evening classes and night shifts)
+const HOUR_ROW_HEIGHT = 74;         // 74px per hour -> very clean & legible
 
 export function parseFlexibleTime(input: string): number {
   if (!input) return 0;
@@ -316,6 +320,7 @@ export function minutesToTime12(totalMinutes: number): string {
   return `${displayH}:${displayM} ${ampm}`;
 }
 
+// ArrowUp moves +30m (later in time), ArrowDown moves -30m (earlier in time)
 export function stepTime(
   currentTime: string,
   direction: 'up' | 'down',
@@ -324,20 +329,74 @@ export function stepTime(
   if (!timeList || timeList.length === 0) return currentTime;
   const idx = timeList.indexOf(currentTime);
   if (idx !== -1) {
-    if (direction === 'down') {
-      return timeList[Math.min(timeList.length - 1, idx + 1)];
+    if (direction === 'up') {
+      return timeList[Math.min(timeList.length - 1, idx + 1)]; // +30m (Later)
     } else {
-      return timeList[Math.max(0, idx - 1)];
+      return timeList[Math.max(0, idx - 1)]; // -30m (Earlier)
     }
   }
   const currentMins = parseFlexibleTime(currentTime);
-  if (direction === 'down') {
+  if (direction === 'up') {
     const next = timeList.find(t => parseFlexibleTime(t) > currentMins);
     return next || timeList[timeList.length - 1];
   } else {
     const prev = [...timeList].reverse().find(t => parseFlexibleTime(t) < currentMins);
     return prev || timeList[0];
   }
+}
+
+// Smart time typing handler: extracts digits safely and preserves/toggles AM/PM
+export function handleTimeInput(raw: string, prevTime: string): string {
+  const clean = raw.trim();
+  if (!clean) return '';
+
+  // Extract AM / PM intent without inserting digits into letters
+  let ampm: 'AM' | 'PM' = prevTime.toUpperCase().includes('PM') ? 'PM' : 'AM';
+  if (/p/i.test(clean) && !/a/i.test(clean)) {
+    ampm = 'PM';
+  } else if (/a/i.test(clean) && !/p/i.test(clean)) {
+    ampm = 'AM';
+  }
+
+  // Extract numbers only
+  const numericOnly = clean.replace(/[^0-9:]/g, '');
+  if (!numericOnly) {
+    return ampm === 'PM' ? '12:00 PM' : '09:00 AM';
+  }
+
+  let hours = 0;
+  let minutes = 0;
+  if (numericOnly.includes(':')) {
+    const [hStr, mStr] = numericOnly.split(':');
+    hours = parseInt(hStr, 10) || 0;
+    minutes = parseInt(mStr?.slice(0, 2), 10) || 0;
+  } else {
+    const val = parseInt(numericOnly, 10) || 0;
+    if (numericOnly.length <= 2) {
+      hours = val;
+      minutes = 0;
+    } else if (numericOnly.length === 3) {
+      hours = parseInt(numericOnly.slice(0, 1), 10);
+      minutes = parseInt(numericOnly.slice(1, 3), 10);
+    } else {
+      hours = parseInt(numericOnly.slice(0, 2), 10);
+      minutes = parseInt(numericOnly.slice(2, 4), 10);
+    }
+  }
+
+  if (hours > 12 && hours <= 23) {
+    hours = hours - 12;
+    ampm = 'PM';
+  } else if (hours === 0) {
+    hours = 12;
+  } else if (hours > 23) {
+    hours = 12;
+  }
+  if (minutes > 59) minutes = 59;
+
+  const displayH = hours < 10 ? `0${hours}` : `${hours}`;
+  const displayM = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  return `${displayH}:${displayM} ${ampm}`;
 }
 
 const DEFAULT_SAMPLE_COURSES: Course[] = [
@@ -442,6 +501,86 @@ export default function AcademicStudioApp() {
   const [isExporting, setIsExporting] = useState(false);
   const [mobileDay, setMobileDay] = useState<DayOfWeek>('Mon');
 
+  // Dynamic Grid Range (covers 06:30 AM clinicals and 07:35 AM bus duty)
+  const [gridStartHour, setGridStartHour] = useState(DEFAULT_GRID_START_HOUR); // 6 AM
+  const [gridEndHour, setGridEndHour] = useState(DEFAULT_GRID_END_HOUR);       // 10 PM
+  const [showSampleHint, setShowSampleHint] = useState(false);
+
+  // In-app Confirm Dialog State (Replaces native window.confirm)
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    type: 'reset' | 'start-empty' | 'preset-replace';
+    title: string;
+    description: string;
+    confirmLabel: string;
+    onConfirm: () => void;
+    secondaryLabel?: string;
+    onSecondary?: () => void;
+  } | null>(null);
+
+  // Gap Optimizer Proposal State (Honest Optimization)
+  const [optimizerProposal, setOptimizerProposal] = useState<{
+    isOpen: boolean;
+    currentGapHours: string;
+    proposedGapHours: string;
+    savedHours: string;
+    proposedCourses: Course[];
+  } | null>(null);
+
+  // Undo History Stack (Restores state before destructive actions: reset, preset, delete, drag)
+  const historyStackRef = useRef<{ courses: Course[]; tasks: TaskItem[] }[]>([]);
+  const [canUndo, setCanUndo] = useState(false);
+
+  const pushUndoSnapshot = (snapCourses: Course[], snapTasks: TaskItem[]) => {
+    historyStackRef.current.push({
+      courses: JSON.parse(JSON.stringify(snapCourses)),
+      tasks: JSON.parse(JSON.stringify(snapTasks))
+    });
+    if (historyStackRef.current.length > 20) {
+      historyStackRef.current.shift();
+    }
+    setCanUndo(true);
+  };
+
+  const handleUndo = () => {
+    if (historyStackRef.current.length === 0) return;
+    const lastSnap = historyStackRef.current.pop();
+    if (historyStackRef.current.length === 0) {
+      setCanUndo(false);
+    }
+    if (!lastSnap) return;
+
+    setCourses(lastSnap.courses);
+    setTasks(lastSnap.tasks);
+    setPlans(prev => {
+      const updated = prev.map(p =>
+        p.id === activePlanId ? { ...p, courses: lastSnap.courses, tasks: lastSnap.tasks } : p
+      );
+      try {
+        localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    setBanner('Restored previous schedule (Undo).');
+    setTimeout(() => setBanner(null), 3000);
+  };
+
+  // Keyboard shortcut: Ctrl+Z / Cmd+Z for Undo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        const active = document.activeElement;
+        const isInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || (active as HTMLElement).isContentEditable);
+        if (!isInput) {
+          e.preventDefault();
+          handleUndo();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activePlanId]);
+
   // Multi-Language State & i18n
   const [locale, setLocale] = useState<SupportedLocale>('en');
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -492,6 +631,16 @@ export default function AcademicStudioApp() {
     setIsLangMenuOpen(false);
     window.dispatchEvent(new CustomEvent('langchange', { detail: newLang }));
   };
+
+  // 1. Onboarding Quick Guide on Studio Open (Shows on first visit)
+  useEffect(() => {
+    try {
+      const hintDismissed = localStorage.getItem('sample_schedule_hint_dismissed');
+      if (!hintDismissed) {
+        setShowSampleHint(true);
+      }
+    } catch (e) {}
+  }, []);
 
   // 1. Onboarding Quick Guide on Studio Open (Shows on first visit)
   useEffect(() => {
@@ -616,14 +765,17 @@ export default function AcademicStudioApp() {
         rawShareCode = hash.split('share=')[1]?.split('&')[0];
       }
 
-      if (rawShareCode) {
+            if (rawShareCode) {
         const decoded = decodeScheduleFromShareString(rawShareCode);
         if (decoded && decoded.length > 0) {
+          const nameMatch = hash.match(/name=([^&]+)/);
+          const sharedName = nameMatch ? decodeURIComponent(nameMatch[1]) : 'Shared Plan';
           loadedPlans[0].courses = decoded;
+          loadedPlans[0].name = sharedName;
           setCourses(decoded);
           setPlans(loadedPlans);
           setActivePlanId('plan-a');
-          setBanner("Shared schedule loaded — it's now saved on this device.");
+          setBanner(`Shared schedule "${sharedName}" loaded — it's now saved on this device.`);
           setTimeout(() => setBanner(null), 5000);
           isLoadedRef.current = true;
           return;
@@ -791,13 +943,14 @@ export default function AcademicStudioApp() {
 
     const rect = e.currentTarget.getBoundingClientRect();
     const dropY = e.clientY - rect.top;
-    const hoursFrom8 = dropY / HOUR_ROW_HEIGHT;
-    const totalDropMins = 8 * 60 + Math.floor(hoursFrom8 * 60);
+    const hoursFromStart = dropY / HOUR_ROW_HEIGHT;
+    const totalDropMins = gridStartHour * 60 + Math.floor(hoursFromStart * 60);
     const snapStartMins = Math.floor(totalDropMins / 15) * 15;
-    const validStartMins = Math.max(8 * 60, Math.min(20 * 60 - 30, snapStartMins));
+    const validStartMins = Math.max(gridStartHour * 60, Math.min(gridEndHour * 60 - 30, snapStartMins));
     const duration = draggedEvent.durationMins || 60;
-    const validEndMins = Math.min(20 * 60, validStartMins + duration);
+    const validEndMins = Math.min(gridEndHour * 60, validStartMins + duration);
 
+    pushUndoSnapshot(courses, tasks);
     const newStartStr = minutesToTime12(validStartMins);
     const newEndStr = minutesToTime12(validEndMins);
 
@@ -852,6 +1005,13 @@ export default function AcademicStudioApp() {
       setFormError('End time must be later than start time.');
       return;
     }
+
+    // Auto-enable 7-day weekend view if Saturday or Sunday is selected
+    if (validDays.some(d => d === 'Sat' || d === 'Sun') && !includeWeekend) {
+      setIncludeWeekend(true);
+    }
+
+    pushUndoSnapshot(courses, tasks);
 
     if (selectedEventForEdit) {
       // Update existing course
@@ -914,6 +1074,7 @@ export default function AcademicStudioApp() {
 
   // Delete Course
   const handleDeleteCourse = (id: string) => {
+    pushUndoSnapshot(courses, tasks);
     setCourses(prev => prev.filter(c => c.id !== id));
     setSelectedEventForEdit(null);
     setIsClassModalOpen(false);
@@ -977,22 +1138,22 @@ export default function AcademicStudioApp() {
   const handleDuplicateCurrentPlan = (targetPlanId: 'plan-a' | 'plan-b' | 'plan-c') => {
     const targetPlan = plans.find(p => p.id === targetPlanId);
     const targetName = targetPlan?.name || (targetPlanId === 'plan-b' ? 'Plan B' : 'Plan C');
+    const sourcePlan = plans.find(p => p.id === activePlanId);
+    const sourceName = sourcePlan?.name || 'Plan A';
     
-    if (confirm(`Duplicate current schedule into ${targetName}? Existing classes in ${targetName} will be replaced.`)) {
-      const clonedCourses: Course[] = JSON.parse(JSON.stringify(courses));
-      const clonedTasks: TaskItem[] = JSON.parse(JSON.stringify(tasks));
-      
-      const updated = plans.map(p => 
-        p.id === targetPlanId ? { ...p, courses: clonedCourses, tasks: clonedTasks } : p
-      );
-      setPlans(updated);
-      try {
-        localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
-      } catch (e) {}
-      setIsPlanMenuOpen(false);
-      setBanner(`Current schedule duplicated into ${targetName}.`);
-      setTimeout(() => setBanner(null), 3000);
-    }
+    const clonedCourses: Course[] = JSON.parse(JSON.stringify(courses));
+    const clonedTasks: TaskItem[] = JSON.parse(JSON.stringify(tasks));
+    
+    const updated = plans.map(p => 
+      p.id === targetPlanId ? { ...p, courses: clonedCourses, tasks: clonedTasks } : p
+    );
+    setPlans(updated);
+    try {
+      localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+    } catch (e) {}
+    setIsPlanMenuOpen(false);
+    setBanner(`Copied ${sourceName} into ${targetName}.`);
+    setTimeout(() => setBanner(null), 3500);
   };
 
   const handleRenamePlan = (name: string) => {
@@ -1010,36 +1171,34 @@ export default function AcademicStudioApp() {
     setTimeout(() => setBanner(null), 2500);
   };
 
-  const handleLoadPreset = (presetKey: string, targetPlanId?: 'plan-a' | 'plan-b' | 'plan-c') => {
+  const executeLoadPreset = (presetKey: string, targetPlanId: 'plan-a' | 'plan-b' | 'plan-c') => {
     const preset = MAJOR_PRESETS[presetKey];
     if (!preset) return;
-
-    const targetId = targetPlanId || activePlanId;
-    const target = plans.find(p => p.id === targetId);
-    const targetName = target?.name || 'Current Plan';
 
     const clonedCourses: Course[] = JSON.parse(JSON.stringify(preset.courses));
     const clonedTasks: TaskItem[] = JSON.parse(JSON.stringify(preset.tasks || []));
 
-    if (targetId === activePlanId) {
+    if (targetPlanId === activePlanId) {
       setCourses(clonedCourses);
       setTasks(clonedTasks);
     }
 
     const updated = plans.map(p => 
-      p.id === targetId ? { ...p, courses: clonedCourses, tasks: clonedTasks } : p
+      p.id === targetPlanId ? { ...p, courses: clonedCourses, tasks: clonedTasks } : p
     );
     setPlans(updated);
-    if (targetId !== activePlanId) {
-      setActivePlanId(targetId);
+    if (targetPlanId !== activePlanId) {
+      setActivePlanId(targetPlanId);
       setCourses(clonedCourses);
       setTasks(clonedTasks);
     }
     try {
       localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
-      localStorage.setItem(STORAGE_KEY_ACTIVE_PLAN, targetId);
+      localStorage.setItem(STORAGE_KEY_ACTIVE_PLAN, targetPlanId);
     } catch (e) {}
 
+    const target = updated.find(p => p.id === targetPlanId);
+    const targetName = target?.name || 'Current Plan';
     setIsPresetModalOpen(false);
     setBanner(`Loaded ${preset.name} (${preset.credits} cr) into ${targetName}!`);
     setTimeout(() => setBanner(null), 3500);
@@ -1048,26 +1207,110 @@ export default function AcademicStudioApp() {
     } catch (e) {}
   };
 
+  const handleRequestLoadPreset = (presetKey: string, requestedPlanId?: 'plan-a' | 'plan-b' | 'plan-c') => {
+    const preset = MAJOR_PRESETS[presetKey];
+    if (!preset) return;
+
+    const targetId = requestedPlanId || activePlanId;
+    const targetPlan = plans.find(p => p.id === targetId);
+    const targetName = targetPlan?.name || 'Current Plan';
+
+    if (targetPlan && targetPlan.courses && targetPlan.courses.length > 0) {
+      setIsPresetModalOpen(false);
+      setConfirmDialog({
+        isOpen: true,
+        type: 'preset-replace',
+        title: `Load ${preset.name} Preset`,
+        description: `Loading this preset will replace the ${targetPlan.courses.length} classes in ${targetName}.`,
+        confirmLabel: `Replace ${targetName}`,
+        onConfirm: () => {
+          pushUndoSnapshot(courses, tasks);
+          executeLoadPreset(presetKey, targetId);
+          setConfirmDialog(null);
+        },
+        secondaryLabel: 'Load into New Plan',
+        onSecondary: () => {
+          const emptyPlan = plans.find(p => p.id !== targetId && (!p.courses || p.courses.length === 0));
+          const nextTarget = emptyPlan ? emptyPlan.id : (targetId === 'plan-a' ? 'plan-b' : 'plan-c');
+          executeLoadPreset(presetKey, nextTarget);
+          setConfirmDialog(null);
+        }
+      });
+    } else {
+      pushUndoSnapshot(courses, tasks);
+      executeLoadPreset(presetKey, targetId);
+    }
+  };
+
   const handleShareSchedule = () => {
+    const currentPlan = plans.find(p => p.id === activePlanId);
+    const planName = currentPlan?.name || 'Plan A';
     const shareCode = encodeScheduleToShareString(courses);
-    const fullUrl = `${window.location.origin}/app#plan=${shareCode}`;
+    const fullUrl = `${window.location.origin}/app#plan=${shareCode}&name=${encodeURIComponent(planName)}`;
     setShareUrl(fullUrl);
     setIsShareModalOpen(true);
     try {
       navigator.clipboard.writeText(fullUrl);
-      setBanner('Share link copied to clipboard! Anyone opening it can view and save this schedule.');
+      setBanner(`Share link for "${planName}" copied to clipboard! Anyone opening it can view and save this schedule.`);
       setTimeout(() => setBanner(null), 4000);
       confetti({ particleCount: 40, spread: 45, origin: { y: 0.7 } });
     } catch (e) {}
   };
 
-  // Reset Schedule
-  const handleResetSchedule = () => {
-    if (confirm('Reset timetable to sample course demonstrations?')) {
-      setCourses(DEFAULT_SAMPLE_COURSES);
-      setBanner('Schedule reset to demo courses successfully.');
-      setTimeout(() => setBanner(null), 3000);
-    }
+  // Reset Schedule to Sample Course Demonstration (P2: with confirmation modal)
+  const handleTriggerReset = () => {
+    setIsPlanMenuOpen(false);
+    setConfirmDialog({
+      isOpen: true,
+      type: 'reset',
+      title: 'Reset to Sample Schedule?',
+      description: 'Replace this plan with the sample schedule? Your current classes in this plan will be removed.',
+      confirmLabel: 'Reset Sample Schedule',
+      onConfirm: () => {
+        pushUndoSnapshot(courses, tasks);
+        setCourses(DEFAULT_SAMPLE_COURSES);
+        setPlans(prev => {
+          const updated = prev.map(p =>
+            p.id === activePlanId ? { ...p, courses: DEFAULT_SAMPLE_COURSES } : p
+          );
+          try {
+            localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+          } catch (e) {}
+          return updated;
+        });
+        setConfirmDialog(null);
+        setBanner('Sample schedule restored.');
+        setTimeout(() => setBanner(null), 3000);
+      }
+    });
+  };
+
+  // Start Empty Schedule (P2: clears current plan to 0 classes)
+  const handleTriggerStartEmpty = () => {
+    setIsPlanMenuOpen(false);
+    setConfirmDialog({
+      isOpen: true,
+      type: 'start-empty',
+      title: 'Start Empty Schedule?',
+      description: 'Clear all classes from this plan? You will start with an empty timetable grid.',
+      confirmLabel: 'Clear All & Start Empty',
+      onConfirm: () => {
+        pushUndoSnapshot(courses, tasks);
+        setCourses([]);
+        setPlans(prev => {
+          const updated = prev.map(p =>
+            p.id === activePlanId ? { ...p, courses: [] } : p
+          );
+          try {
+            localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
+          } catch (e) {}
+          return updated;
+        });
+        setConfirmDialog(null);
+        setBanner('Started empty schedule.');
+        setTimeout(() => setBanner(null), 3000);
+      }
+    });
   };
 
   // Feedback Submission
@@ -1184,8 +1427,8 @@ export default function AcademicStudioApp() {
       Sun: []
     };
 
-    const calendarStartMins = CALENDAR_START_HOUR * 60; // 480 (8 AM)
-    const calendarEndMins = CALENDAR_END_HOUR * 60;     // 1200 (8 PM)
+    const calendarStartMins = gridStartHour * 60;
+    const calendarEndMins = gridEndHour * 60;
 
     courses.forEach(course => {
       const activeSec = course.sections.find(s => s.id === course.selectedSectionId);
@@ -1325,70 +1568,139 @@ export default function AcademicStudioApp() {
     };
   }, [courses, placedEventsByDay, activeDaysList]);
 
-  // Permutation Gap Optimizer Engine
+  // Honest Gap Optimizer Engine (P5: Analyzes current plan, proposes genuine compaction, or honestly informs if already compact)
   const handleOptimizeGaps = () => {
-    if (courses.length === 0) return;
-
-    const options = courses.map(c => c.sections.map(s => ({ courseId: c.id, sectionId: s.id, days: s.days, start: s.startTime, end: s.endTime })));
-    function cartesian<T>(arrays: T[][]): T[][] {
-      return arrays.reduce<T[][]>((acc, curr) => acc.flatMap(x => curr.map(y => [...x, y])), [[]]);
+    if (courses.length === 0) {
+      setBanner('No classes in timetable to optimize.');
+      setTimeout(() => setBanner(null), 3000);
+      return;
     }
 
-    const combos = cartesian(options);
-    let bestCombo: { courseId: string; sectionId: string }[] | null = null;
-    let minGaps = Infinity;
+    // Measure current idle gaps across all active days
+    let currentTotalGaps = 0;
+    let longestIdleGap = 0;
 
-    for (const combo of combos) {
-      const allSlots: { day: DayOfWeek; s: number; e: number }[] = [];
-      let clash = false;
-
-      for (const item of combo) {
-        for (const day of item.days) {
-          const s = parseFlexibleTime(item.start);
-          const e = parseFlexibleTime(item.end);
-
-          if (allSlots.some(x => x.day === day && Math.max(x.s, s) < Math.min(x.e, e))) {
-            clash = true;
-            break;
-          }
-          allSlots.push({ day, s, e });
+    activeDaysList.forEach(day => {
+      const slots = (placedEventsByDay[day] || []).slice().sort((a, b) => a.startMins - b.startMins);
+      for (let i = 0; i < slots.length - 1; i++) {
+        const gap = slots[i + 1].startMins - slots[i].endMins;
+        if (gap > 0) {
+          currentTotalGaps += gap;
+          if (gap > longestIdleGap) longestIdleGap = gap;
         }
-        if (clash) break;
       }
+    });
 
-      if (clash) continue;
+    if (currentTotalGaps < 30) {
+      // Zero confetti, zero fake claim
+      setBanner('Your schedule is already compact — no change reduces your idle gaps.');
+      setTimeout(() => setBanner(null), 3500);
+      return;
+    }
 
-      let totalGaps = 0;
+    // Try finding an improved schedule by closing idle gaps without clashes
+    const candidateCourses: Course[] = JSON.parse(JSON.stringify(courses));
+    let hasImprovements = false;
+
+    // Check movable classes
+    for (const day of activeDaysList) {
+      const daySlots = (placedEventsByDay[day] || []).slice().sort((a, b) => a.startMins - b.startMins);
+      if (daySlots.length <= 1) continue;
+
+      for (let i = 0; i < daySlots.length - 1; i++) {
+        const first = daySlots[i];
+        const second = daySlots[i + 1];
+        const gap = second.startMins - first.endMins;
+
+        if (gap >= 30) {
+          // Compact second course to 15m after first
+          const secondDuration = second.endMins - second.startMins;
+          const proposedStart = first.endMins + 15;
+          const proposedEnd = proposedStart + secondDuration;
+
+          const targetCourse = candidateCourses.find(c => c.id === second.courseId);
+          if (!targetCourse) continue;
+          const targetSec = targetCourse.sections.find(s => s.id === second.rawSection.id);
+          if (!targetSec) continue;
+
+          // Verify moving this course does not conflict on any of its meeting days
+          let clash = false;
+          for (const meetDay of targetSec.days) {
+            const dayEvents = (placedEventsByDay[meetDay] || []).filter(e => e.courseId !== second.courseId);
+            if (dayEvents.some(e => Math.max(e.startMins, proposedStart) < Math.min(e.endMins, proposedEnd))) {
+              clash = true;
+              break;
+            }
+          }
+
+          if (!clash && proposedStart < second.startMins) {
+            targetSec.startTime = minutesToTime12(proposedStart);
+            targetSec.endTime = minutesToTime12(proposedEnd);
+            hasImprovements = true;
+          }
+        }
+      }
+    }
+
+    if (hasImprovements) {
+      // Calculate new total gaps
+      let newTotalGaps = 0;
+      let newLongestGap = 0;
       activeDaysList.forEach(day => {
-        const sorted = allSlots.filter(x => x.day === day).sort((a, b) => a.s - b.s);
-        for (let i = 0; i < sorted.length - 1; i++) {
-          const gap = sorted[i + 1].s - sorted[i].e;
-          if (gap > 0) totalGaps += gap;
+        const slots: { s: number; e: number }[] = [];
+        candidateCourses.forEach(c => {
+          const s = c.sections.find(sec => sec.id === c.selectedSectionId);
+          if (s && s.days.includes(day)) {
+            slots.push({ s: parseFlexibleTime(s.startTime), e: parseFlexibleTime(s.endTime) });
+          }
+        });
+        slots.sort((a, b) => a.s - b.s);
+        for (let i = 0; i < slots.length - 1; i++) {
+          const gap = slots[i + 1].s - slots[i].e;
+          if (gap > 0) {
+            newTotalGaps += gap;
+            if (gap > newLongestGap) newLongestGap = gap;
+          }
         }
       });
 
-      if (totalGaps < minGaps) {
-        minGaps = totalGaps;
-        bestCombo = combo;
+      if (newTotalGaps < currentTotalGaps) {
+        const savedHours = ((currentTotalGaps - newTotalGaps) / 60).toFixed(1);
+        setOptimizerProposal({
+          isOpen: true,
+          currentGapHours: (longestIdleGap / 60).toFixed(1),
+          proposedGapHours: (newLongestGap / 60).toFixed(1),
+          savedHours,
+          proposedCourses: candidateCourses
+        });
+        return;
       }
     }
 
-    if (bestCombo) {
-      setCourses(prev =>
-        prev.map(c => {
-          const match = bestCombo!.find(b => b.courseId === c.id);
-          return match ? { ...c, selectedSectionId: match.sectionId } : c;
-        })
+    // If no safe compaction could be found
+    setBanner('Your schedule is already compact — no change reduces your idle gaps.');
+    setTimeout(() => setBanner(null), 3500);
+  };
+
+  const handleApplyOptimizerProposal = () => {
+    if (!optimizerProposal) return;
+    pushUndoSnapshot(courses, tasks);
+    setCourses(optimizerProposal.proposedCourses);
+    setPlans(prev => {
+      const updated = prev.map(p =>
+        p.id === activePlanId ? { ...p, courses: optimizerProposal.proposedCourses } : p
       );
       try {
-        confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
+        localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(updated));
       } catch (e) {}
-      setBanner(`Optimized! Lowest campus idle gap: ${(minGaps / 60).toFixed(1)}h.`);
-      setTimeout(() => setBanner(null), 3500);
-    } else {
-      setBanner('No conflict-free combination found across active section timings.');
-      setTimeout(() => setBanner(null), 3500);
-    }
+      return updated;
+    });
+    setOptimizerProposal(null);
+    setBanner(`Schedule optimized! Longest idle gap cut from ${optimizerProposal.currentGapHours}h to ${optimizerProposal.proposedGapHours}h.`);
+    setTimeout(() => setBanner(null), 3500);
+    try {
+      confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
+    } catch (e) {}
   };
 
   // Export .ICS
@@ -1477,18 +1789,18 @@ export default function AcademicStudioApp() {
     }
   };
 
-  // Hours List
+  // Hours List (Derived dynamically from gridStartHour and gridEndHour)
   const hoursList = useMemo(() => {
     const list: { hour: number; label: string }[] = [];
-    for (let h = CALENDAR_START_HOUR; h <= CALENDAR_END_HOUR; h++) {
+    for (let h = gridStartHour; h <= gridEndHour; h++) {
       const ampm = h >= 12 ? 'PM' : 'AM';
       const displayH = h % 12 === 0 ? 12 : h % 12;
       list.push({ hour: h, label: `${displayH} ${ampm}` });
     }
     return list;
-  }, []);
+  }, [gridStartHour, gridEndHour]);
 
-  const totalGridHeight = (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * HOUR_ROW_HEIGHT;
+  const totalGridHeight = (gridEndHour - gridStartHour) * HOUR_ROW_HEIGHT;
 
   // Render Day Column (Shared between Desktop multi-column and Mobile single-day view)
   const renderDayColumn = (day: DayOfWeek, isMobileSingle = false) => {
@@ -1629,73 +1941,78 @@ export default function AcademicStudioApp() {
         />
       )}
       
-      {/* 1. Left Micro-Sidebar (Desktop Only: hidden on mobile) */}
-      <aside className="hidden md:flex w-16 sm:w-20 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] flex-col items-center justify-between py-5 select-none z-30 transition-colors">
+      {/* 1. Left Micro-Sidebar (Desktop Only: clean vertical navigation with micro-labels) */}
+      <aside className="hidden md:flex w-16 sm:w-18 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#121215] flex-col items-center justify-between py-4 select-none z-30 transition-colors">
         
-        {/* Top: Home Link & New Class Trigger */}
-        <div className="flex flex-col items-center gap-4 w-full px-2">
+        {/* Top: Home Link & Core Studio Tools */}
+        <div className="flex flex-col items-center gap-2 w-full px-1.5">
           
           {/* Logo / Back to Home */}
           <a
             href="/"
-            className="w-11 h-11 rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-xs cursor-pointer overflow-hidden p-0.5"
-            title="Class Schedule Home"
+            className="w-10 h-10 rounded-xl flex items-center justify-center hover:scale-105 transition-transform shadow-xs cursor-pointer overflow-hidden p-0.5"
+            title="Free Class Schedule Maker Home"
           >
-            <img src="/logo.svg" alt="Class Schedule Logo" className="w-full h-full object-contain rounded-xl" />
+            <img src="/logo.svg" alt="Class Schedule Logo" className="w-full h-full object-contain rounded-lg" />
           </a>
 
-          <div className="w-8 h-px bg-zinc-200 dark:bg-zinc-800 my-1" />
+          <div className="w-8 h-px bg-zinc-200 dark:bg-zinc-800 my-0.5" />
 
-          {/* [+ New Class] Primary Trigger Button */}
+          {/* [+ Add Class] Primary Action */}
           <button
             onClick={() => handleOpenNewClassModal()}
-            className="w-11 h-11 rounded-2xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer group"
+            className="w-full py-2 px-1 rounded-xl bg-zinc-950 hover:bg-black text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 flex flex-col items-center justify-center gap-1 shadow-xs transition-all active:scale-95 cursor-pointer group"
             title="+ Add New Class"
           >
-            <Plus className="w-5 h-5 stroke-[2.5] group-hover:rotate-90 transition-transform duration-200" />
+            <Plus className="w-4 h-4 stroke-[2.5] group-hover:rotate-90 transition-transform duration-200" />
+            <span className="text-[10px] font-bold tracking-tight leading-none">Add</span>
           </button>
 
-          {/* Tasks / Todo Panel */}
+          {/* Tasks & Assignments */}
           <button
             onClick={() => setIsTaskModalOpen(true)}
-            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer relative"
+            className="w-full py-2 px-1 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer relative"
             title="Tasks & Deadlines"
           >
             <CheckSquare className="w-4 h-4" />
             {tasks.filter(t => !t.completed).length > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-zinc-900 dark:bg-white" />
+              <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-zinc-900 dark:bg-white" />
             )}
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Tasks</span>
           </button>
 
           {/* Gap Optimizer Engine */}
           <button
             onClick={handleOptimizeGaps}
-            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
+            className="w-full py-2 px-1 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
             title="Run Gap Optimizer Engine"
           >
             <Sliders className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Optimize</span>
           </button>
 
           {/* Export Hub */}
           <button
             onClick={() => setIsExportModalOpen(true)}
-            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
+            className="w-full py-2 px-1 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
             title="Export Timetable (PNG, PDF, .ICS)"
           >
             <Download className="w-4 h-4" />
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Export</span>
           </button>
 
           {/* 5-Day / 7-Day Weekend Toggle */}
           <button
             onClick={() => setIncludeWeekend(!includeWeekend)}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold font-mono transition cursor-pointer ${
+            className={`w-full py-2 px-1 rounded-xl flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
               includeWeekend
-                ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
-                : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-2xs font-bold'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850'
             }`}
             title={includeWeekend ? 'Showing 7 Days (Mon-Sun)' : 'Showing 5 Days (Mon-Fri)'}
           >
-            {includeWeekend ? '7D' : '5D'}
+            <span className="text-xs font-bold font-mono leading-none">{includeWeekend ? '7D' : '5D'}</span>
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Days</span>
           </button>
 
           <div className="w-8 h-px bg-zinc-200 dark:bg-zinc-800 my-0.5" />
@@ -1703,30 +2020,33 @@ export default function AcademicStudioApp() {
           {/* Quick Instructions & Feature Guide */}
           <button
             onClick={() => setIsOnboardingOpen(true)}
-            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
+            className="w-full py-2 px-1 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
             title="How to Use & Feature Instructions"
           >
             <BookOpen className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Guide</span>
           </button>
 
-          {/* Student Feedback & Rating Modal Trigger */}
+          {/* Student Feedback Modal Trigger */}
           <button
             onClick={() => setIsFeedbackModalOpen(true)}
-            className="w-10 h-10 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer relative"
+            className="w-full py-2 px-1 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer relative"
             title="Send Student Feedback & Rating"
           >
             <MessageSquare className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Feedback</span>
           </button>
         </div>
 
-        {/* Bottom: Dark/Light Mode Theme Switcher */}
-        <div className="flex flex-col items-center w-full px-2">
+        {/* Bottom: Visual Theme Toggle */}
+        <div className="flex flex-col items-center w-full px-1.5">
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition cursor-pointer"
-            title="Toggle Visual Theme"
+            className="w-full py-2 px-1 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
+            title="Toggle Visual Theme (Light/Dark)"
           >
             {isDarkTheme ? <Sun className="w-4 h-4 text-zinc-200" /> : <Moon className="w-4 h-4 text-zinc-700" />}
+            <span className="text-[10px] font-semibold tracking-tight leading-none">Theme</span>
           </button>
         </div>
 
@@ -1822,10 +2142,28 @@ export default function AcademicStudioApp() {
                         setIsPlanMenuOpen(false);
                         setIsPresetModalOpen(true);
                       }}
-                      className="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap"
+                      className="w-full px-3 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap"
                     >
                       <Bookmark className="w-3.5 h-3.5 text-zinc-500" />
-                      <span>Load Major Preset...</span>
+                      <span>Load Degree Preset...</span>
+                    </button>
+
+                    <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
+
+                    <button
+                      onClick={handleTriggerStartEmpty}
+                      className="w-full px-3 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-zinc-500" />
+                      <span>Start Empty Schedule</span>
+                    </button>
+
+                    <button
+                      onClick={handleTriggerReset}
+                      className="w-full px-3 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2 cursor-pointer font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-zinc-500" />
+                      <span>Reset Sample Schedule</span>
                     </button>
                   </div>
                 )}
@@ -1964,10 +2302,24 @@ export default function AcademicStudioApp() {
               )}
             </div>
 
+            {/* Undo Button (Desktop Only) */}
+            <button
+              onClick={handleUndo}
+              disabled={!canUndo}
+              className={`h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 hidden md:flex items-center justify-center transition shrink-0 ${
+                canUndo
+                  ? 'text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer'
+                  : 'text-zinc-300 dark:text-zinc-700 cursor-not-allowed opacity-40'
+              }`}
+              title="Undo last action (Ctrl+Z)"
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+            </button>
+
             {/* Reset (Desktop Only) */}
             <button
-              onClick={handleResetSchedule}
-              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hidden md:flex items-center justify-center transition cursor-pointer shrink-0"
+              onClick={handleTriggerReset}
+              className="h-9 w-9 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hidden md:flex items-center justify-center transition cursor-pointer shrink-0"
               title="Reset sample schedule"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -1984,6 +2336,28 @@ export default function AcademicStudioApp() {
           </div>
 
         </header>
+
+        {/* Sample Schedule Dismissible Hint Banner (P11) */}
+        {showSampleHint && courses === DEFAULT_SAMPLE_COURSES && (
+          <div className="mx-3 sm:mx-6 mt-2.5 px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between gap-3 animate-in fade-in shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-zinc-900 dark:text-white">Sample Timetable:</span>
+              <span>This is a sample schedule — add your own classes, or Start empty (Plan Options).</span>
+            </div>
+            <button
+              onClick={() => {
+                setShowSampleHint(false);
+                try {
+                  localStorage.setItem('sample_schedule_hint_dismissed', 'true');
+                } catch (e) {}
+              }}
+              className="p-1 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+              title="Dismiss hint"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         {/* Toast Alert Banner */}
         {banner && (
@@ -2512,13 +2886,14 @@ export default function AcademicStudioApp() {
                 />
               </div>
 
-              {/* Class Days Multi-Selector Pills */}
+              {/* Class Days Multi-Selector Pills (P7: Mon-Sun 7 days selectable) */}
               <div>
-                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  {t.form.classDays} <span className="text-rose-500">*</span>
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center justify-between">
+                  <span>{t.form.classDays} <span className="text-rose-500">*</span></span>
+                  <span className="text-[10px] text-zinc-500 font-normal">Mon–Sun selectable</span>
                 </label>
-                <div className="grid grid-cols-5 gap-2">
-                  {WEEKDAY_DAYS.map(d => {
+                <div className="grid grid-cols-7 gap-1.5">
+                  {FULL_WEEK_DAYS.map(d => {
                     const isSelected = formDays.some(fd => normalizeDayOfWeek(fd) === d);
                     return (
                       <button
@@ -2547,7 +2922,7 @@ export default function AcademicStudioApp() {
                   <input
                     type="text"
                     value={formStartTime}
-                    onChange={e => setFormStartTime(e.target.value)}
+                    onChange={e => setFormStartTime(prev => handleTimeInput(e.target.value, prev))}
                     onKeyDown={e => {
                       if (e.key === 'ArrowDown') {
                         e.preventDefault();
@@ -2573,7 +2948,7 @@ export default function AcademicStudioApp() {
                   <input
                     type="text"
                     value={formEndTime}
-                    onChange={e => setFormEndTime(e.target.value)}
+                    onChange={e => setFormEndTime(prev => handleTimeInput(e.target.value, prev))}
                     onKeyDown={e => {
                       if (e.key === 'ArrowDown') {
                         e.preventDefault();
@@ -2637,7 +3012,7 @@ export default function AcademicStudioApp() {
                     {t.form.duplicateToOtherDays || 'Duplicate to other days'}
                   </span>
                   <div className="flex flex-wrap items-center gap-1.5">
-                    {WEEKDAY_DAYS.filter(d => !formDays.some(fd => normalizeDayOfWeek(fd) === d)).map(d => (
+                    {FULL_WEEK_DAYS.filter(d => !formDays.some(fd => normalizeDayOfWeek(fd) === d)).map(d => (
                       <button
                         key={d}
                         type="button"
@@ -2968,7 +3343,7 @@ export default function AcademicStudioApp() {
                   <div className="flex items-center gap-2 pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     <button
                       type="button"
-                      onClick={() => handleLoadPreset(key, activePlanId)}
+                      onClick={() => handleRequestLoadPreset(key, activePlanId)}
                       className="h-8 px-3 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 text-xs font-semibold hover:bg-black dark:hover:bg-zinc-100 transition cursor-pointer"
                     >
                       Load into {plans.find(p => p.id === activePlanId)?.name || 'Current'}
@@ -2977,7 +3352,7 @@ export default function AcademicStudioApp() {
                       <button
                         key={p.id}
                         type="button"
-                        onClick={() => handleLoadPreset(key, p.id)}
+                        onClick={() => handleRequestLoadPreset(key, p.id)}
                         className="h-8 px-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-xs font-medium transition cursor-pointer"
                       >
                         Load into {p.name}
@@ -3168,6 +3543,110 @@ export default function AcademicStudioApp() {
         </div>
       )}
 
+      {/* Universal Confirmation Modal (P2 / P3: Replaces blocking native window.confirm) */}
+      {confirmDialog && confirmDialog.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-sm font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-500" />
+                <span>{confirmDialog.title}</span>
+              </h3>
+              <button
+                onClick={() => setConfirmDialog(null)}
+                className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              {confirmDialog.description}
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setConfirmDialog(null)}
+                className="h-9 px-3 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition cursor-pointer order-last sm:order-first"
+              >
+                Cancel
+              </button>
+              {confirmDialog.secondaryLabel && confirmDialog.onSecondary && (
+                <button
+                  type="button"
+                  onClick={confirmDialog.onSecondary}
+                  className="h-9 px-3.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-850 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white text-xs font-semibold transition cursor-pointer"
+                >
+                  {confirmDialog.secondaryLabel}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={confirmDialog.onConfirm}
+                className="h-9 px-4 rounded-xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-xs font-bold hover:bg-black dark:hover:bg-zinc-100 transition shadow-xs cursor-pointer"
+              >
+                {confirmDialog.confirmLabel}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gap Optimizer Proposal Modal (P5: Honest Interactive Proposal) */}
+      {optimizerProposal && optimizerProposal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-sm font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-emerald-500" />
+                <span>Gap Optimizer Proposal</span>
+              </h3>
+              <button
+                onClick={() => setOptimizerProposal(null)}
+                className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+              <p className="text-xs text-zinc-700 dark:text-zinc-300">
+                This compaction reduces your idle on-campus wait time between classes:
+              </p>
+              <div className="flex items-center justify-between text-xs font-mono py-1">
+                <span className="text-zinc-500">Longest idle gap before:</span>
+                <span className="font-bold text-rose-500">{optimizerProposal.currentGapHours} hrs</span>
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono py-1 border-t border-zinc-200/60 dark:border-zinc-700/60">
+                <span className="text-zinc-500">Longest idle gap after:</span>
+                <span className="font-bold text-emerald-500">{optimizerProposal.proposedGapHours} hrs</span>
+              </div>
+              <div className="text-[11px] text-zinc-500 pt-1">
+                Saves <strong className="text-zinc-900 dark:text-white">{optimizerProposal.savedHours} hours</strong> of idle wait with zero class conflicts.
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setOptimizerProposal(null)}
+                className="h-9 px-3.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition cursor-pointer"
+              >
+                Keep Mine
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyOptimizerProposal}
+                className="h-9 px-4 rounded-xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-xs font-bold hover:bg-black dark:hover:bg-zinc-100 transition shadow-xs cursor-pointer"
+              >
+                Apply Optimization
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 6. Interactive Studio Welcome & Instructions Guide Modal */}
       {isOnboardingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
@@ -3251,9 +3730,9 @@ export default function AcademicStudioApp() {
                   <Download className="w-4 h-4 text-zinc-900 dark:text-white" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">5. 1-Click Calendar Sync & PDF</h4>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-white">5. Universal .ICS Calendar Export & PDF</h4>
                   <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
-                    Export your timetable as a <strong>.ICS file</strong> to Google Calendar / Apple Calendar, or generate a clean printable PDF.
+                    Export your timetable as a <strong>.ICS file</strong> to import into Google Calendar / Apple Calendar / Outlook, or generate a clean printable PDF.
                   </p>
                 </div>
               </div>

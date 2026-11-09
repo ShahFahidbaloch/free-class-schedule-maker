@@ -12,6 +12,14 @@
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600
 
+# SVG & image asset headers
+/*.svg
+  Content-Type: image/svg+xml; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # Allow embedding widget across external educational and student sites
 /embed
   X-Frame-Options: ALLOWALL

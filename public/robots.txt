@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /cdn-cgi/
 
 # Explicitly allow AI Search Engines & Crawlers
 User-agent: GPTBot
