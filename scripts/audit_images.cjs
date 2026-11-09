@@ -29,12 +29,10 @@ sourceFiles.forEach(file => {
   const content = fs.readFileSync(file, 'utf8');
   let match;
   while ((match = imgRegex.exec(content)) !== null) {
-    const src = match[1];
-    checkRef(file, src);
+    checkRef(file, match[1]);
   }
   while ((match = mdRegex.exec(content)) !== null) {
-    const src = match[1];
-    checkRef(file, src);
+    checkRef(file, match[1]);
   }
 });
 
@@ -50,12 +48,40 @@ function checkRef(file, src) {
   }
 }
 
+// Check XML validity and undeclared entities on all SVGs in public
+const svgFiles = walk(publicDir, ['.svg']);
+const svgErrors = [];
+const allowedXmlEntities = ['&amp;', '&lt;', '&gt;', '&quot;', '&apos;'];
+
+svgFiles.forEach(file => {
+  const content = fs.readFileSync(file, 'utf8');
+  const entities = content.match(/&[a-zA-Z]+;/g) || [];
+  const invalid = entities.filter(e => !allowedXmlEntities.includes(e));
+  if (invalid.length > 0) {
+    svgErrors.push({ file: path.relative(path.join(__dirname, '..'), file), invalid });
+  }
+});
+
+let failed = false;
+
 if (missing.length > 0) {
   console.error('\x1b[31m[ERROR] Missing local image references found:\x1b[0m');
   missing.forEach(m => {
     console.error(`  - In ${m.file}: image "${m.src}" does not exist at ${m.targetPath}`);
   });
+  failed = true;
+}
+
+if (svgErrors.length > 0) {
+  console.error('\x1b[31m[ERROR] SVG files contain invalid HTML entities (causes XML parse errors in browser):\x1b[0m');
+  svgErrors.forEach(s => {
+    console.error(`  - In ${s.file}: contains undeclared entity ${s.invalid.join(', ')}`);
+  });
+  failed = true;
+}
+
+if (failed) {
   process.exit(1);
 } else {
-  console.log('\x1b[32m[PASS] All referenced local images exist in public/.\x1b[0m');
+  console.log('\x1b[32m[PASS] All referenced local images exist and SVGs contain valid XML entities.\x1b[0m');
 }

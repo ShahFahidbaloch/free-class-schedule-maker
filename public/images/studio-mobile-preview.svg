@@ -97,14 +97,14 @@
   <rect x="80" y="330" width="6" height="72" rx="3" class="bar-blue" />
   <text x="96" y="352" class="text-title" fill="#1e3a8a">CS 301</text>
   <text x="96" y="370" class="text-sub" fill="#1e40af">Data Structures &amp; Algorithms</text>
-  <text x="96" y="390" class="text-mono" fill="#3b82f6">10:00 – 11:15 AM &bull; Turing Hall 101</text>
+  <text x="96" y="390" class="text-mono" fill="#3b82f6">10:00 – 11:15 AM • Turing Hall 101</text>
 
   <!-- MATH 21 -->
   <rect x="80" y="415" width="286" height="72" rx="10" class="card-emerald" />
   <rect x="80" y="415" width="6" height="72" rx="3" class="bar-emerald" />
   <text x="96" y="437" class="text-title" fill="#064e3b">MATH 21</text>
   <text x="96" y="455" class="text-sub" fill="#065f46">Calculus &amp; Analytic Geometry II</text>
-  <text x="96" y="475" class="text-mono" fill="#059669">11:30 AM – 12:45 PM &bull; Quad 304</text>
+  <text x="96" y="475" class="text-mono" fill="#059669">11:30 AM – 12:45 PM • Quad 304</text>
 
   <!-- Bottom Floating Sticky Action Bar -->
   <rect x="30" y="642" width="330" height="46" rx="23" fill="#0f172a" />

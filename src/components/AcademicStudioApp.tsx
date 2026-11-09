@@ -345,12 +345,20 @@ export function stepTime(
   }
 }
 
-// Smart time typing handler: extracts digits safely and preserves/toggles AM/PM
-export function handleTimeInput(raw: string, prevTime: string): string {
-  const clean = raw.trim();
-  if (!clean) return '';
+// Pure mathematical step: ArrowUp +30m (or custom step), ArrowDown -30m
+export function stepTimeMinutes(currentTime: string, direction: 'up' | 'down', stepMins: number = 30): string {
+  const currentMins = parseFlexibleTime(currentTime);
+  let newMins = direction === 'up' ? currentMins + stepMins : currentMins - stepMins;
+  if (newMins < 0) newMins += 24 * 60;
+  if (newMins >= 24 * 60) newMins -= 24 * 60;
+  return minutesToTime12(newMins);
+}
 
-  // Extract AM / PM intent without inserting digits into letters
+// Robust typed time parser: formats "1030" or "10:30" or "9" into valid "HH:MM AM/PM"
+export function parseTypedTime(raw: string, prevTime: string): string {
+  const clean = (raw || '').trim();
+  if (!clean) return prevTime || '09:00 AM';
+
   let ampm: 'AM' | 'PM' = prevTime.toUpperCase().includes('PM') ? 'PM' : 'AM';
   if (/p/i.test(clean) && !/a/i.test(clean)) {
     ampm = 'PM';
@@ -358,48 +366,64 @@ export function handleTimeInput(raw: string, prevTime: string): string {
     ampm = 'AM';
   }
 
-  // Extract numbers only
-  const numericOnly = clean.replace(/[^0-9:]/g, '');
-  if (!numericOnly) {
-    return ampm === 'PM' ? '12:00 PM' : '09:00 AM';
-  }
+  const digits = clean.replace(/\D/g, '');
+  if (!digits) return prevTime || '09:00 AM';
 
-  let hours = 0;
-  let minutes = 0;
-  if (numericOnly.includes(':')) {
-    const [hStr, mStr] = numericOnly.split(':');
-    hours = parseInt(hStr, 10) || 0;
-    minutes = parseInt(mStr?.slice(0, 2), 10) || 0;
+  let h = 0;
+  let m = 0;
+
+  if (digits.length <= 2) {
+    h = parseInt(digits, 10);
+    m = 0;
+  } else if (digits.length === 3) {
+    h = parseInt(digits.slice(0, 1), 10);
+    m = parseInt(digits.slice(1, 3), 10);
   } else {
-    const val = parseInt(numericOnly, 10) || 0;
-    if (numericOnly.length <= 2) {
-      hours = val;
-      minutes = 0;
-    } else if (numericOnly.length === 3) {
-      hours = parseInt(numericOnly.slice(0, 1), 10);
-      minutes = parseInt(numericOnly.slice(1, 3), 10);
-    } else {
-      hours = parseInt(numericOnly.slice(0, 2), 10);
-      minutes = parseInt(numericOnly.slice(2, 4), 10);
-    }
+    h = parseInt(digits.slice(0, 2), 10);
+    m = parseInt(digits.slice(2, 4), 10);
   }
 
-  if (hours > 12 && hours <= 23) {
-    hours = hours - 12;
+  if (h > 12 && h <= 23) {
+    h = h - 12;
     ampm = 'PM';
-  } else if (hours === 0) {
-    hours = 12;
-  } else if (hours > 23) {
-    hours = 12;
+  } else if (h === 0 || h > 23) {
+    h = 12;
   }
-  if (minutes > 59) minutes = 59;
+  if (m > 59) m = 59;
 
-  const displayH = hours < 10 ? `0${hours}` : `${hours}`;
-  const displayM = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  const displayH = h < 10 ? `0${h}` : `${h}`;
+  const displayM = m < 10 ? `0${m}` : `${m}`;
   return `${displayH}:${displayM} ${ampm}`;
 }
 
-const DEFAULT_SAMPLE_COURSES: Course[] = [
+// Pure idle gaps calculation
+export function calculateScheduleIdleGaps(coursesList: Course[], activeDays: DayOfWeek[]): number {
+  let totalGapMins = 0;
+  activeDays.forEach(day => {
+    const dayMeetings: { s: number; e: number }[] = [];
+    coursesList.forEach(c => {
+      const sec = c.sections.find(s => s.id === c.selectedSectionId);
+      if (!sec) return;
+      if (sec.days.some(d => normalizeDayOfWeek(d) === day)) {
+        dayMeetings.push({
+          s: parseFlexibleTime(sec.startTime),
+          e: parseFlexibleTime(sec.endTime)
+        });
+      }
+    });
+
+    dayMeetings.sort((a, b) => a.s - b.s);
+    for (let i = 0; i < dayMeetings.length - 1; i++) {
+      const gap = dayMeetings[i + 1].s - dayMeetings[i].e;
+      if (gap > 0 && gap < 480) {
+        totalGapMins += gap;
+      }
+    }
+  });
+  return totalGapMins;
+}
+
+export const DEFAULT_SAMPLE_COURSES: Course[] = [
   {
     id: 'course-cs301',
     code: 'CS 301',
@@ -532,14 +556,18 @@ export default function AcademicStudioApp() {
   const [canUndo, setCanUndo] = useState(false);
 
   const pushUndoSnapshot = (snapCourses: Course[], snapTasks: TaskItem[]) => {
-    historyStackRef.current.push({
+    const snap = {
       courses: JSON.parse(JSON.stringify(snapCourses)),
       tasks: JSON.parse(JSON.stringify(snapTasks))
-    });
+    };
+    historyStackRef.current.push(snap);
     if (historyStackRef.current.length > 20) {
       historyStackRef.current.shift();
     }
     setCanUndo(true);
+    try {
+      localStorage.setItem('class_schedule_undo_snapshot_v1', JSON.stringify(snap));
+    } catch (e) {}
   };
 
   const handleUndo = () => {
@@ -547,6 +575,13 @@ export default function AcademicStudioApp() {
     const lastSnap = historyStackRef.current.pop();
     if (historyStackRef.current.length === 0) {
       setCanUndo(false);
+      try {
+        localStorage.removeItem('class_schedule_undo_snapshot_v1');
+      } catch (e) {}
+    } else {
+      try {
+        localStorage.setItem('class_schedule_undo_snapshot_v1', JSON.stringify(historyStackRef.current[historyStackRef.current.length - 1]));
+      } catch (e) {}
     }
     if (!lastSnap) return;
 
@@ -835,6 +870,26 @@ export default function AcademicStudioApp() {
     } finally {
       isLoadedRef.current = true;
     }
+
+    // Restore Undo history across reload (R4)
+    try {
+      const savedUndo = localStorage.getItem('class_schedule_undo_snapshot_v1');
+      if (savedUndo) {
+        const parsedUndo = JSON.parse(savedUndo);
+        if (parsedUndo && Array.isArray(parsedUndo.courses)) {
+          historyStackRef.current = [parsedUndo];
+          setCanUndo(true);
+        }
+      }
+    } catch (e) {}
+
+    // Restore 5D/7D view preference across reload (R6)
+    try {
+      const savedWeekend = localStorage.getItem('class_schedule_include_weekend_v1');
+      if (savedWeekend === 'true') {
+        setIncludeWeekend(true);
+      }
+    } catch (e) {}
 
     const isDark = document.documentElement.classList.contains('dark');
     setIsDarkTheme(isDark);
@@ -1532,16 +1587,14 @@ export default function AcademicStudioApp() {
     return dayMap;
   }, [courses]);
 
-  // Compute Live Metrics
+  // Compute Live Metrics (Pure function: R5 - identical plans always yield identical gap totals)
   const metrics = useMemo(() => {
     const totalCredits = courses.reduce((sum, c) => sum + (c.credits || 0), 0);
-    let totalGapMinutes = 0;
+    const totalGapMinutes = calculateScheduleIdleGaps(courses, activeDaysList);
     let conflictPairs = 0;
 
     activeDaysList.forEach(day => {
       const daySlots = placedEventsByDay[day] || [];
-
-      // Calculate true conflicting pairs
       for (let i = 0; i < daySlots.length; i++) {
         for (let j = i + 1; j < daySlots.length; j++) {
           const a = daySlots[i];
@@ -1551,24 +1604,17 @@ export default function AcademicStudioApp() {
           }
         }
       }
-
-      const sorted = [...daySlots].sort((a, b) => a.startMins - b.startMins);
-      for (let i = 0; i < sorted.length - 1; i++) {
-        const gap = sorted[i + 1].startMins - sorted[i].endMins;
-        if (gap > 0 && gap < 360 && !sorted[i].hasClash && !sorted[i + 1].hasClash) {
-          totalGapMinutes += gap;
-        }
-      }
     });
 
     return {
       totalCredits,
+      totalGapMinutes,
       gapHours: (totalGapMinutes / 60).toFixed(1),
       conflicts: conflictPairs
     };
   }, [courses, placedEventsByDay, activeDaysList]);
 
-  // Honest Gap Optimizer Engine (P5: Analyzes current plan, proposes genuine compaction, or honestly informs if already compact)
+  // Honest Gap Optimizer Engine (R5: uses total idle wait consistently in proposal, toast, and header)
   const handleOptimizeGaps = () => {
     if (courses.length === 0) {
       setBanner('No classes in timetable to optimize.');
@@ -1576,33 +1622,16 @@ export default function AcademicStudioApp() {
       return;
     }
 
-    // Measure current idle gaps across all active days
-    let currentTotalGaps = 0;
-    let longestIdleGap = 0;
-
-    activeDaysList.forEach(day => {
-      const slots = (placedEventsByDay[day] || []).slice().sort((a, b) => a.startMins - b.startMins);
-      for (let i = 0; i < slots.length - 1; i++) {
-        const gap = slots[i + 1].startMins - slots[i].endMins;
-        if (gap > 0) {
-          currentTotalGaps += gap;
-          if (gap > longestIdleGap) longestIdleGap = gap;
-        }
-      }
-    });
-
+    const currentTotalGaps = calculateScheduleIdleGaps(courses, activeDaysList);
     if (currentTotalGaps < 30) {
-      // Zero confetti, zero fake claim
       setBanner('Your schedule is already compact — no change reduces your idle gaps.');
       setTimeout(() => setBanner(null), 3500);
       return;
     }
 
-    // Try finding an improved schedule by closing idle gaps without clashes
     const candidateCourses: Course[] = JSON.parse(JSON.stringify(courses));
     let hasImprovements = false;
 
-    // Check movable classes
     for (const day of activeDaysList) {
       const daySlots = (placedEventsByDay[day] || []).slice().sort((a, b) => a.startMins - b.startMins);
       if (daySlots.length <= 1) continue;
@@ -1613,7 +1642,6 @@ export default function AcademicStudioApp() {
         const gap = second.startMins - first.endMins;
 
         if (gap >= 30) {
-          // Compact second course to 15m after first
           const secondDuration = second.endMins - second.startMins;
           const proposedStart = first.endMins + 15;
           const proposedEnd = proposedStart + secondDuration;
@@ -1623,7 +1651,6 @@ export default function AcademicStudioApp() {
           const targetSec = targetCourse.sections.find(s => s.id === second.rawSection.id);
           if (!targetSec) continue;
 
-          // Verify moving this course does not conflict on any of its meeting days
           let clash = false;
           for (const meetDay of targetSec.days) {
             const dayEvents = (placedEventsByDay[meetDay] || []).filter(e => e.courseId !== second.courseId);
@@ -1643,33 +1670,15 @@ export default function AcademicStudioApp() {
     }
 
     if (hasImprovements) {
-      // Calculate new total gaps
-      let newTotalGaps = 0;
-      let newLongestGap = 0;
-      activeDaysList.forEach(day => {
-        const slots: { s: number; e: number }[] = [];
-        candidateCourses.forEach(c => {
-          const s = c.sections.find(sec => sec.id === c.selectedSectionId);
-          if (s && s.days.includes(day)) {
-            slots.push({ s: parseFlexibleTime(s.startTime), e: parseFlexibleTime(s.endTime) });
-          }
-        });
-        slots.sort((a, b) => a.s - b.s);
-        for (let i = 0; i < slots.length - 1; i++) {
-          const gap = slots[i + 1].s - slots[i].e;
-          if (gap > 0) {
-            newTotalGaps += gap;
-            if (gap > newLongestGap) newLongestGap = gap;
-          }
-        }
-      });
-
+      const newTotalGaps = calculateScheduleIdleGaps(candidateCourses, activeDaysList);
       if (newTotalGaps < currentTotalGaps) {
-        const savedHours = ((currentTotalGaps - newTotalGaps) / 60).toFixed(1);
+        const currentHours = (currentTotalGaps / 60).toFixed(1);
+        const proposedHours = (newTotalGaps / 60).toFixed(1);
+        const savedHours = (Math.max(0, currentTotalGaps - newTotalGaps) / 60).toFixed(1);
         setOptimizerProposal({
           isOpen: true,
-          currentGapHours: (longestIdleGap / 60).toFixed(1),
-          proposedGapHours: (newLongestGap / 60).toFixed(1),
+          currentGapHours: currentHours,
+          proposedGapHours: proposedHours,
           savedHours,
           proposedCourses: candidateCourses
         });
@@ -1677,7 +1686,6 @@ export default function AcademicStudioApp() {
       }
     }
 
-    // If no safe compaction could be found
     setBanner('Your schedule is already compact — no change reduces your idle gaps.');
     setTimeout(() => setBanner(null), 3500);
   };
@@ -1696,7 +1704,7 @@ export default function AcademicStudioApp() {
       return updated;
     });
     setOptimizerProposal(null);
-    setBanner(`Schedule optimized! Longest idle gap cut from ${optimizerProposal.currentGapHours}h to ${optimizerProposal.proposedGapHours}h.`);
+    setBanner(`Schedule optimized! Total idle gaps cut from ${optimizerProposal.currentGapHours}h to ${optimizerProposal.proposedGapHours}h (saved ${optimizerProposal.savedHours}h).`);
     setTimeout(() => setBanner(null), 3500);
     try {
       confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
@@ -1882,7 +1890,7 @@ export default function AcademicStudioApp() {
               className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
                 isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
               }`}
-              title={`${event.code} - ${event.title}\nClick to edit or drag to reschedule`}
+              title={`${event.code} - ${event.title}\nClick to edit or drag to reschedule • Dragging a class moves all of its weekly meetings`}
             >
               <div className="leading-tight">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -1903,7 +1911,7 @@ export default function AcademicStudioApp() {
                 </div>
 
                 {event.title && (
-                  <div className={`text-[11px] font-medium line-clamp-2 break-words leading-tight ${pal.textTitle}`}>
+                  <div className={`text-[11px] font-medium ${event.heightPx <= 74 ? "truncate" : "line-clamp-2 break-words"} leading-tight ${pal.textTitle}`}>
                     {event.title}
                   </div>
                 )}
@@ -1916,7 +1924,7 @@ export default function AcademicStudioApp() {
                 )}
               </div>
 
-              <div className={`text-[10px] font-mono font-semibold pt-1 truncate flex items-center gap-1 border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
+              <div className={`text-[10px] font-mono font-semibold pt-0.5 pb-0.5 truncate shrink-0 flex items-center gap-1 border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
                 <Clock className="w-2.5 h-2.5 shrink-0 opacity-75" />
                 <span className="truncate">{formatClassTimeRange(event.startTime, event.endTime, !isMobileSingle && totalCols > 1)}</span>
               </div>
@@ -2003,7 +2011,7 @@ export default function AcademicStudioApp() {
 
           {/* 5-Day / 7-Day Weekend Toggle */}
           <button
-            onClick={() => setIncludeWeekend(!includeWeekend)}
+            onClick={() => { const next = !includeWeekend; setIncludeWeekend(next); try { localStorage.setItem('class_schedule_include_weekend_v1', String(next)); } catch (e) {} }}
             className={`w-full py-2 px-1 rounded-xl flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
               includeWeekend
                 ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-2xs font-bold'
@@ -2926,10 +2934,10 @@ export default function AcademicStudioApp() {
                     onKeyDown={e => {
                       if (e.key === 'ArrowDown') {
                         e.preventDefault();
-                        setFormStartTime(prev => stepTime(prev, 'down', COMMON_START_TIMES));
+                        setFormStartTime(prev => stepTimeMinutes(prev, 'down', 30));
                       } else if (e.key === 'ArrowUp') {
                         e.preventDefault();
-                        setFormStartTime(prev => stepTime(prev, 'up', COMMON_START_TIMES));
+                        setFormStartTime(prev => stepTimeMinutes(prev, 'up', 30));
                       }
                     }}
                     placeholder="09:00 AM"
@@ -2952,10 +2960,10 @@ export default function AcademicStudioApp() {
                     onKeyDown={e => {
                       if (e.key === 'ArrowDown') {
                         e.preventDefault();
-                        setFormEndTime(prev => stepTime(prev, 'down', COMMON_END_TIMES));
+                        setFormEndTime(prev => stepTimeMinutes(prev, 'down', 30));
                       } else if (e.key === 'ArrowUp') {
                         e.preventDefault();
-                        setFormEndTime(prev => stepTime(prev, 'up', COMMON_END_TIMES));
+                        setFormEndTime(prev => stepTimeMinutes(prev, 'up', 30));
                       }
                     }}
                     placeholder="10:15 AM"
@@ -3615,11 +3623,11 @@ export default function AcademicStudioApp() {
                 This compaction reduces your idle on-campus wait time between classes:
               </p>
               <div className="flex items-center justify-between text-xs font-mono py-1">
-                <span className="text-zinc-500">Longest idle gap before:</span>
+                <span className="text-zinc-500">Total idle wait before:</span>
                 <span className="font-bold text-rose-500">{optimizerProposal.currentGapHours} hrs</span>
               </div>
               <div className="flex items-center justify-between text-xs font-mono py-1 border-t border-zinc-200/60 dark:border-zinc-700/60">
-                <span className="text-zinc-500">Longest idle gap after:</span>
+                <span className="text-zinc-500">Total idle wait after:</span>
                 <span className="font-bold text-emerald-500">{optimizerProposal.proposedGapHours} hrs</span>
               </div>
               <div className="text-[11px] text-zinc-500 pt-1">
@@ -3708,7 +3716,7 @@ export default function AcademicStudioApp() {
                 <div>
                   <h4 className="text-xs font-bold text-zinc-900 dark:text-white">3. Eliminate Campus Dead-Time</h4>
                   <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">
-                    The <strong>Gap Optimizer</strong> measures idle hours between classes, helping you pack lectures efficiently or keep study breaks balanced.
+                    The <strong>Gap Optimizer</strong> measures idle hours between classes. Note: dragging a class moves all of its weekly meetings across the timetable.
                   </p>
                 </div>
               </div>

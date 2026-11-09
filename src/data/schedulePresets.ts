@@ -120,12 +120,12 @@ export const MAJOR_PRESETS: Record<string, SchedulePreset> = {
     name: 'Nursing Student',
     major: 'B.S. Nursing (BSN Clinical Track)',
     credits: 15,
-    description: 'Foundations of Clinical Nursing, Pharmacology, Simulation Lab, Holistic Health Assessment, and Hospital Rotation.',
+    description: 'Clinical Pharmacology, Adult Health Pathophysiology, Simulation Lab, Holistic Health Assessment, and Hospital Rotation.',
     courses: [
       {
         id: 'nurs-210',
         code: 'NURS 210',
-        title: 'Foundations of Clinical Nursing Practice',
+        title: 'Clinical Pharmacology I',
         credits: 3,
         colorIndex: 0,
         selectedSectionId: 'sec-nurs210',
@@ -134,8 +134,8 @@ export const MAJOR_PRESETS: Record<string, SchedulePreset> = {
             id: 'sec-nurs210',
             name: 'Lecture MW',
             days: ['Mon', 'Wed'],
-            startTime: '08:30 AM',
-            endTime: '10:00 AM',
+            startTime: '09:00 AM',
+            endTime: '10:30 AM',
             room: 'Health Sciences 104'
           }
         ]
@@ -143,7 +143,7 @@ export const MAJOR_PRESETS: Record<string, SchedulePreset> = {
       {
         id: 'nurs-220',
         code: 'NURS 220',
-        title: 'Pharmacology for Nursing Practice',
+        title: 'Adult Health Pathophysiology',
         credits: 3,
         colorIndex: 1,
         selectedSectionId: 'sec-nurs220',
@@ -152,8 +152,8 @@ export const MAJOR_PRESETS: Record<string, SchedulePreset> = {
             id: 'sec-nurs220',
             name: 'Lecture MW',
             days: ['Mon', 'Wed'],
-            startTime: '10:30 AM',
-            endTime: '12:00 PM',
+            startTime: '11:00 AM',
+            endTime: '12:30 PM',
             room: 'Pharmacy Hall 202'
           }
         ]

@@ -6,7 +6,8 @@ import {
   formatClassTimeRange,
   parseFlexibleTime,
   VALID_DAYS,
-  normalizeDayOfWeek
+  normalizeDayOfWeek,
+  DEFAULT_SAMPLE_COURSES
 } from './AcademicStudioApp';
 import { MAJOR_PRESETS } from '../data/schedulePresets';
 import { Clock, MapPin, Calendar, ExternalLink } from 'lucide-react';
@@ -16,7 +17,7 @@ const CALENDAR_END_HOUR = 20;
 const HOUR_ROW_HEIGHT = 64;
 
 export default function EmbedScheduleView() {
-  const [courses, setCourses] = useState<Course[]>(MAJOR_PRESETS['computer-science'].courses);
+  const [courses, setCourses] = useState<Course[]>(DEFAULT_SAMPLE_COURSES);
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeDay, setActiveDay] = useState<DayOfWeek>('Mon');
   const [isNarrow, setIsNarrow] = useState(false);

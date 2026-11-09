@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/audit_images.cjs && astro build",
+    "build": "node scripts/audit_images.cjs && astro build && node scripts/crawl_images.cjs",
     "preview": "astro preview",
     "astro": "astro",
     "deploy": "astro build && wrangler pages deploy dist --project-name=class-schedule-optimizer --branch=master"
