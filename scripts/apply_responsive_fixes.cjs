@@ -185,3 +185,4 @@ content = content.replace(oldSampleBanner, newSampleBanner);
 
 fs.writeFileSync(targetPath, content, 'utf8');
 console.log('Applied responsive typography, time gutter, bottom nav, and sample banner updates.');
+

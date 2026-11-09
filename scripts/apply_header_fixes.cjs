@@ -536,3 +536,4 @@ if (oldHeaderRegex.test(content)) {
 } else {
   console.error('Could not find old header pattern.');
 }
+
