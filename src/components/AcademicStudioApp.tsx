@@ -1757,9 +1757,9 @@ function AcademicStudioAppInner() {
         const sec = c.sections.find(s => s.id === c.selectedSectionId) || c.sections[0];
         if (!sec) continue;
         if (!sec.days.some(d => (normalizeDayOfWeek(d) || d) === targetDay)) continue;
-        const sMins = parseTimeToMinutes(sec.startTime);
-        const eMins = parseTimeToMinutes(sec.endTime);
-        if (sMins !== null && eMins !== null) {
+        const sMins = parseFlexibleTime(sec.startTime);
+        const eMins = parseFlexibleTime(sec.endTime);
+        if (sMins > 0 && eMins > sMins) {
           slots.push({ courseId: c.id, sectionId: sec.id, startMins: sMins, endMins: eMins });
         }
       }
