@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -311,6 +311,64 @@ export function formatClassTimeRange(startTime: string, endTime: string, isNarro
   return `${startFmt} – ${endFmt}`;
 }
 
+/**
+ * Renders a time range in narrow/split-lane blocks and shrinks font size (never ellipsizing)
+ * so the full time string always remains legible inside its container.
+ */
+function AutoFitTime({
+  text,
+  className = '',
+  maxFontPx = 9.5,
+  minFontPx = 6.5,
+}: {
+  text: string;
+  className?: string;
+  maxFontPx?: number;
+  minFontPx?: number;
+}) {
+  const spanRef = useRef<HTMLSpanElement | null>(null);
+
+  useLayoutEffect(() => {
+    const el = spanRef.current;
+    if (!el) return;
+
+    const fit = () => {
+      const parent = el.parentElement;
+      const available = parent ? parent.clientWidth : el.clientWidth;
+      if (available <= 0) return;
+
+      el.style.fontSize = `${maxFontPx}px`;
+      el.style.transform = '';
+      el.style.transformOrigin = 'left center';
+
+      let size = maxFontPx;
+      while (el.scrollWidth > available && size > minFontPx) {
+        size = Math.max(minFontPx, size - 0.5);
+        el.style.fontSize = `${size}px`;
+      }
+
+      if (el.scrollWidth > available && el.scrollWidth > 0) {
+        const scale = Math.max(0.65, available / el.scrollWidth);
+        el.style.transform = `scale(${scale})`;
+        el.style.display = 'inline-block';
+      }
+    };
+
+    fit();
+    if (typeof ResizeObserver !== 'undefined' && el.parentElement) {
+      const ro = new ResizeObserver(fit);
+      ro.observe(el.parentElement);
+      return () => ro.disconnect();
+    }
+  }, [text, maxFontPx, minFontPx]);
+
+  return (
+    <span ref={spanRef} className={`whitespace-nowrap leading-none ${className}`}>
+      {text}
+    </span>
+  );
+}
+
 export function minutesToTime12(totalMinutes: number): string {
   const clamped = Math.max(0, Math.min(24 * 60 - 1, totalMinutes));
   const h = Math.floor(clamped / 60);
@@ -403,8 +461,8 @@ export function calculateScheduleIdleGaps(coursesList: Course[], activeDays: Day
   activeDays.forEach(day => {
     const dayMeetings: { s: number; e: number }[] = [];
     coursesList.forEach(c => {
-      const sec = c.sections.find(s => s.id === c.selectedSectionId);
-      if (!sec) return;
+      const sec = c.sections.find(s => s.id === c.selectedSectionId) || c.sections[0];
+      if (!sec || !Array.isArray(sec.days)) return;
       if (sec.days.some(d => normalizeDayOfWeek(d) === day)) {
         dayMeetings.push({
           s: parseFlexibleTime(sec.startTime),
@@ -609,6 +667,15 @@ function AcademicStudioAppInner() {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [includeWeekend, setIncludeWeekend] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
+  const bannerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = (msg: string, durationMs: number = 3500) => {
+    if (bannerTimeoutRef.current) clearTimeout(bannerTimeoutRef.current);
+    setBanner(msg);
+    bannerTimeoutRef.current = setTimeout(() => {
+      setBanner(null);
+      bannerTimeoutRef.current = null;
+    }, durationMs);
+  };
   const [isExporting, setIsExporting] = useState(false);
   const [mobileDay, setMobileDay] = useState<DayOfWeek>('Mon');
 
@@ -1734,18 +1801,17 @@ function AcademicStudioAppInner() {
 
   // Honest Gap Optimizer Engine (R5: uses total idle wait consistently in proposal, toast, and header)
   const handleOptimizeGaps = () => {
-    if (courses.length === 0) {
-      setBanner('No classes in timetable to optimize.');
-      setTimeout(() => setBanner(null), 3000);
-      return;
-    }
+    try {
+      if (courses.length === 0) {
+        showToast('No classes in timetable to optimize.', 3000);
+        return;
+      }
 
-    const currentTotalGaps = calculateScheduleIdleGaps(courses, activeDaysList);
-    if (currentTotalGaps < 30) {
-      setBanner('Your schedule is already compact — no change reduces your idle gaps.');
-      setTimeout(() => setBanner(null), 3500);
-      return;
-    }
+      const currentTotalGaps = calculateScheduleIdleGaps(courses, activeDaysList);
+      if (currentTotalGaps < 30) {
+        showToast('Your schedule is already compact — no change reduces your idle gaps.', 3500);
+        return;
+      }
 
     const candidateCourses: Course[] = JSON.parse(JSON.stringify(courses));
     const movedSectionIds = new Set<string>();
@@ -1856,8 +1922,11 @@ function AcademicStudioAppInner() {
       }
     }
 
-    setBanner('Your schedule is already compact — no change reduces your idle gaps.');
-    setTimeout(() => setBanner(null), 3500);
+      showToast('Your schedule is already compact — no change reduces your idle gaps.', 3500);
+    } catch (err) {
+      console.error('Gap Optimizer error:', err);
+      showToast('Could not analyze schedule — please check class times.', 3500);
+    }
   };
 
   const handleApplyOptimizerProposal = () => {
@@ -2068,22 +2137,27 @@ function AcademicStudioAppInner() {
                 left: leftPos,
                 width: blockWidth
               }}
-              className={`absolute rounded-xl border ${event.heightPx < 85 ? (!isMobileSingle && totalCols > 1 ? 'px-1 py-1' : 'px-1.5 py-1') : 'p-2 sm:p-2.5'} transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
+              className={`absolute rounded-xl border ${!isMobileSingle && totalCols > 1 ? 'px-1 py-1' : event.heightPx < 85 ? 'px-1.5 py-1' : 'p-2 sm:p-2.5'} transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
                 isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
               }`}
               title={`${event.code} - ${event.title}\nClick to edit or drag to reschedule • Dragging a class moves all of its weekly meetings`}
             >
-              {/* Height-aware Block Layout (F1: Under 75 min / heightPx < 85 = strict compact layout; F4: No 1-click delete button) */}
+              {/* Height-aware Block Layout (F1 & G1: Short blocks & split-lane blocks NEVER clip or ellipsis times) */}
               {event.heightPx < 85 ? (
                 !isMobileSingle && totalCols > 1 ? (
-                  /* Narrow split-lane short block: stack code + proportional compact time on separate lines so time NEVER truncates */
+                  /* Narrow split-lane short block: stack code + AutoFitTime on separate lines */
                   <div className="h-full flex flex-col justify-between leading-none select-none min-w-0">
                     <span className={`font-bold text-[10.5px] tracking-tight truncate ${pal.textCode}`}>
                       {event.code}
                     </span>
-                    <span className={`font-sans text-[9px] tracking-tighter font-semibold whitespace-nowrap ${pal.textMeta}`}>
-                      {formatClassTimeRange(event.startTime, event.endTime, true)}
-                    </span>
+                    <div className="w-full min-w-0 overflow-hidden">
+                      <AutoFitTime
+                        text={formatClassTimeRange(event.startTime, event.endTime, true)}
+                        className={`font-sans tracking-tighter font-semibold ${pal.textMeta}`}
+                        maxFontPx={9}
+                        minFontPx={6.5}
+                      />
+                    </div>
                     {event.title && event.heightPx >= 66 && (
                       <div className={`text-[9.5px] font-medium truncate opacity-90 ${pal.textTitle}`}>
                         {event.title}
@@ -2132,10 +2206,21 @@ function AcademicStudioAppInner() {
                     )}
                   </div>
 
-                  <div className={`text-[10px] font-mono font-semibold pt-0.5 pb-0.5 truncate shrink-0 flex items-center gap-1 border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
-                    <Clock className="w-2.5 h-2.5 shrink-0 opacity-75" />
-                    <span className="truncate">{formatClassTimeRange(event.startTime, event.endTime, !isMobileSingle && totalCols > 1)}</span>
-                  </div>
+                  {!isMobileSingle && totalCols > 1 ? (
+                    <div className={`pt-0.5 pb-0.5 shrink-0 w-full min-w-0 overflow-hidden border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
+                      <AutoFitTime
+                        text={formatClassTimeRange(event.startTime, event.endTime, true)}
+                        className="font-sans tracking-tighter font-semibold"
+                        maxFontPx={9.5}
+                        minFontPx={6.5}
+                      />
+                    </div>
+                  ) : (
+                    <div className={`text-[10px] font-mono font-semibold pt-0.5 pb-0.5 truncate shrink-0 flex items-center gap-1 border-t border-black/5 dark:border-white/10 ${pal.textMeta}`}>
+                      <Clock className="w-2.5 h-2.5 shrink-0 opacity-75" />
+                      <span className="truncate">{formatClassTimeRange(event.startTime, event.endTime, false)}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -2201,6 +2286,7 @@ function AcademicStudioAppInner() {
 
           {/* Gap Optimizer Engine */}
           <button
+            type="button"
             onClick={handleOptimizeGaps}
             className="w-full py-2 px-1 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
             title="Run Gap Optimizer Engine"
@@ -3191,6 +3277,7 @@ function AcademicStudioAppInner() {
 
         {/* 4. Optimizer */}
         <button
+          type="button"
           onClick={handleOptimizeGaps}
           className="w-full flex flex-col items-center justify-center gap-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer h-12 overflow-hidden px-1"
           title={t.actions.autoOptimize}
