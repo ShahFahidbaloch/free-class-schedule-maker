@@ -304,8 +304,9 @@ export function formatClassTimeRange(startTime: string, endTime: string, isNarro
     const sParts = startFmt.split(' ');
     const eParts = endFmt.split(' ');
     if (sParts[1] === eParts[1]) {
-      return `${sParts[0]} – ${endFmt}`;
+      return `${sParts[0]}–${endFmt}`;
     }
+    return `${startFmt}–${endFmt}`;
   }
   return `${startFmt} – ${endFmt}`;
 }
@@ -649,6 +650,7 @@ function AcademicStudioAppInner() {
   // Undo History Stack (Restores state before destructive actions: reset, preset, delete, drag)
   const historyStackRef = useRef<{ courses: Course[]; tasks: TaskItem[] }[]>([]);
   const [canUndo, setCanUndo] = useState(false);
+  const [confirmDeleteInModal, setConfirmDeleteInModal] = useState(false);
 
   const pushUndoSnapshot = (snapCourses: Course[], snapTasks: TaskItem[]) => {
     const snap = {
@@ -1746,7 +1748,66 @@ function AcademicStudioAppInner() {
     }
 
     const candidateCourses: Course[] = JSON.parse(JSON.stringify(courses));
-    const recordedMoves: Array<{
+    const movedSectionIds = new Set<string>();
+
+    // Helper to get live candidate slots for any day
+    const getCandidateDaySlots = (targetDay: DayOfWeek) => {
+      const slots: Array<{ courseId: string; sectionId: string; startMins: number; endMins: number }> = [];
+      for (const c of candidateCourses) {
+        const sec = c.sections.find(s => s.id === c.selectedSectionId) || c.sections[0];
+        if (!sec) continue;
+        if (!sec.days.some(d => (normalizeDayOfWeek(d) || d) === targetDay)) continue;
+        const sMins = parseTimeToMinutes(sec.startTime);
+        const eMins = parseTimeToMinutes(sec.endTime);
+        if (sMins !== null && eMins !== null) {
+          slots.push({ courseId: c.id, sectionId: sec.id, startMins: sMins, endMins: eMins });
+        }
+      }
+      return slots.sort((a, b) => a.startMins - b.startMins);
+    };
+
+    for (const day of activeDaysList) {
+      const daySlots = getCandidateDaySlots(day);
+      if (daySlots.length <= 1) continue;
+
+      for (let i = 0; i < daySlots.length - 1; i++) {
+        const first = daySlots[i];
+        const second = daySlots[i + 1];
+        if (movedSectionIds.has(second.sectionId)) continue;
+
+        const gap = second.startMins - first.endMins;
+        if (gap >= 30) {
+          const secondDuration = second.endMins - second.startMins;
+          const proposedStart = first.endMins + 15;
+          const proposedEnd = proposedStart + secondDuration;
+
+          const targetCourse = candidateCourses.find(c => c.id === second.courseId);
+          if (!targetCourse) continue;
+          const targetSec = targetCourse.sections.find(s => s.id === second.sectionId);
+          if (!targetSec) continue;
+
+          // Check clashes against live candidateCourses on ALL meeting days of this section
+          let clash = false;
+          for (const rawMeetDay of targetSec.days) {
+            const meetDay = normalizeDayOfWeek(rawMeetDay) || rawMeetDay;
+            const liveEvents = getCandidateDaySlots(meetDay).filter(e => e.courseId !== second.courseId);
+            if (liveEvents.some(e => Math.max(e.startMins, proposedStart) < Math.min(e.endMins, proposedEnd))) {
+              clash = true;
+              break;
+            }
+          }
+
+          if (!clash && proposedStart < second.startMins) {
+            targetSec.startTime = minutesToTime12(proposedStart);
+            targetSec.endTime = minutesToTime12(proposedEnd);
+            movedSectionIds.add(targetSec.id);
+          }
+        }
+      }
+    }
+
+    // Compute exact diff between original courses and candidateCourses (F2: impossible to list fake moves)
+    const realMoves: Array<{
       courseCode: string;
       courseTitle: string;
       day: DayOfWeek;
@@ -1756,61 +1817,26 @@ function AcademicStudioAppInner() {
       toEnd: string;
     }> = [];
 
-    for (const day of activeDaysList) {
-      const daySlots = (placedEventsByDay[day] || []).slice().sort((a, b) => a.startMins - b.startMins);
-      if (daySlots.length <= 1) continue;
-
-      for (let i = 0; i < daySlots.length - 1; i++) {
-        const first = daySlots[i];
-        const second = daySlots[i + 1];
-        const gap = second.startMins - first.endMins;
-
-        if (gap >= 30) {
-          const secondDuration = second.endMins - second.startMins;
-          const proposedStart = first.endMins + 15;
-          const proposedEnd = proposedStart + secondDuration;
-
-          const targetCourse = candidateCourses.find(c => c.id === second.courseId);
-          if (!targetCourse) continue;
-          const targetSec = targetCourse.sections.find(s => s.id === second.rawSection.id);
-          if (!targetSec) continue;
-
-          let clash = false;
-          for (const meetDay of targetSec.days) {
-            const dayEvents = (placedEventsByDay[meetDay] || []).filter(e => e.courseId !== second.courseId);
-            if (dayEvents.some(e => Math.max(e.startMins, proposedStart) < Math.min(e.endMins, proposedEnd))) {
-              clash = true;
-              break;
-            }
-          }
-
-          if (!clash && proposedStart < second.startMins) {
-            const fromStartStr = targetSec.startTime;
-            const fromEndStr = targetSec.endTime;
-            const toStartStr = minutesToTime12(proposedStart);
-            const toEndStr = minutesToTime12(proposedEnd);
-
-            // Self-check guard (F2): ONLY record if from !== to
-            if (fromStartStr !== toStartStr || fromEndStr !== toEndStr) {
-              targetSec.startTime = toStartStr;
-              targetSec.endTime = toEndStr;
-              recordedMoves.push({
-                courseCode: targetCourse.code,
-                courseTitle: targetCourse.title,
-                day,
-                fromStart: fromStartStr,
-                fromEnd: fromEndStr,
-                toStart: toStartStr,
-                toEnd: toEndStr
-              });
-            }
-          }
+    for (const candCourse of candidateCourses) {
+      const origCourse = courses.find(c => c.id === candCourse.id);
+      if (!origCourse) continue;
+      for (const candSec of candCourse.sections) {
+        const origSec = origCourse.sections.find(s => s.id === candSec.id);
+        if (!origSec) continue;
+        if (origSec.startTime !== candSec.startTime || origSec.endTime !== candSec.endTime) {
+          const primaryDay = normalizeDayOfWeek(candSec.days[0]) || 'Mon';
+          realMoves.push({
+            courseCode: candCourse.code,
+            courseTitle: candCourse.title,
+            day: primaryDay,
+            fromStart: origSec.startTime,
+            fromEnd: origSec.endTime,
+            toStart: candSec.startTime,
+            toEnd: candSec.endTime
+          });
         }
       }
     }
-
-    // Filter to ensure zero fake moves
-    const realMoves = recordedMoves.filter(m => m.fromStart !== m.toStart || m.fromEnd !== m.toEnd);
 
     if (realMoves.length > 0) {
       const newTotalGaps = calculateScheduleIdleGaps(candidateCourses, activeDaysList);
@@ -2033,6 +2059,7 @@ function AcademicStudioAppInner() {
                 setFormRoom(event.rawSection.room || '');
                 setFormColorIndex(event.rawCourse.colorIndex);
                 setFormError(null);
+                setConfirmDeleteInModal(false);
                 setIsClassModalOpen(true);
               }}
               style={{
@@ -2041,29 +2068,46 @@ function AcademicStudioAppInner() {
                 left: leftPos,
                 width: blockWidth
               }}
-              className={`absolute rounded-xl border p-2 sm:p-2.5 transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
+              className={`absolute rounded-xl border ${event.heightPx < 85 ? 'px-1.5 py-1' : 'p-2 sm:p-2.5'} transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
                 isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
               }`}
               title={`${event.code} - ${event.title}\nClick to edit or drag to reschedule • Dragging a class moves all of its weekly meetings`}
             >
-              {/* Height-aware Block Layout (F1: Under 75 min / heightPx < 85 = strict 2-line layout; F4: No 1-click delete button) */}
+              {/* Height-aware Block Layout (F1: Under 75 min / heightPx < 85 = strict compact layout; F4: No 1-click delete button) */}
               {event.heightPx < 85 ? (
-                /* Compact 2-Line Layout for Short Blocks (< 75 mins: 45m, 50m, 60m) */
-                <div className="h-full flex flex-col justify-between py-0.5 leading-tight select-none">
-                  <div className="flex items-center justify-between gap-1 min-w-0">
-                    <span className={`font-bold text-xs sm:text-sm tracking-tight truncate ${pal.textCode}`}>
+                !isMobileSingle && totalCols > 1 ? (
+                  /* Narrow split-lane short block: stack code + time on separate lines so time NEVER truncates */
+                  <div className="h-full flex flex-col justify-between leading-none select-none min-w-0">
+                    <span className={`font-bold text-[11px] tracking-tight truncate ${pal.textCode}`}>
                       {event.code}
                     </span>
-                    <span className={`font-mono text-[10px] font-semibold whitespace-nowrap shrink-0 ${pal.textMeta}`}>
-                      {formatClassTimeRange(event.startTime, event.endTime, !isMobileSingle && totalCols > 1)}
+                    <span className={`font-mono text-[9.5px] tracking-tighter font-semibold whitespace-nowrap ${pal.textMeta}`}>
+                      {formatClassTimeRange(event.startTime, event.endTime, true)}
                     </span>
+                    {event.title && event.heightPx >= 66 && (
+                      <div className={`text-[10px] font-medium truncate opacity-90 ${pal.textTitle}`}>
+                        {event.title}
+                      </div>
+                    )}
                   </div>
-                  {event.title && (
-                    <div className={`text-[11px] font-medium truncate leading-none mt-0.5 ${pal.textTitle}`}>
-                      {event.title}
+                ) : (
+                  /* Full-width short block (< 75 mins: 45m, 50m, 60m): strict 2-line layout, NO room line */
+                  <div className="h-full flex flex-col justify-between py-0.5 leading-tight select-none min-w-0">
+                    <div className="flex items-center justify-between gap-1 min-w-0">
+                      <span className={`font-bold text-[11px] sm:text-xs tracking-tight truncate ${pal.textCode}`}>
+                        {event.code}
+                      </span>
+                      <span className={`font-mono text-[9.5px] sm:text-[10px] tracking-tight font-semibold whitespace-nowrap shrink-0 ${pal.textMeta}`}>
+                        {formatClassTimeRange(event.startTime, event.endTime, true)}
+                      </span>
                     </div>
-                  )}
-                </div>
+                    {event.title && (
+                      <div className={`text-[10.5px] sm:text-[11px] font-medium truncate leading-tight ${pal.textTitle}`}>
+                        {event.title}
+                      </div>
+                    )}
+                  </div>
+                )
               ) : (
                 /* Standard Multi-Line Layout for Taller Blocks (>= 75 mins) */
                 <div className="h-full flex flex-col justify-between leading-tight select-none">
@@ -3549,14 +3593,37 @@ function AcademicStudioAppInner() {
               {/* Action Buttons (Sticky at bottom on mobile) */}
               <div className="sticky bottom-0 bg-white dark:bg-[#121215] pt-3 pb-1 border-t border-zinc-100 dark:border-zinc-800 -mx-5 sm:-mx-6 px-5 sm:px-6 z-10 flex items-center justify-between gap-3">
                 {selectedEventForEdit ? (
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteCourse(selectedEventForEdit.course.id)}
-                    className="h-11 px-4 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>{t.form.deleteClass}</span>
-                  </button>
+                  confirmDeleteInModal ? (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setConfirmDeleteInModal(false);
+                          handleDeleteCourse(selectedEventForEdit.course.id);
+                        }}
+                        className="h-11 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span>Confirm Delete</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDeleteInModal(false)}
+                        className="h-11 px-3 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                      >
+                        Keep
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDeleteInModal(true)}
+                      className="h-11 px-4 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>{t.form.deleteClass}</span>
+                    </button>
+                  )
                 ) : <div />}
 
                 <button
