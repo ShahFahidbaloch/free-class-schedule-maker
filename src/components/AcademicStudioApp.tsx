@@ -2068,7 +2068,7 @@ function AcademicStudioAppInner() {
                 left: leftPos,
                 width: blockWidth
               }}
-              className={`absolute rounded-xl border ${event.heightPx < 85 ? 'px-1.5 py-1' : 'p-2 sm:p-2.5'} transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
+              className={`absolute rounded-xl border ${event.heightPx < 85 ? (!isMobileSingle && totalCols > 1 ? 'px-1 py-1' : 'px-1.5 py-1') : 'p-2 sm:p-2.5'} transition-all shadow-2xs hover:shadow-md hover:scale-[1.01] hover:z-30 overflow-hidden flex flex-col justify-between group cursor-grab active:cursor-grabbing select-none ${pal.cardBg} ${pal.cardBorder} border-l-4 ${pal.leftBar} ${
                 isClashed ? 'ring-2 ring-rose-500 border-rose-500' : ''
               }`}
               title={`${event.code} - ${event.title}\nClick to edit or drag to reschedule • Dragging a class moves all of its weekly meetings`}
@@ -2076,16 +2076,16 @@ function AcademicStudioAppInner() {
               {/* Height-aware Block Layout (F1: Under 75 min / heightPx < 85 = strict compact layout; F4: No 1-click delete button) */}
               {event.heightPx < 85 ? (
                 !isMobileSingle && totalCols > 1 ? (
-                  /* Narrow split-lane short block: stack code + time on separate lines so time NEVER truncates */
+                  /* Narrow split-lane short block: stack code + proportional compact time on separate lines so time NEVER truncates */
                   <div className="h-full flex flex-col justify-between leading-none select-none min-w-0">
-                    <span className={`font-bold text-[11px] tracking-tight truncate ${pal.textCode}`}>
+                    <span className={`font-bold text-[10.5px] tracking-tight truncate ${pal.textCode}`}>
                       {event.code}
                     </span>
-                    <span className={`font-mono text-[9.5px] tracking-tighter font-semibold whitespace-nowrap ${pal.textMeta}`}>
+                    <span className={`font-sans text-[9px] tracking-tighter font-semibold whitespace-nowrap ${pal.textMeta}`}>
                       {formatClassTimeRange(event.startTime, event.endTime, true)}
                     </span>
                     {event.title && event.heightPx >= 66 && (
-                      <div className={`text-[10px] font-medium truncate opacity-90 ${pal.textTitle}`}>
+                      <div className={`text-[9.5px] font-medium truncate opacity-90 ${pal.textTitle}`}>
                         {event.title}
                       </div>
                     )}
