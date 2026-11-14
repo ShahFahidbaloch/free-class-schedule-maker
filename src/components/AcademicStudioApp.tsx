@@ -337,6 +337,7 @@ function AutoFitTime({
       const available = parent ? parent.clientWidth : el.clientWidth;
       if (available <= 0) return;
 
+      el.style.display = 'inline-block';
       el.style.fontSize = `${maxFontPx}px`;
       el.style.transform = '';
       el.style.transformOrigin = 'left center';
@@ -348,9 +349,8 @@ function AutoFitTime({
       }
 
       if (el.scrollWidth > available && el.scrollWidth > 0) {
-        const scale = Math.max(0.65, available / el.scrollWidth);
+        const scale = Math.max(0.45, (available - 0.5) / el.scrollWidth);
         el.style.transform = `scale(${scale})`;
-        el.style.display = 'inline-block';
       }
     };
 
@@ -363,7 +363,7 @@ function AutoFitTime({
   }, [text, maxFontPx, minFontPx]);
 
   return (
-    <span ref={spanRef} className={`whitespace-nowrap leading-none ${className}`}>
+    <span ref={spanRef} className={`inline-block whitespace-nowrap leading-none ${className}`}>
       {text}
     </span>
   );
