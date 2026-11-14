@@ -413,3 +413,4 @@ if (content.includes(oldModalProposalBody)) {
 
 fs.writeFileSync(targetPath, content, 'utf8');
 console.log('Applied all updates to AcademicStudioApp.tsx');
+
